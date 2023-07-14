@@ -1,0 +1,11 @@
+{
+  "emailFrom": "",
+  "smtpOptions": {
+    "host": "",
+    "port": 465,
+    "auth": {
+      "user": "",
+      "pass": ""
+    }
+  }
+}
