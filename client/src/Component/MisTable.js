@@ -139,7 +139,7 @@ const MisTable = ({ data }) => {
   const deleteStudent = () => {
     try {
       const { res } = axios.delete(
-        "https://att-creotech.onrender.com/bulk/delete-vehiclelist",
+        "https://creo-8w4j.onrender.com/bulk/delete-vehiclelist",
         { data: data }
       );
       alert(`${data.length} vechicle data deleted successfully`);

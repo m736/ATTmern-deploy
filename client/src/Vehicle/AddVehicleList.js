@@ -113,7 +113,7 @@ const AdvancedSearchForm = () => {
     try {
       dispatch(addVehicleRequest());
       const { data } = await axios.post(
-        `https://att-creotech.onrender.com/vehicle/addvehicle`,
+        `https://creo-8w4j.onrender.com/vehicle/addvehicle`,
         formData,
         {
           headers: {

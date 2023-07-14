@@ -24,7 +24,7 @@ function App() {
     try {
       dispatch(vechicleRequest());
       const { data } = await axios.get(
-        "https://att-creotech.onrender.com/api/v1/jokes"
+        "https://creo-8w4j.onrender.com/api/v1/jokes"
       );
       setRows(data);
       dispatch(vechicleSuccess(data));

@@ -17,7 +17,7 @@ export const getVechicle = async (dispatch) => {
   try {
     dispatch(vechicleRequest());
     const { data } = await axios.get(
-      "https://att-creotech.onrender.com/api/v1/jokes"
+      "https://creo-8w4j.onrender.com/api/v1/jokes"
     );
     dispatch(vechicleSuccess(data));
   } catch (error) {
@@ -31,7 +31,7 @@ export const addVehicle =
     try {
       dispatch(addVehicleRequest());
       const { data } = await axios.post(
-        `https://att-creotech.onrender.com/api/v1/addvehicle`,
+        `https://creo-8w4j.onrender.com/api/v1/addvehicle`,
         formData,
         {
           headers: {
@@ -50,7 +50,7 @@ export const updateVehicleList = (id, vehicleListData) => async (dispatch) => {
   try {
     dispatch(updateVehicleListRequest());
     const { data } = await axios.put(
-      `https://att-creotech.onrender.com/vehicle/update_vehicle/${id}`,
+      `https://creo-8w4j.onrender.com/vehicle/update_vehicle/${id}`,
       vehicleListData,
       {
         headers: {

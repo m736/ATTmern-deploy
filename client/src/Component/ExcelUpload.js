@@ -23,7 +23,7 @@ function ExcelUpload() {
     try {
       dispatch(vechicleRequest());
       const { data } = await axios.get(
-        "https://att-creotech.onrender.com/api/v1/jokes"
+        "https://creo-8w4j.onrender.com/api/v1/jokes"
       );
       setRows(data);
       dispatch(vechicleSuccess(data));
@@ -103,7 +103,7 @@ function ExcelUpload() {
       if (updatedJokes.length) {
         const result = (
           await axios.post(
-            "https://att-creotech.onrender.com/bulk/jokes-bulk-update",
+            "https://creo-8w4j.onrender.com/bulk/jokes-bulk-update",
             updatedJokes
           )
         ).data;
@@ -114,7 +114,7 @@ function ExcelUpload() {
       if (newJokes.length) {
         const result = (
           await axios.post(
-            "https://att-creotech.onrender.com/bulk/jokes-bulk-insert",
+            "https://creo-8w4j.onrender.com/bulk/jokes-bulk-insert",
             newJokes
           )
         ).data;

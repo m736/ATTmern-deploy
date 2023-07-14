@@ -142,7 +142,7 @@ const VehicleList = () => {
     try {
       dispatch(getVehicleListRequest());
       const { data } = await axios.get(
-        "https://att-creotech.onrender.com/api/v1/vehicle_list"
+        "https://creo-8w4j.onrender.com/api/v1/vehicle_list"
       );
 
       dispatch(getVehicleListSuccess(data));
