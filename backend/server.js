@@ -26,7 +26,7 @@ app.use(cookieParser());
 
 // allow cors requests from any origin and with credentials
 const corsOptions = {
-  origin: "https://creo-8w4j.onrender.com/", // frontend URI (ReactJS)
+  origin: "https://creotech-deploy-frontend.onrender.com", // frontend URI (ReactJS)
 };
 app.use(cors(corsOptions));
 
