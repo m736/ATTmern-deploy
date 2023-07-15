@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { BrowserRouter, Routes, Route, NavLink } from "react-router-dom";
+import { HashRouter, Routes, Route, NavLink } from "react-router-dom";
 import "./App.css";
 import ExcelUpload from "./Component/ExcelUpload";
 import NavBar from "./Component/NavBar";
@@ -38,7 +38,7 @@ function App() {
   }, []);
 
   return (
-    <BrowserRouter>
+    <HashRouter>
       <div className="flex">
         <NavBar />
         <div className="px-3 pt-20 w-4/5">
@@ -51,7 +51,7 @@ function App() {
           </Routes>
         </div>
       </div>
-    </BrowserRouter>
+    </HashRouter>
   );
 }
 
