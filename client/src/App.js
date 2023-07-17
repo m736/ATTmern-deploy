@@ -27,6 +27,7 @@ function App() {
         "https://creo-8w4j.onrender.com/api/v1/jokes"
       );
       setRows(data);
+      console.log(data);
       dispatch(vechicleSuccess(data));
     } catch (error) {
       dispatch(vechicleFail());

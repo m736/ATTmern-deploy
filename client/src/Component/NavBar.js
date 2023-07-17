@@ -16,12 +16,11 @@ import { NavLink } from "react-router-dom";
 const NavBar = () => {
   const [open, setOpen] = useState(true);
   const [submenuOpen, setSubmenuOpen] = useState(false);
-  const [submenuOpen1, setSubmenuOpen1] = useState(false);
-  const Menus = [
+  let Menus = [
     {
       title: "MIS Details",
       icon: <FaTruckMoving />,
-      submenu1: true,
+      submenu: true,
       name: "mis",
 
       submenuItems: [
@@ -45,6 +44,8 @@ const NavBar = () => {
       ],
     },
   ];
+  const [menuOption, setMenuOption] = useState(Menus);
+
   return (
     <>
       <div
@@ -91,7 +92,7 @@ const NavBar = () => {
           />
         </div>
         <ul className={`pt-2`}>
-          {Menus.map((menu, index) => (
+          {menuOption.map((menu, index) => (
             <>
               <li
                 key={index}
@@ -114,45 +115,18 @@ const NavBar = () => {
                     menu.title
                   )}
                 </span>
-                {menu.submenu && open && (
+                {open && (
                   <BsChevronDown
-                    className={`${submenuOpen && "rotate-180"}`}
-                    onClick={() => setSubmenuOpen(!submenuOpen)}
-                  />
-                )}
-                {menu.submenu1 && open && (
-                  <BsChevronDown
-                    className={`${submenuOpen1 && "rotate-180"}`}
-                    onClick={() => setSubmenuOpen1(!submenuOpen1)}
+                    className={`${menu.submenu && "rotate-180"}`}
+                    onClick={() => {
+                      let menulist = [...menuOption];
+                      menulist[index].submenu = !menulist[index].submenu;
+                      setMenuOption(menulist);
+                    }}
                   />
                 )}
               </li>
-              {menu.submenu && submenuOpen && open && (
-                <ul>
-                  {menu.submenuItems.map((submenuItem, index) => (
-                    <li
-                      key={index}
-                      className="text-gray-300 text-sm flex 
-                     items-center gap-x-4 
-                     cursor-pointer p-2 hover:bg-light_white 
-                     rounded-md mt-2 ml-5"
-                    >
-                      <span className="text-xl block float-left">
-                        {submenuItem.icon ? (
-                          submenuItem.icon
-                        ) : (
-                          <RiDashboardFill />
-                        )}
-                      </span>
-                      <NavLink to={`${submenuItem.href}`}>
-                        {" "}
-                        {submenuItem.title}
-                      </NavLink>
-                    </li>
-                  ))}
-                </ul>
-              )}
-              {menu.submenu1 && submenuOpen1 && open && (
+              {menu.submenu && open && (
                 <ul>
                   {menu.submenuItems.map((submenuItem, index) => (
                     <li

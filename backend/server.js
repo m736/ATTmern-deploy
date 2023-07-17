@@ -25,10 +25,12 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 // allow cors requests from any origin and with credentials
-const corsOptions = {
-  origin: "https://creotech-deploy-frontend.onrender.com", // frontend URI (ReactJS)
-};
-app.use(cors(corsOptions));
+app.use(
+  cors({
+    origin: (origin, callback) => callback(null, true),
+    credentials: true,
+  })
+);
 
 // // Database configuration
 require("src/utils/database");
@@ -40,6 +42,13 @@ app.use("/bulk", require("src/controllers/bulk.controller"));
 
 app.use("/vehicle", require("src/controllers/vehicle.controller"));
 app.get("*", (req, res) => res.status(404).json("API route not found"));
+
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, "../client/build")));
+  app.get("*", (req, res) => {
+    res.sendFile(path.resolve(__dirname, "../client/build/index.html"));
+  });
+}
 
 // // Global error handler
 app.use(errorHandler);
