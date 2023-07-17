@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "install-server": "cd backend && npm install",
-    "start-server": "cd backend && npm install nodemon && set NODE_ENV=production&&nodemon backend/server.js",
+    "install-server": "cd backend && npm install && npm install nodemon",
+    "start-server": "cd backend  && set NODE_ENV=production && nodemon server.js",
     "install-client": "cd client && npm install && npm run build",
     "build-client": "cd client && npm run build",
     "start-client": "cd client && npm run start"
