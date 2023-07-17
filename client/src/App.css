@@ -61,3 +61,12 @@
   top: 100%;
   font-size: 12px;
 }
+:where(.css-dev-only-do-not-override-1wazalj).ant-btn-primary {
+  background-color: #1677ff !important;
+}
+.ant-btn-warning {
+  background-color: #eca52b !important;
+}
+.ant-btn-success {
+  background-color: #28a745 !important;
+}

@@ -182,10 +182,7 @@ const FormSelect = (props) => {
                 </Form.Item>
                 <Form.Item name="date">
                   <DatePicker.RangePicker
-                    format="MMM Do, YYYY HH:mm"
-                    showTime={{
-                      format: "HH:mm",
-                    }}
+                    format="MMM Do, YYYY"
                     value={dateRange}
                     separator={"-"}
                     onChange={(x) => {

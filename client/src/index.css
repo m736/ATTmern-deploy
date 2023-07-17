@@ -10,7 +10,3 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-
-:where(.css-dev-only-do-not-override-1wazalj).ant-btn-primary {
-  background-color: #1677ff !important;
-}

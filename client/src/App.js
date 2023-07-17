@@ -41,16 +41,20 @@ function App() {
   return (
     <HashRouter>
       <div className="flex">
-        <NavBar />
-        <div className="px-3 pt-20 w-4/5">
-          <ToastContainer theme="dark" />
-          <Routes>
-            <Route exact path="/" element={<ExcelUpload />} />
-            <Route path="/tabledata" element={<FormSelect />} />
-            <Route path="/add_vechicle" element={<AddVehicleList />} />
-            <Route path="/vehicle_list" element={<VehicleList />} />
-          </Routes>
-        </div>
+        <aside class="h-screen sticky top-0">
+          <NavBar />
+        </aside>
+        <main className="px-3 pt-20 w-4/5">
+          <div>
+            <ToastContainer theme="dark" />
+            <Routes>
+              <Route exact path="/" element={<ExcelUpload />} />
+              <Route path="/tabledata" element={<FormSelect />} />
+              <Route path="/add_vechicle" element={<AddVehicleList />} />
+              <Route path="/vehicle_list" element={<VehicleList />} />
+            </Routes>
+          </div>
+        </main>
       </div>
     </HashRouter>
   );
