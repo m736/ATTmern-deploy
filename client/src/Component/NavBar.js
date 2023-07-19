@@ -43,6 +43,20 @@ const NavBar = () => {
         },
       ],
     },
+    {
+      title: "Tarrif",
+      icon: <BsChatRightDots />,
+      submenu: true,
+      name: "tarrif",
+      spacing: "true",
+      submenuItems: [
+        {
+          title: "AddTarrif",
+          icon: <BsBuildingAdd />,
+          href: "/tarrif/newtarrif",
+        },
+      ],
+    },
   ];
   const [menuOption, setMenuOption] = useState(Menus);
 

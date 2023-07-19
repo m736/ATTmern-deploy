@@ -1,5 +1,11 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { HashRouter, Routes, Route, NavLink } from "react-router-dom";
+import {
+  HashRouter,
+  Routes,
+  Route,
+  NavLink,
+  BrowserRouter,
+} from "react-router-dom";
 import "./App.css";
 import ExcelUpload from "./Component/ExcelUpload";
 import NavBar from "./Component/NavBar";
@@ -15,6 +21,7 @@ import axios from "axios";
 import VehicleList from "./Vehicle/VehicleList";
 import AddVehicleList from "./Vehicle/AddVehicleList";
 import { ToastContainer, toast } from "react-toastify";
+import { CreateNewTarrif } from "./Tarrif/CreateNewTarrif";
 
 function App() {
   const [rows, setRows] = useState([]);
@@ -39,7 +46,7 @@ function App() {
   }, []);
 
   return (
-    <HashRouter>
+    <BrowserRouter>
       <div className="flex">
         <aside class="h-screen sticky top-0">
           <NavBar />
@@ -52,11 +59,14 @@ function App() {
               <Route path="/tabledata" element={<FormSelect />} />
               <Route path="/add_vechicle" element={<AddVehicleList />} />
               <Route path="/vehicle_list" element={<VehicleList />} />
+              <Route path="/tarrif">
+                <Route path="newtarrif" element={<CreateNewTarrif />} />
+              </Route>
             </Routes>
           </div>
         </main>
       </div>
-    </HashRouter>
+    </BrowserRouter>
   );
 }
 
