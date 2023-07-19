@@ -54,13 +54,44 @@ const tarrifInputField = {
   driverbata: null,
   position: 1,
 };
-
 export const CreateNewTarrif = () => {
   const [tarrifInput, setTarrifInput] = React.useState([tarrifInputField]);
-  console.log(tarrifInput);
+
   return (
     <>
-      {tarrifInput.map((item, index) => {
+      <Form name="dynamic_form_item" className="px-4">
+        <Form.Item name={["userlistName"]}>
+          <Input
+            placeholder="user list name"
+            style={{ width: "30%", marginRight: 8 }}
+          />
+        </Form.Item>
+        <Form.List name="fields">
+          {({ add, remove }) => {
+            return (
+              <div>
+                {tarrifInput.map((item, index) => {
+                  return (
+                    <TarrifTable
+                      tarrifInput={tarrifInput}
+                      tarrif={item}
+                      setTarrifInput={setTarrifInput}
+                      add={add}
+                      remove={remove}
+                    />
+                  );
+                })}
+              </div>
+            );
+          }}
+        </Form.List>
+        <Form.Item className="mt-3">
+          <Button type="primary" htmlType="submit">
+            Submit
+          </Button>
+        </Form.Item>
+      </Form>
+      {/* {tarrifInput.map((item, index) => {
         return (
           <TarrifForm
             tarrifInput={tarrifInput}
@@ -68,7 +99,7 @@ export const CreateNewTarrif = () => {
             setTarrifInput={setTarrifInput}
           />
         );
-      })}
+      })} */}
     </>
   );
 };

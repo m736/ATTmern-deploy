@@ -64,7 +64,7 @@ const NavBar = () => {
     <>
       <div
         className={`bg-dark-blue h-screen p-5 pt-8 ${
-          open ? "w-72" : "w-20"
+          open ? "" : "w-20"
         } duration-300 relative`}
       >
         <BsArrowLeftShort

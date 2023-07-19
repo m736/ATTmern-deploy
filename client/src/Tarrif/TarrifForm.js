@@ -44,7 +44,7 @@ const TarrifForm = (props) => {
       (item) => item.position == tarrif.position
     );
     if (activeIndex > -1) {
-      let updated = tarrifInput.map((item, index) => {
+      let updated = tarrifInput?.forEach((item, index) => {
         if (index == activeIndex) {
           return {
             ...item,
@@ -57,6 +57,7 @@ const TarrifForm = (props) => {
       setTarrifInput(updated);
     }
   };
+  console.log(tarrifInput);
   return (
     <Card>
       <Form name="tarrifform" onFinish={onFinish}>

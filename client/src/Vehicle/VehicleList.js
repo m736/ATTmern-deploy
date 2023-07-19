@@ -358,7 +358,6 @@ const VehicleList = () => {
             }}
             scroll={{
               x: 1500,
-              y: 300,
             }}
           />
         </Form>
