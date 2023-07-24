@@ -4,7 +4,7 @@ import { Form, Input, Button, Select, Card, Row, Col, Table } from "antd";
 import { NumericInput } from "./TarrifNumericInput";
 const { Column } = Table;
 
-export const TarrifTable = (props) => {
+export const ParentColum = (props) => {
   const { tarrif, setTarrifInput, tarrifInput, add } = props;
   const { Option } = Select;
   const EnableTarrifRentalInput = {

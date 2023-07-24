@@ -8,7 +8,6 @@ router.use(
   "/vehicle_list",
   require("src/helpers/base.crud")(models.AddVehicle)
 );
-router.use("/books", require("src/helpers/base.crud")(models.Book));
-// router.use("/accounts", require("src/collections/account/account.controller"));
+router.use("/add_tarri", require("src/helpers/base.crud")(models.Createtarrif));
 
 module.exports = router;

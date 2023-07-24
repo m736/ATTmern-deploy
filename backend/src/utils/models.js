@@ -66,10 +66,22 @@ const addVehicleSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+const CreatetarrifShema = new mongoose.Schema(
+  {
+    selectedRental: String,
+    selectedSegment: String,
+    selectedArea: String,
+    selectedSlabhrs: String,
+    selectedSlabkms: String,
+    selectedSlabfrom: String,
+    selectedSlabto: String,
+    selectedAddon: String,
+  },
+  { timestamps: true }
+);
 
 module.exports = {
   Vehicle: mongoose.model("vehicles", vehicleSchema),
   AddVehicle: mongoose.model("addvehicles", addVehicleSchema),
-  RefreshToken: mongoose.model("RefreshToken", refreshTokenSchema),
-  Account: require("src/collections/account/account.model"),
+  Createtarrif: mongoose.model("createtarrif", CreatetarrifShema),
 };

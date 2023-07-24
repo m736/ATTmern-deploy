@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Form, Input, Button, Select, Card, Row, Col } from "antd";
+import { Form, Input, Button, Select, Card, Row, Col, Divider } from "antd";
 import { TarrifTable } from "./TarrifTable";
 import { NumericInput } from "./TarrifNumericInput";
 
 const TarrifForm = (props) => {
-  const { tarrif, setTarrifInput, tarrifInput } = props;
-  console.log(props);
+  const { tarrif, setTarrifInput, tarrifInput, index, tarrifInputField } =
+    props;
+  const [form] = Form.useForm();
+
   const { Option } = Select;
   const EnableTarrifRentalInput = {
     slab: [
@@ -26,15 +28,7 @@ const TarrifForm = (props) => {
       setEnableInput(EnableTarrifRentalInput[tarrif?.selectedRental]);
     }
   }, [tarrif]);
-  console.log("enableinput");
-  console.log(enableinput);
-  const style = {
-    background: "#0092ff",
-    padding: "8px 0",
-  };
-  const onFinish = (values) => {
-    console.log("Received values of form:", values);
-  };
+
   const RentalChange = (value) => {
     valueHandle("selectedRental", value);
   };
@@ -43,31 +37,58 @@ const TarrifForm = (props) => {
     let activeIndex = tarrifInput.findIndex(
       (item) => item.position == tarrif.position
     );
+
     if (activeIndex > -1) {
-      let updated = tarrifInput?.forEach((item, index) => {
-        if (index == activeIndex) {
-          return {
-            ...item,
-            [field]: value,
-          };
-        } else {
-          return item;
-        }
-      });
+      let updated = [];
+      if (field == "selectedRental") {
+        updated = tarrifInput?.map((item, index) => {
+          if (index == activeIndex) {
+            return {
+              ...tarrifInputField,
+              position: item.position,
+              [field]: value,
+            };
+          } else {
+            return item;
+          }
+        });
+      } else {
+        updated = tarrifInput?.map((item, index) => {
+          if (index == activeIndex) {
+            return {
+              ...item,
+              [field]: value,
+            };
+          } else {
+            return item;
+          }
+        });
+      }
+      console.log(updated);
+    }
+  };
+
+  const RemoveTarrifInput = () => {
+    let activeIndex = tarrifInput.findIndex(
+      (item) => item.position == tarrif.position
+    );
+    if (activeIndex > -1) {
+      let updated = tarrifInput.filter((i, index) => index !== activeIndex);
       setTarrifInput(updated);
     }
   };
-  console.log(tarrifInput);
+
   return (
-    <Card>
-      <Form name="tarrifform" onFinish={onFinish}>
+    <>
+      <Form form={form} name={`tarrifform-${index}`}>
         <Row gutter={[16, 24]}>
           <Col className="gutter-row" span={4}>
             <Form.Item name="rental">
               <Select
+                defaultValue={tarrif?.selectedRental}
+                value={tarrif?.selectedRental}
                 placeholder="Select Rental"
                 onChange={RentalChange}
-                defaultValue={tarrif?.selectedRental}
               >
                 {tarrif?.rental?.map((item) => {
                   return (
@@ -82,8 +103,10 @@ const TarrifForm = (props) => {
           <Col className="gutter-row" span={4}>
             <Form.Item name="segment">
               <Select
-                placeholder="Select Segment"
                 disabled={!enableinput.includes("segment")}
+                onChange={(value) => {
+                  valueHandle("selectedSegment", value);
+                }}
               >
                 {tarrif?.segment?.map((item) => {
                   return (
@@ -100,6 +123,9 @@ const TarrifForm = (props) => {
               <Select
                 placeholder="Select Area"
                 disabled={!enableinput.includes("area")}
+                onChange={(value) => {
+                  valueHandle("selectedArea", value);
+                }}
               >
                 {tarrif?.area?.map((item) => {
                   return (
@@ -116,6 +142,9 @@ const TarrifForm = (props) => {
               <Select
                 placeholder="Slab Hrs"
                 disabled={!enableinput.includes("slabhrs")}
+                onChange={(value) => {
+                  valueHandle("selectedSlabhrs", value);
+                }}
               >
                 {tarrif?.slabhrs?.map((item) => {
                   return (
@@ -132,6 +161,9 @@ const TarrifForm = (props) => {
               <Select
                 placeholder="Slab Kms"
                 disabled={!enableinput.includes("slabkms")}
+                onChange={(value) => {
+                  valueHandle("selectedSlabkms", value);
+                }}
               >
                 {tarrif?.slabkms?.map((item) => {
                   return (
@@ -148,6 +180,9 @@ const TarrifForm = (props) => {
               <Select
                 placeholder="Slab From"
                 disabled={!enableinput.includes("slabfrom")}
+                onChange={(value) => {
+                  valueHandle("selectedSlabfrom", value);
+                }}
               >
                 {tarrif?.slabfrom?.map((item) => {
                   return (
@@ -164,6 +199,9 @@ const TarrifForm = (props) => {
               <Select
                 placeholder="Slab To"
                 disabled={!enableinput.includes("slabto")}
+                onChange={(value) => {
+                  valueHandle("selectedSlabto", value);
+                }}
               >
                 {tarrif?.slabto?.map((item) => {
                   return (
@@ -177,7 +215,13 @@ const TarrifForm = (props) => {
           </Col>
           <Col className="gutter-row" span={4}>
             <Form.Item name="addon">
-              <Select placeholder="Select AddOn">
+              <Select
+                placeholder="Select AddOn"
+                disabled={!enableinput.includes("addon")}
+                onChange={(value) => {
+                  valueHandle("selectedAddon", value);
+                }}
+              >
                 {tarrif?.addon?.map((item) => {
                   return (
                     <Option key={item.value} value={item.value}>
@@ -189,7 +233,7 @@ const TarrifForm = (props) => {
             </Form.Item>
           </Col>
           <Col className="gutter-row" span={4}>
-            <Form.Item name="salesRate">
+            <Form.Item name="salesRate" initialValue="">
               <NumericInput
                 value={tarrif.salesRate}
                 disabled={!enableinput.includes("salesRate")}
@@ -200,7 +244,7 @@ const TarrifForm = (props) => {
             </Form.Item>
           </Col>
           <Col className="gutter-row" span={4}>
-            <Form.Item name="purchaseRate">
+            <Form.Item name="purchaseRate" initialValue="">
               <NumericInput
                 value={tarrif.purchaseRate}
                 disabled={!enableinput.includes("purchaseRate")}
@@ -211,7 +255,7 @@ const TarrifForm = (props) => {
             </Form.Item>
           </Col>
           <Col className="gutter-row" span={4}>
-            <Form.Item name="salesExKmsRate">
+            <Form.Item name="salesExKmsRate" initialValue="">
               <NumericInput
                 value={tarrif.salesExKmsRate}
                 disabled={!enableinput.includes("salesExKmsRate")}
@@ -222,7 +266,7 @@ const TarrifForm = (props) => {
             </Form.Item>
           </Col>
           <Col className="gutter-row" span={4}>
-            <Form.Item name="salesExHrsRate">
+            <Form.Item name="salesExHrsRate" initialValue="">
               <NumericInput
                 value={tarrif.salesExHrsRate}
                 disabled={!enableinput.includes("salesExHrsRate")}
@@ -233,7 +277,7 @@ const TarrifForm = (props) => {
             </Form.Item>
           </Col>
           <Col className="gutter-row" span={4}>
-            <Form.Item name="purchaseExHrsRate">
+            <Form.Item name="purchaseExHrsRate" initialValue="">
               <NumericInput
                 value={tarrif.purchaseExHrsRate}
                 disabled={!enableinput.includes("purchaseExHrsRate")}
@@ -244,7 +288,7 @@ const TarrifForm = (props) => {
             </Form.Item>
           </Col>
           <Col className="gutter-row" span={4}>
-            <Form.Item name="purchaseExKmsRate">
+            <Form.Item name="purchaseExKmsRate" initialValue="">
               <NumericInput
                 value={tarrif.purchaseExKmsRate}
                 disabled={!enableinput.includes("purchaseExKmsRate")}
@@ -265,7 +309,16 @@ const TarrifForm = (props) => {
           </Col> */}
         </Row>
       </Form>
-    </Card>
+      {index > 0 ? (
+        <Button
+          className="bg-red-700 hover:bg-red-400  border-red-700 hover:border-red-500 text-white mt-3"
+          onClick={RemoveTarrifInput}
+        >
+          Remove
+        </Button>
+      ) : null}
+      <Divider />
+    </>
   );
 };
 

@@ -39,8 +39,8 @@ require("src/utils/database");
 app.get("/", (req, res) => res.json("Server working..."));
 app.use("/api/v1", require("src/helpers/router"));
 app.use("/bulk", require("src/controllers/bulk.controller"));
-
 app.use("/vehicle", require("src/controllers/vehicle.controller"));
+app.use("/tarrif", require("src/controllers/tarrif.controller"));
 app.get("*", (req, res) => res.status(404).json("API route not found"));
 
 if (process.env.NODE_ENV === "production") {

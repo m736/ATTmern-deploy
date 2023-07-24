@@ -2,10 +2,12 @@ import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import thunk from "redux-thunk";
 import VechicleDetailSliceReducer from "./slices/VechicleDetailSlice";
 import VehicleInductionSliceReducer from "./slices/VehicleInductionSlice";
+import TarrifSliceReducer from "./slices/TarrifSlice";
 
 const reducer = combineReducers({
   VechicleDetailState: VechicleDetailSliceReducer,
   VechicleInductionState: VehicleInductionSliceReducer,
+  TarrifState: TarrifSliceReducer,
 });
 
 const store = configureStore({
