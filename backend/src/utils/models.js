@@ -68,6 +68,8 @@ const addVehicleSchema = new mongoose.Schema(
 );
 const CreatetarrifShema = new mongoose.Schema(
   {
+    company: String,
+    vehicleType: String,
     selectedRental: String,
     selectedSegment: String,
     selectedArea: String,

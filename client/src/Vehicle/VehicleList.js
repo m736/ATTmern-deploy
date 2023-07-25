@@ -6,6 +6,7 @@ import {
   Input,
   InputNumber,
   Popconfirm,
+  Spin,
   Table,
   Typography,
   Upload,
@@ -340,28 +341,32 @@ const VehicleList = () => {
   // var copy = JSON.parse(JSON.stringify(data));
   return (
     <>
-      <div className="container">
-        <h1 className="text-black">Vehicle List</h1>
-        <Form form={form} component={false}>
-          <Table
-            components={{
-              body: {
-                cell: EditableCell,
-              },
-            }}
-            bordered
-            dataSource={data}
-            columns={mergedColumns}
-            rowClassName="editable-row"
-            pagination={{
-              onChange: cancel,
-            }}
-            scroll={{
-              x: 1500,
-            }}
-          />
-        </Form>
-      </div>
+      {loading ? (
+        <Spin />
+      ) : (
+        <div className="container">
+          <h1 className="text-black">Vehicle List</h1>
+          <Form form={form} component={false}>
+            <Table
+              components={{
+                body: {
+                  cell: EditableCell,
+                },
+              }}
+              bordered
+              dataSource={data}
+              columns={mergedColumns}
+              rowClassName="editable-row"
+              pagination={{
+                onChange: cancel,
+              }}
+              scroll={{
+                x: 1500,
+              }}
+            />
+          </Form>
+        </div>
+      )}
     </>
   );
 };

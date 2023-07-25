@@ -53,7 +53,12 @@ const NavBar = () => {
         {
           title: "AddTarrif",
           icon: <BsBuildingAdd />,
-          href: "/tarrif/newtarrif",
+          href: "/tarrif/new_tarrif",
+        },
+        {
+          title: "TarrifList",
+          icon: <BsBuildingAdd />,
+          href: "/tarrif/tarrif_list",
         },
       ],
     },

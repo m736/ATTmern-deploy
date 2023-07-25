@@ -8,6 +8,9 @@ router.use(
   "/vehicle_list",
   require("src/helpers/base.crud")(models.AddVehicle)
 );
-router.use("/add_tarri", require("src/helpers/base.crud")(models.Createtarrif));
+router.use(
+  "/list_tarrif",
+  require("src/helpers/base.crud")(models.Createtarrif)
+);
 
 module.exports = router;

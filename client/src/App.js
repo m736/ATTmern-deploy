@@ -22,6 +22,7 @@ import VehicleList from "./Vehicle/VehicleList";
 import AddVehicleList from "./Vehicle/AddVehicleList";
 import { ToastContainer, toast } from "react-toastify";
 import { CreateNewTarrif } from "./Tarrif/CreateNewTarrif";
+import ReUpDeTarrif from "./Tarrif/ReUpDeTarrif";
 
 function App() {
   const [rows, setRows] = useState([]);
@@ -34,7 +35,7 @@ function App() {
         "https://creo-8w4j.onrender.com/api/v1/jokes"
       );
       setRows(data);
-      console.log(data);
+
       dispatch(vechicleSuccess(data));
     } catch (error) {
       dispatch(vechicleFail());
@@ -48,7 +49,7 @@ function App() {
   return (
     <BrowserRouter>
       <div className="flex">
-        <aside class="h-screen sticky top-0 w-2/12">
+        <aside className="h-screen sticky top-0 w-2/12">
           <NavBar />
         </aside>
         <main className="px-3 pt-20 w-10/12">
@@ -60,7 +61,8 @@ function App() {
               <Route path="/add_vechicle" element={<AddVehicleList />} />
               <Route path="/vehicle_list" element={<VehicleList />} />
               <Route path="/tarrif">
-                <Route path="newtarrif" element={<CreateNewTarrif />} />
+                <Route path="new_tarrif" element={<CreateNewTarrif />} />
+                <Route path="tarrif_list" element={<ReUpDeTarrif />} />
               </Route>
             </Routes>
           </div>

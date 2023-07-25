@@ -4,8 +4,15 @@ import { TarrifTable } from "./TarrifTable";
 import { NumericInput } from "./TarrifNumericInput";
 
 const TarrifForm = (props) => {
-  const { tarrif, setTarrifInput, tarrifInput, index, tarrifInputField } =
-    props;
+  const {
+    tarrif,
+    setTarrifInput,
+    tarrifInput,
+    index,
+    tarrifInputField,
+    company,
+    vehicleType,
+  } = props;
   const [form] = Form.useForm();
 
   const { Option } = Select;
@@ -30,6 +37,7 @@ const TarrifForm = (props) => {
   }, [tarrif]);
 
   const RentalChange = (value) => {
+    form.resetFields();
     valueHandle("selectedRental", value);
   };
 
@@ -46,6 +54,8 @@ const TarrifForm = (props) => {
             return {
               ...tarrifInputField,
               position: item.position,
+              company: company,
+              vehicleType: vehicleType,
               [field]: value,
             };
           } else {
@@ -64,7 +74,7 @@ const TarrifForm = (props) => {
           }
         });
       }
-      console.log(updated);
+      setTarrifInput(updated);
     }
   };
 

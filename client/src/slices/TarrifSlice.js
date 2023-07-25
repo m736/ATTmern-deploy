@@ -5,9 +5,30 @@ const TarrifSlice = createSlice({
   initialState: {
     loading: false,
     isTarrifCreated: false,
+    isTarrifUpdated: false,
+    isTarrifDeleted: false,
     tarrifData: [],
   },
   reducers: {
+    getTarrifListRequest(state, action) {
+      return {
+        ...state,
+        loading: true,
+      };
+    },
+    getTarrifListSuccess(state, action) {
+      return {
+        loading: false,
+        tarrifData: action.payload,
+      };
+    },
+    getTarrifListFail(state, action) {
+      return {
+        ...state,
+        loading: false,
+        error: action.payload,
+      };
+    },
     createTarrifRequest(state, action) {
       return {
         ...state,
@@ -40,6 +61,32 @@ const TarrifSlice = createSlice({
     clearTarrifError(state, action) {
       return { ...state, error: null };
     },
+    updateTarrifListRequest(state, action) {
+      return {
+        ...state,
+        loading: true,
+      };
+    },
+    updateTarrifListSuccess(state, action) {
+      return {
+        loading: false,
+        tarrifData: action.payload.createTarrif,
+        isTarrifUpdated: true,
+      };
+    },
+    updateTarrifListFail(state, action) {
+      return {
+        ...state,
+        loading: false,
+        error: action.payload,
+      };
+    },
+    clearUpdateTarrifListCreated(state, action) {
+      return {
+        ...state,
+        isTarrifUpdated: false,
+      };
+    },
   },
 });
 
@@ -49,7 +96,14 @@ export const {
   createTarrifRequest,
   createTarrifSuccess,
   createTarrifFail,
+  getTarrifListRequest,
+  getTarrifListSuccess,
+  getTarrifListFail,
+  updateTarrifListRequest,
+  updateTarrifListSuccess,
+  updateTarrifListFail,
   clearCreateTarrif,
+  clearUpdateTarrifListCreated,
   clearTarrifError,
 } = actions;
 
