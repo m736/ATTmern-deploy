@@ -1,7 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { Form, Input, Button, Select, Card, Row, Col, Divider } from "antd";
+import {
+  Form,
+  Input,
+  Button,
+  Select,
+  Card,
+  Row,
+  Col,
+  Divider,
+  Space,
+  Popconfirm,
+} from "antd";
 import { TarrifTable } from "./TarrifTable";
 import { NumericInput } from "./TarrifNumericInput";
+import { updateSingleTarrif } from "../action/tarrifAction";
+import { useDispatch } from "react-redux";
 
 const TarrifForm = (props) => {
   const {
@@ -12,22 +25,18 @@ const TarrifForm = (props) => {
     tarrifInputField,
     company,
     vehicleType,
+    screenEdit,
+    editableIndex,
+    id,
+    setEditableIndex,
   } = props;
   const [form] = Form.useForm();
-
+  console.log(tarrif);
   const { Option } = Select;
   const EnableTarrifRentalInput = {
-    slab: [
-      "segment",
-      "area",
-      "slabfrom",
-      "slabto",
-      "addon",
-      "salesRate",
-      "purchaseRate",
-    ],
-    outstation: ["segment", "slabhrs", "slabkms", "addon"],
-    flat_rate: ["addon", "purchaseRate"],
+    slab: ["segment"],
+    outstation: [],
+    flat_rate: ["area"],
   };
   const [enableinput, setEnableInput] = useState([]);
   useEffect(() => {
@@ -51,13 +60,22 @@ const TarrifForm = (props) => {
       if (field == "selectedRental") {
         updated = tarrifInput?.map((item, index) => {
           if (index == activeIndex) {
-            return {
-              ...tarrifInputField,
-              position: item.position,
-              company: company,
-              vehicleType: vehicleType,
-              [field]: value,
-            };
+            return screenEdit == "edit"
+              ? {
+                  ...tarrifInputField,
+                  position: item.position,
+                  company: company,
+                  vehicleType: vehicleType,
+                  [field]: value,
+                  editable: item.editable,
+                }
+              : {
+                  ...tarrifInputField,
+                  position: item.position,
+                  company: company,
+                  vehicleType: vehicleType,
+                  [field]: value,
+                };
           } else {
             return item;
           }
@@ -78,6 +96,45 @@ const TarrifForm = (props) => {
     }
   };
 
+  const edit = (activeIndex) => {
+    let updated = tarrifInput?.map((item, index) => {
+      if (index == activeIndex) {
+        return {
+          ...item,
+
+          editable: true,
+        };
+      } else {
+        return item;
+      }
+    });
+    setEditableIndex(activeIndex);
+    setTarrifInput(updated);
+  };
+  const cancel = (activeIndex) => {
+    let canceled = tarrifInput?.map((item, index) => {
+      if (index == activeIndex) {
+        return {
+          ...item,
+
+          editable: false,
+        };
+      } else {
+        return item;
+      }
+    });
+
+    setTarrifInput(canceled);
+  };
+  const dispatch = useDispatch();
+  const save = async (key) => {
+    try {
+      dispatch(updateSingleTarrif(key, tarrif));
+    } catch (errInfo) {
+      console.log("Validate Failed:", errInfo);
+    }
+  };
+
   const RemoveTarrifInput = () => {
     let activeIndex = tarrifInput.findIndex(
       (item) => item.position == tarrif.position
@@ -87,11 +144,54 @@ const TarrifForm = (props) => {
       setTarrifInput(updated);
     }
   };
-
   return (
     <>
       <Form form={form} name={`tarrifform-${index}`}>
         <Row gutter={[16, 24]}>
+          {screenEdit == "edit" ? (
+            <>
+              <Col className="gutter-row" span={4}>
+                <Form.Item name="company">
+                  <Select
+                    disabled={!tarrif.editable}
+                    defaultValue={tarrif?.company}
+                    value={tarrif?.company}
+                    onChange={(value) => {
+                      valueHandle("company", value);
+                    }}
+                  >
+                    {tarrif?.companies?.map((item) => {
+                      return (
+                        <Option key={item.value} value={item.value}>
+                          {item.text}
+                        </Option>
+                      );
+                    })}
+                  </Select>
+                </Form.Item>
+              </Col>
+              <Col className="gutter-row" span={4}>
+                <Form.Item name="vehicleType">
+                  <Select
+                    disabled={!tarrif.editable}
+                    defaultValue={tarrif?.vehicleType}
+                    value={tarrif?.vehicleType}
+                    onChange={(value) => {
+                      valueHandle("vehicleType", value);
+                    }}
+                  >
+                    {tarrif?.vehicleTypes?.map((item) => {
+                      return (
+                        <Option key={item.value} value={item.value}>
+                          {item.text}
+                        </Option>
+                      );
+                    })}
+                  </Select>
+                </Form.Item>
+              </Col>
+            </>
+          ) : null}
           <Col className="gutter-row" span={4}>
             <Form.Item name="rental">
               <Select
@@ -99,6 +199,7 @@ const TarrifForm = (props) => {
                 value={tarrif?.selectedRental}
                 placeholder="Select Rental"
                 onChange={RentalChange}
+                disabled={!tarrif?.editable}
               >
                 {tarrif?.rental?.map((item) => {
                   return (
@@ -113,7 +214,9 @@ const TarrifForm = (props) => {
           <Col className="gutter-row" span={4}>
             <Form.Item name="segment">
               <Select
-                disabled={!enableinput.includes("segment")}
+                disabled={!enableinput.includes("segment") || !tarrif.editable}
+                defaultValue={tarrif?.selectedSegment}
+                value={tarrif?.selectedSegment}
                 onChange={(value) => {
                   valueHandle("selectedSegment", value);
                 }}
@@ -132,7 +235,9 @@ const TarrifForm = (props) => {
             <Form.Item name="area">
               <Select
                 placeholder="Select Area"
-                disabled={!enableinput.includes("area")}
+                disabled={!enableinput.includes("area") || !tarrif.editable}
+                defaultValue={tarrif?.selectedArea}
+                value={tarrif?.selectedArea}
                 onChange={(value) => {
                   valueHandle("selectedArea", value);
                 }}
@@ -147,179 +252,48 @@ const TarrifForm = (props) => {
               </Select>
             </Form.Item>
           </Col>
-          <Col className="gutter-row" span={4}>
-            <Form.Item name="slabhrs">
-              <Select
-                placeholder="Slab Hrs"
-                disabled={!enableinput.includes("slabhrs")}
-                onChange={(value) => {
-                  valueHandle("selectedSlabhrs", value);
-                }}
-              >
-                {tarrif?.slabhrs?.map((item) => {
-                  return (
-                    <Option key={item.value} value={item.value}>
-                      {item.text}
-                    </Option>
-                  );
-                })}
-              </Select>
-            </Form.Item>
-          </Col>
-          <Col className="gutter-row" span={4}>
-            <Form.Item name="slabkms">
-              <Select
-                placeholder="Slab Kms"
-                disabled={!enableinput.includes("slabkms")}
-                onChange={(value) => {
-                  valueHandle("selectedSlabkms", value);
-                }}
-              >
-                {tarrif?.slabkms?.map((item) => {
-                  return (
-                    <Option key={item.value} value={item.value}>
-                      {item.text}
-                    </Option>
-                  );
-                })}
-              </Select>
-            </Form.Item>
-          </Col>
-          <Col className="gutter-row" span={4}>
-            <Form.Item name="slabfrom">
-              <Select
-                placeholder="Slab From"
-                disabled={!enableinput.includes("slabfrom")}
-                onChange={(value) => {
-                  valueHandle("selectedSlabfrom", value);
-                }}
-              >
-                {tarrif?.slabfrom?.map((item) => {
-                  return (
-                    <Option key={item.value} value={item.value}>
-                      {item.text}
-                    </Option>
-                  );
-                })}
-              </Select>
-            </Form.Item>
-          </Col>
-          <Col className="gutter-row" span={4}>
-            <Form.Item name="slabto">
-              <Select
-                placeholder="Slab To"
-                disabled={!enableinput.includes("slabto")}
-                onChange={(value) => {
-                  valueHandle("selectedSlabto", value);
-                }}
-              >
-                {tarrif?.slabto?.map((item) => {
-                  return (
-                    <Option key={item.value} value={item.value}>
-                      {item.text}
-                    </Option>
-                  );
-                })}
-              </Select>
-            </Form.Item>
-          </Col>
-          <Col className="gutter-row" span={4}>
-            <Form.Item name="addon">
-              <Select
-                placeholder="Select AddOn"
-                disabled={!enableinput.includes("addon")}
-                onChange={(value) => {
-                  valueHandle("selectedAddon", value);
-                }}
-              >
-                {tarrif?.addon?.map((item) => {
-                  return (
-                    <Option key={item.value} value={item.value}>
-                      {item.text}
-                    </Option>
-                  );
-                })}
-              </Select>
-            </Form.Item>
-          </Col>
-          <Col className="gutter-row" span={4}>
-            <Form.Item name="salesRate" initialValue="">
-              <NumericInput
-                value={tarrif.salesRate}
-                disabled={!enableinput.includes("salesRate")}
-                onChange={(value) => {
-                  valueHandle("salesRate", value);
-                }}
-              />
-            </Form.Item>
-          </Col>
-          <Col className="gutter-row" span={4}>
-            <Form.Item name="purchaseRate" initialValue="">
-              <NumericInput
-                value={tarrif.purchaseRate}
-                disabled={!enableinput.includes("purchaseRate")}
-                onChange={(value) => {
-                  valueHandle("purchaseRate", value);
-                }}
-              />
-            </Form.Item>
-          </Col>
-          <Col className="gutter-row" span={4}>
-            <Form.Item name="salesExKmsRate" initialValue="">
-              <NumericInput
-                value={tarrif.salesExKmsRate}
-                disabled={!enableinput.includes("salesExKmsRate")}
-                onChange={(value) => {
-                  valueHandle("salesExKmsRate", value);
-                }}
-              />
-            </Form.Item>
-          </Col>
-          <Col className="gutter-row" span={4}>
-            <Form.Item name="salesExHrsRate" initialValue="">
-              <NumericInput
-                value={tarrif.salesExHrsRate}
-                disabled={!enableinput.includes("salesExHrsRate")}
-                onChange={(value) => {
-                  valueHandle("salesExHrsRate", value);
-                }}
-              />
-            </Form.Item>
-          </Col>
-          <Col className="gutter-row" span={4}>
-            <Form.Item name="purchaseExHrsRate" initialValue="">
-              <NumericInput
-                value={tarrif.purchaseExHrsRate}
-                disabled={!enableinput.includes("purchaseExHrsRate")}
-                onChange={(value) => {
-                  valueHandle("purchaseExHrsRate", value);
-                }}
-              />
-            </Form.Item>
-          </Col>
-          <Col className="gutter-row" span={4}>
-            <Form.Item name="purchaseExKmsRate" initialValue="">
-              <NumericInput
-                value={tarrif.purchaseExKmsRate}
-                disabled={!enableinput.includes("purchaseExKmsRate")}
-                onChange={(value) => {
-                  valueHandle("purchaseExKmsRate", value);
-                }}
-              />
-            </Form.Item>
-          </Col>
-          {/* <Col className="gutter-row" span={4}>
-            <div style={style}>col-6</div>
-          </Col>
-          <Col className="gutter-row" span={4}>
-            <div style={style}>col-6</div>
-          </Col>
-          <Col className="gutter-row" span={4}>
-            <div style={style}>col-6</div>
-          </Col> */}
         </Row>
       </Form>
-      {index > 0 ? (
+      {screenEdit == "edit" ? (
+        <Space>
+          {tarrif.editable ? (
+            <>
+              <Button
+                type="primary"
+                className="mt-3"
+                onClick={() => save(tarrif._id)}
+              >
+                Save
+              </Button>
+              <Button className="mt-3">
+                <Popconfirm
+                  title="Sure to cancel?"
+                  onConfirm={() => cancel(index)}
+                >
+                  <a>Cancel</a>
+                </Popconfirm>
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button
+                className="mt-3"
+                onClick={() => edit(index)}
+                disabled={editableIndex !== null && editableIndex !== index}
+              >
+                Edit
+              </Button>
+
+              <Button
+                className="bg-red-700 hover:bg-red-400  border-red-700 hover:border-red-500 text-white mt-3"
+                onClick={RemoveTarrifInput}
+              >
+                Remove
+              </Button>
+            </>
+          )}
+        </Space>
+      ) : index > 0 ? (
         <Button
           className="bg-red-700 hover:bg-red-400  border-red-700 hover:border-red-500 text-white mt-3"
           onClick={RemoveTarrifInput}
