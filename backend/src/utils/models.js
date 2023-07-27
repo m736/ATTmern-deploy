@@ -102,6 +102,8 @@ const CreatetarrifShema = new mongoose.Schema(
     selectedPurchaseExKmsRate: String,
     purchaseGraceTime: String,
     selectedPurchaseGraceTime: String,
+    salesGraceTime: String,
+    selectedSalesGraceTime: String,
     driverbata: String,
     selectedDriverbata: String,
     position: Number,

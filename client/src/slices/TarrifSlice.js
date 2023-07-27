@@ -87,6 +87,32 @@ const TarrifSlice = createSlice({
         isTarrifUpdated: false,
       };
     },
+    deleteTarrifRequest(state, action) {
+      return {
+        ...state,
+        loading: true,
+      };
+    },
+    deleteTarrifSuccess(state, action) {
+      return {
+        ...state,
+        loading: false,
+        isTarrifDeleted: true,
+      };
+    },
+    deleteTarrifFail(state, action) {
+      return {
+        ...state,
+        loading: false,
+        error: action.payload,
+      };
+    },
+    clearTarrifDeleted(state, action) {
+      return {
+        ...state,
+        isTarrifDeleted: false,
+      };
+    },
   },
 });
 
@@ -102,6 +128,10 @@ export const {
   updateTarrifListRequest,
   updateTarrifListSuccess,
   updateTarrifListFail,
+  deleteTarrifRequest,
+  deleteTarrifSuccess,
+  deleteTarrifFail,
+  clearTarrifDeleted,
   clearCreateTarrif,
   clearUpdateTarrifListCreated,
   clearTarrifError,

@@ -3,6 +3,9 @@ import {
   createTarrifFail,
   createTarrifRequest,
   createTarrifSuccess,
+  deleteTarrifFail,
+  deleteTarrifRequest,
+  deleteTarrifSuccess,
   getTarrifListFail,
   getTarrifListRequest,
   getTarrifListSuccess,
@@ -32,6 +35,8 @@ export const getTarrif = async (dispatch) => {
     const { data } = await axios.get(
       "http://localhost:4000/api/v1/list_tarrif"
     );
+    console.log("data");
+    console.log(data);
     dispatch(getTarrifListSuccess(data));
   } catch (error) {
     //handle error
@@ -46,10 +51,23 @@ export const updateSingleTarrif =
         `http://localhost:4000/tarrif/update_tarrif/${id}`,
         updatedTarrifListData
       );
-      console.log(data);
+
       dispatch(updateTarrifListSuccess(data));
+      setTimeout(() => {
+        dispatch(getTarrif);
+      }, 5000);
     } catch (error) {
       //handle error
       dispatch(updateTarrifListFail(error.response.data.message));
     }
   };
+export const deleteTarrif = (id) => async (dispatch) => {
+  try {
+    dispatch(deleteTarrifRequest());
+    await axios.delete(`http://localhost:4000/api/v1/delete_tarrif/${id}`);
+    dispatch(deleteTarrifSuccess());
+  } catch (error) {
+    //handle error
+    dispatch(deleteTarrifFail(error.response.data.message));
+  }
+};

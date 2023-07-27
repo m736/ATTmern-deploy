@@ -22,7 +22,7 @@ import VehicleList from "./Vehicle/VehicleList";
 import AddVehicleList from "./Vehicle/AddVehicleList";
 import { ToastContainer, toast } from "react-toastify";
 import { CreateNewTarrif } from "./Tarrif/CreateNewTarrif";
-import ReUpDeTarrif from "./Tarrif/ReUpDeTarrif";
+import ReadUpdateDeleteTarrif from "./Tarrif/ReadUpdateDeleteTarrif";
 
 function App() {
   const [rows, setRows] = useState([]);
@@ -52,7 +52,7 @@ function App() {
         <aside className="h-screen sticky top-0 w-2/12">
           <NavBar />
         </aside>
-        <main className="px-3 pt-20 w-9/12">
+        <main className="px-3 pt-20 w-10/12">
           <div>
             <ToastContainer theme="dark" />
             <Routes>
@@ -62,7 +62,10 @@ function App() {
               <Route path="/vehicle_list" element={<VehicleList />} />
               <Route path="/tarrif">
                 <Route path="new_tarrif" element={<CreateNewTarrif />} />
-                <Route path="tarrif_list" element={<ReUpDeTarrif />} />
+                <Route
+                  path="tarrif_list"
+                  element={<ReadUpdateDeleteTarrif />}
+                />
               </Route>
             </Routes>
           </div>

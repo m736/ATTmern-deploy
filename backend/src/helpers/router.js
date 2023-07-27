@@ -12,5 +12,9 @@ router.use(
   "/list_tarrif",
   require("src/helpers/base.crud")(models.Createtarrif)
 );
+router.use(
+  "/delete_tarrif",
+  require("src/helpers/base.crud")(models.Createtarrif)
+);
 
 module.exports = router;
