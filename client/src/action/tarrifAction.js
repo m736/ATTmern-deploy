@@ -43,7 +43,7 @@ export const updateSingleTarrif =
     try {
       dispatch(updateTarrifListRequest());
       const { data } = await axios.put(
-        `http://localhost:4000/vehicle/tarrif/update_tarrif/${id}`,
+        `http://localhost:4000/tarrif/update_tarrif/${id}`,
         updatedTarrifListData
       );
       console.log(data);

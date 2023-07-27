@@ -52,7 +52,7 @@ function App() {
         <aside className="h-screen sticky top-0 w-2/12">
           <NavBar />
         </aside>
-        <main className="px-3 pt-20 w-10/12">
+        <main className="px-3 pt-20 w-9/12">
           <div>
             <ToastContainer theme="dark" />
             <Routes>
