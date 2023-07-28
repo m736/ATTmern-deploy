@@ -46,16 +46,14 @@ export const getTarrif = async (dispatch) => {
 export const updateSingleTarrif =
   (id, updatedTarrifListData) => async (dispatch) => {
     try {
+      console.log(updatedTarrifListData);
       dispatch(updateTarrifListRequest());
       const { data } = await axios.put(
-        `http://localhost:4000/tarrif/update_tarrif/${id}`,
+        `http://localhost:4000/api/v1/update_tarrif/${id}`,
         updatedTarrifListData
       );
-
+      console.log(data);
       dispatch(updateTarrifListSuccess(data));
-      setTimeout(() => {
-        dispatch(getTarrif);
-      }, 5000);
     } catch (error) {
       //handle error
       dispatch(updateTarrifListFail(error.response.data.message));

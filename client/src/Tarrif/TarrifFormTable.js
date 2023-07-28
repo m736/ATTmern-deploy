@@ -155,9 +155,11 @@ const TarrifFormTable = (props) => {
   };
   const updateTarrifData = (index) => {
     let updated = tarrifInput.find((i, ind) => ind == index);
-    console.log(updated);
-    dispatch(updateSingleTarrif(updated?._id, updated));
 
+    dispatch(updateSingleTarrif(updated?._id, updated));
+    setTimeout(() => {
+      dispatch(getTarrif);
+    }, 1000);
     setEditableIndex(null);
   };
   const deleteTarrifData = (id) => {

@@ -55,14 +55,20 @@ module.exports = (Collection) => {
   // ======
   const update = (req, res) => {
     const changedEntry = req.body;
-    Collection.update({ _id: req.params._id }, { $set: changedEntry }, (e) => {
-      if (e) {
-        console.log("baseCrud.update error: ", e.message || e);
-        res.status(400).send(e);
-      } else {
-        res.status(200).send({ message: "Successfully updated" });
+    console.log(req.params._id);
+    console.log(req.body);
+    Collection.updateOne(
+      { _id: req.params._id },
+      { $set: changedEntry },
+      (e) => {
+        if (e) {
+          console.log("baseCrud.update error: ", e.message || e);
+          res.status(400).send(e);
+        } else {
+          res.status(200).send({ message: "Successfully updated" });
+        }
       }
-    });
+    );
   };
 
   // ======
