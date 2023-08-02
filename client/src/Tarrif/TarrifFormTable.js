@@ -24,19 +24,149 @@ const TarrifFormTable = (props) => {
     editableRow,
   } = props;
   const [form] = Form.useForm();
+  const sample = [
+    "segment",
+    "area",
+    "slabhrs",
+    "slabkms",
 
+    "slabfrom",
+    "slabto",
+    "addon",
+    "salesRate",
+    "purchaseRate",
+    "salesExKmsRate",
+    "salesExHrsRate",
+    "purchaseExHrsRate",
+    "purchaseExKmsRate",
+    "purchaseGraceTime",
+    "salesGraceTime",
+    "driverbata",
+  ];
   const EnableTarrifRentalInput = {
-    slab: [
+    local: [
+      "segment",
+      "area",
+      "slabhrs",
+      "slabkms",
+      "salesRate",
+      "purchaseRate",
+      "salesExKmsRate",
+      "salesExHrsRate",
+      "purchaseExHrsRate",
+      "purchaseExKmsRate",
+      "purchaseGraceTime",
+      "salesGraceTime",
+    ],
+    out_station: [
+      "segment",
+      "slabhrs",
+      "slabkms",
+      "area",
+      "salesExKmsRate",
+      "purchaseExKmsRate",
+      "driverbata",
+    ],
+    flat_rate: [
+      "segment",
+      "slabhrs",
+      "slabkms",
+      "salesRate",
+      "purchaseRate",
+      "salesExKmsRate",
+      "salesExHrsRate",
+      "purchaseExHrsRate",
+      "purchaseExKmsRate",
+      "purchaseGraceTime",
+      "salesGraceTime",
+    ],
+    airport_transfer: [
+      "segment",
+      "area",
+      "slabhrs",
+      "slabkms",
+      "salesRate",
+      "purchaseRate",
+      "driverbata",
+    ],
+    hotel_transfer: [
+      "segment",
+      "slabhrs",
+      "slabkms",
+      "salesRate",
+      "purchaseRate",
+      "salesExKmsRate",
+      "salesExHrsRate",
+      "purchaseExHrsRate",
+      "purchaseExKmsRate",
+      "purchaseGraceTime",
+      "salesGraceTime",
+    ],
+    slab_rate: [
       "segment",
       "area",
       "slabfrom",
       "slabto",
       "addon",
+      "purchaseRate",
+      "salesRate",
+    ],
+    trip_rate: ["segment", "area", "addon", "purchaseRate", "salesRate"],
+    shift_rate: ["segment", "area", "purchaseRate", "salesRate"],
+    day_rate: ["segment", "area", "purchaseRate", "salesRate"],
+    escort_airport_transfer: [
+      "segment",
+      "slabhrs",
+      "slabkms",
       "salesRate",
       "purchaseRate",
+      "salesExKmsRate",
+      "salesExHrsRate",
+      "purchaseExHrsRate",
+      "purchaseExKmsRate",
+      "purchaseGraceTime",
+      "salesGraceTime",
     ],
-    outstation: ["segment", "slabhrs", "slabkms", "addon"],
-    flat_rate: ["addon", "purchaseRate"],
+    one_way: [
+      "segment",
+      "slabhrs",
+      "slabkms",
+      "salesRate",
+      "purchaseRate",
+      "salesExKmsRate",
+      "salesExHrsRate",
+      "purchaseExHrsRate",
+      "purchaseExKmsRate",
+      "purchaseGraceTime",
+      "salesGraceTime",
+    ],
+    two_way: [
+      "segment",
+      "slabhrs",
+      "slabkms",
+      "salesRate",
+      "purchaseRate",
+      "salesExKmsRate",
+      "salesExHrsRate",
+      "purchaseExHrsRate",
+      "purchaseExKmsRate",
+      "purchaseGraceTime",
+      "salesGraceTime",
+    ],
+    railway_bus_transfer: [
+      "segment",
+      "slabhrs",
+      "slabkms",
+      "salesRate",
+      "purchaseRate",
+      "salesExKmsRate",
+      "salesExHrsRate",
+      "purchaseExHrsRate",
+      "purchaseExKmsRate",
+      "purchaseGraceTime",
+      "salesGraceTime",
+    ],
+    KMS_rate: ["segment", "salesRate", "purchaseRate"],
   };
   const [enableinput, setEnableInput] = useState([]);
 
@@ -174,11 +304,69 @@ const TarrifFormTable = (props) => {
       {screenEdit == "edit" && (
         <tr>
           {!tarrif.editable ? (
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200">
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
+              {tarrif?.company == null ? (
+                <span className="text-red-600">{tarrif.empty}</span>
+              ) : (
+                tarrif?.company
+              )}
+            </td>
+          ) : (
+            <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
+              <Select
+                style={{ width: "140px" }}
+                defaultValue={tarrif?.company}
+                value={tarrif?.company}
+                onChange={(value) => {
+                  valueHandle("company", value);
+                }}
+              >
+                {tarrif?.companies?.map((item) => {
+                  return (
+                    <Option key={item.value} value={item.value}>
+                      {item.text}
+                    </Option>
+                  );
+                })}
+              </Select>
+            </td>
+          )}
+
+          {!tarrif.editable ? (
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
+              {tarrif?.vehicleType == null ? (
+                <span className="text-red-600">{tarrif.empty}</span>
+              ) : (
+                tarrif?.vehicleType
+              )}
+            </td>
+          ) : (
+            <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
+              <Select
+                style={{ width: "140px" }}
+                defaultValue={tarrif?.vehicleType}
+                value={tarrif?.vehicleType}
+                onChange={(value) => {
+                  valueHandle("vehicleType", value);
+                }}
+              >
+                {tarrif?.vehicleTypes?.map((item) => {
+                  return (
+                    <Option key={item.value} value={item.value}>
+                      {item.text}
+                    </Option>
+                  );
+                })}
+              </Select>
+            </td>
+          )}
+
+          {!tarrif.editable ? (
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
               {tarrif?.selectedRental}
             </td>
           ) : (
-            <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200">
+            <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
               <Select
                 style={{ width: "140px" }}
                 defaultValue={tarrif?.selectedRental}
@@ -196,7 +384,7 @@ const TarrifFormTable = (props) => {
             </td>
           )}
           {!tarrif.editable ? (
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200">
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
               {tarrif?.selectedSegment == "" ? (
                 <span className="text-red-600">{tarrif.empty}</span>
               ) : (
@@ -204,11 +392,11 @@ const TarrifFormTable = (props) => {
               )}
             </td>
           ) : (
-            <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200">
-              {enableinput.includes("segment") ? (
+            <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
+              {enableinput?.includes("segment") ? (
                 <Select
                   style={{ width: "140px" }}
-                  disabled={!enableinput.includes("segment")}
+                  disabled={!enableinput?.includes("segment")}
                   defaultValue={tarrif?.selectedSegment}
                   value={tarrif?.selectedSegment}
                   onChange={(value) => {
@@ -227,7 +415,7 @@ const TarrifFormTable = (props) => {
             </td>
           )}
           {!tarrif.editable ? (
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200">
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
               {tarrif?.selectedArea == "" ? (
                 <span className="text-red-600">{tarrif.empty}</span>
               ) : (
@@ -235,11 +423,11 @@ const TarrifFormTable = (props) => {
               )}
             </td>
           ) : (
-            <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200">
-              {enableinput.includes("area") ? (
+            <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
+              {enableinput?.includes("area") ? (
                 <Select
                   style={{ width: "140px" }}
-                  disabled={!enableinput.includes("area")}
+                  disabled={!enableinput?.includes("area")}
                   defaultValue={tarrif?.selectedArea}
                   value={tarrif?.selectedArea}
                   onChange={(value) => {
@@ -258,7 +446,7 @@ const TarrifFormTable = (props) => {
             </td>
           )}
           {!tarrif.editable ? (
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200">
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
               {tarrif?.selectedSlabhrs == "" ? (
                 <span className="text-red-600">{tarrif.empty}</span>
               ) : (
@@ -266,11 +454,11 @@ const TarrifFormTable = (props) => {
               )}
             </td>
           ) : (
-            <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200">
-              {enableinput.includes("slabhrs") ? (
+            <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
+              {enableinput?.includes("slabhrs") ? (
                 <Select
                   style={{ width: "140px" }}
-                  disabled={!enableinput.includes("slabhrs")}
+                  disabled={!enableinput?.includes("slabhrs")}
                   onChange={(value) => {
                     valueHandle("selectedSlabhrs", value);
                   }}
@@ -289,7 +477,7 @@ const TarrifFormTable = (props) => {
             </td>
           )}
           {!tarrif.editable ? (
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200">
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
               {tarrif?.selectedSlabkms == "" ? (
                 <span className="text-red-600">{tarrif.empty}</span>
               ) : (
@@ -297,13 +485,13 @@ const TarrifFormTable = (props) => {
               )}
             </td>
           ) : (
-            <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200">
-              {enableinput.includes("slabkms") ? (
+            <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
+              {enableinput?.includes("slabkms") ? (
                 <Select
                   style={{ width: "140px" }}
                   defaultValue={tarrif.selectedSlabkms}
                   value={tarrif.selectedSlabkms}
-                  disabled={!enableinput.includes("slabkms")}
+                  disabled={!enableinput?.includes("slabkms")}
                   onChange={(value) => {
                     valueHandle("selectedSlabkms", value);
                   }}
@@ -320,7 +508,7 @@ const TarrifFormTable = (props) => {
             </td>
           )}
           {!tarrif.editable ? (
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200">
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
               {tarrif?.selectedSlabfrom == "" ? (
                 <span className="text-red-600">{tarrif.empty}</span>
               ) : (
@@ -328,14 +516,14 @@ const TarrifFormTable = (props) => {
               )}
             </td>
           ) : (
-            <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200">
-              {enableinput.includes("slabfrom") ? (
+            <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
+              {enableinput?.includes("slabfrom") ? (
                 <Select
                   style={{ width: "140px" }}
                   defaultValue={tarrif.selectedSlabfrom}
                   value={tarrif.selectedSlabfrom}
                   placeholder="Slab From"
-                  disabled={!enableinput.includes("slabfrom")}
+                  disabled={!enableinput?.includes("slabfrom")}
                   onChange={(value) => {
                     valueHandle("selectedSlabfrom", value);
                   }}
@@ -352,7 +540,7 @@ const TarrifFormTable = (props) => {
             </td>
           )}
           {!tarrif.editable ? (
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200">
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
               {tarrif?.selectedSlabto == "" ? (
                 <span className="text-red-600">{tarrif.empty}</span>
               ) : (
@@ -360,13 +548,13 @@ const TarrifFormTable = (props) => {
               )}
             </td>
           ) : (
-            <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200">
-              {enableinput.includes("slabto") ? (
+            <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
+              {enableinput?.includes("slabto") ? (
                 <Select
                   style={{ width: "140px" }}
                   defaultValue={tarrif.selectedSlabto}
                   value={tarrif.selectedSlabto}
-                  disabled={!enableinput.includes("slabto")}
+                  disabled={!enableinput?.includes("slabto")}
                   onChange={(value) => {
                     valueHandle("selectedSlabto", value);
                   }}
@@ -383,7 +571,7 @@ const TarrifFormTable = (props) => {
             </td>
           )}
           {!tarrif.editable ? (
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200">
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
               {tarrif?.selectedAddon == "" ? (
                 <span className="text-red-600">{tarrif.empty}</span>
               ) : (
@@ -391,13 +579,13 @@ const TarrifFormTable = (props) => {
               )}
             </td>
           ) : (
-            <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200">
-              {enableinput.includes("addon") ? (
+            <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
+              {enableinput?.includes("addon") ? (
                 <Select
                   style={{ width: "140px" }}
                   defaultValue={tarrif.selectedAddon}
                   value={tarrif.selectedAddon}
-                  disabled={!enableinput.includes("addon")}
+                  disabled={!enableinput?.includes("addon")}
                   onChange={(value) => {
                     valueHandle("selectedAddon", value);
                   }}
@@ -414,7 +602,7 @@ const TarrifFormTable = (props) => {
             </td>
           )}
           {!tarrif.editable ? (
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200">
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
               {tarrif?.salesRate == null ? (
                 <span className="text-red-600">{tarrif.empty}</span>
               ) : (
@@ -422,13 +610,13 @@ const TarrifFormTable = (props) => {
               )}
             </td>
           ) : (
-            <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200">
-              {enableinput.includes("salesRate") ? (
+            <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
+              {enableinput?.includes("salesRate") ? (
                 <NumericInput
                   style={{ width: "140px" }}
                   defaultValue={tarrif.salesRate}
                   value={tarrif.salesRate}
-                  disabled={!enableinput.includes("salesRate")}
+                  disabled={!enableinput?.includes("salesRate")}
                   onChange={(value) => {
                     valueHandle("salesRate", value);
                   }}
@@ -437,7 +625,7 @@ const TarrifFormTable = (props) => {
             </td>
           )}
           {!tarrif.editable ? (
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200">
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
               {tarrif?.purchaseRate == null ? (
                 <span className="text-red-600">{tarrif.empty}</span>
               ) : (
@@ -445,13 +633,13 @@ const TarrifFormTable = (props) => {
               )}
             </td>
           ) : (
-            <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200">
-              {enableinput.includes("purchaseRate") ? (
+            <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
+              {enableinput?.includes("purchaseRate") ? (
                 <NumericInput
                   style={{ width: "140px" }}
                   defaultValue={tarrif.purchaseRate}
                   value={tarrif.purchaseRate}
-                  disabled={!enableinput.includes("purchaseRate")}
+                  disabled={!enableinput?.includes("purchaseRate")}
                   onChange={(value) => {
                     valueHandle("purchaseRate", value);
                   }}
@@ -460,7 +648,7 @@ const TarrifFormTable = (props) => {
             </td>
           )}
           {!tarrif.editable ? (
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200">
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
               {tarrif?.salesExKmsRate == null ? (
                 <span className="text-red-600">{tarrif.empty}</span>
               ) : (
@@ -468,13 +656,13 @@ const TarrifFormTable = (props) => {
               )}
             </td>
           ) : (
-            <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200">
-              {enableinput.includes("salesExKmsRate") ? (
+            <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
+              {enableinput?.includes("salesExKmsRate") ? (
                 <NumericInput
                   style={{ width: "140px" }}
                   defaultValue={tarrif.salesExKmsRate}
                   value={tarrif.salesExKmsRate}
-                  disabled={!enableinput.includes("salesExKmsRate")}
+                  disabled={!enableinput?.includes("salesExKmsRate")}
                   onChange={(value) => {
                     valueHandle("salesExKmsRate", value);
                   }}
@@ -483,7 +671,7 @@ const TarrifFormTable = (props) => {
             </td>
           )}
           {!tarrif.editable ? (
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200">
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
               {tarrif?.salesExHrsRate == null ? (
                 <span className="text-red-600">{tarrif.empty}</span>
               ) : (
@@ -491,13 +679,13 @@ const TarrifFormTable = (props) => {
               )}
             </td>
           ) : (
-            <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200">
-              {enableinput.includes("salesExHrsRate") ? (
+            <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
+              {enableinput?.includes("salesExHrsRate") ? (
                 <NumericInput
                   style={{ width: "140px" }}
                   defaultValue={tarrif.salesExHrsRate}
                   value={tarrif.salesExHrsRate}
-                  disabled={!enableinput.includes("salesExHrsRate")}
+                  disabled={!enableinput?.includes("salesExHrsRate")}
                   onChange={(value) => {
                     valueHandle("salesExHrsRate", value);
                   }}
@@ -506,7 +694,7 @@ const TarrifFormTable = (props) => {
             </td>
           )}
           {!tarrif.editable ? (
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200">
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
               {tarrif?.purchaseExHrsRate == null ? (
                 <span className="text-red-600">{tarrif.empty}</span>
               ) : (
@@ -514,13 +702,13 @@ const TarrifFormTable = (props) => {
               )}
             </td>
           ) : (
-            <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200">
-              {enableinput.includes("purchaseExHrsRate") ? (
+            <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
+              {enableinput?.includes("purchaseExHrsRate") ? (
                 <NumericInput
                   style={{ width: "140px" }}
                   defaultValue={tarrif.purchaseExHrsRate}
                   value={tarrif.purchaseExHrsRate}
-                  disabled={!enableinput.includes("purchaseExHrsRate")}
+                  disabled={!enableinput?.includes("purchaseExHrsRate")}
                   onChange={(value) => {
                     valueHandle("purchaseExHrsRate", value);
                   }}
@@ -529,7 +717,7 @@ const TarrifFormTable = (props) => {
             </td>
           )}
           {!tarrif.editable ? (
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200">
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
               {tarrif?.purchaseExKmsRate == null ? (
                 <span className="text-red-600">{tarrif.empty}</span>
               ) : (
@@ -537,13 +725,13 @@ const TarrifFormTable = (props) => {
               )}
             </td>
           ) : (
-            <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200">
-              {enableinput.includes("purchaseExKmsRate") ? (
+            <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
+              {enableinput?.includes("purchaseExKmsRate") ? (
                 <NumericInput
                   style={{ width: "140px" }}
                   defaultValue={tarrif.purchaseExKmsRate}
                   value={tarrif.purchaseExKmsRate}
-                  disabled={!enableinput.includes("purchaseExKmsRate")}
+                  disabled={!enableinput?.includes("purchaseExKmsRate")}
                   onChange={(value) => {
                     valueHandle("purchaseExKmsRate", value);
                   }}
@@ -552,7 +740,7 @@ const TarrifFormTable = (props) => {
             </td>
           )}
           {!tarrif.editable ? (
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200">
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
               {tarrif?.salesGraceTime == null ? (
                 <span className="text-red-600">{tarrif.empty}</span>
               ) : (
@@ -560,13 +748,13 @@ const TarrifFormTable = (props) => {
               )}
             </td>
           ) : (
-            <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200">
-              {enableinput.includes("salesGraceTime") ? (
-                <Input
+            <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
+              {enableinput?.includes("salesGraceTime") ? (
+                <NumericInput
                   style={{ width: "140px" }}
                   defaultValue={tarrif.salesGraceTime}
                   value={tarrif.salesGraceTime}
-                  disabled={!enableinput.includes("salesGraceTime")}
+                  disabled={!enableinput?.includes("salesGraceTime")}
                   onChange={(value) => {
                     valueHandle("salesGraceTime", value);
                   }}
@@ -575,7 +763,7 @@ const TarrifFormTable = (props) => {
             </td>
           )}
           {!tarrif.editable ? (
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200">
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
               {tarrif?.purchaseGraceTime == null ? (
                 <span className="text-red-600">{tarrif.empty}</span>
               ) : (
@@ -583,13 +771,13 @@ const TarrifFormTable = (props) => {
               )}
             </td>
           ) : (
-            <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200">
-              {enableinput.includes("purchaseGraceTime") ? (
-                <Input
+            <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
+              {enableinput?.includes("purchaseGraceTime") ? (
+                <NumericInput
                   style={{ width: "140px" }}
                   defaultValue={tarrif.purchaseGraceTime}
                   value={tarrif.purchaseGraceTime}
-                  disabled={!enableinput.includes("purchaseGraceTime")}
+                  disabled={!enableinput?.includes("purchaseGraceTime")}
                   onChange={(value) => {
                     valueHandle("purchaseGraceTime", value);
                   }}
@@ -598,7 +786,7 @@ const TarrifFormTable = (props) => {
             </td>
           )}
           {!tarrif.editable ? (
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200">
+            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
               {tarrif?.driverbata == null ? (
                 <span className="text-red-600">{tarrif.empty}</span>
               ) : (
@@ -606,13 +794,13 @@ const TarrifFormTable = (props) => {
               )}
             </td>
           ) : (
-            <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200">
-              {enableinput.includes("driverbata") ? (
+            <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
+              {enableinput?.includes("driverbata") ? (
                 <NumericInput
                   style={{ width: "140px" }}
                   defaultValue={tarrif.driverbata}
                   value={tarrif.driverbata}
-                  disabled={!enableinput.includes("driverbata")}
+                  disabled={!enableinput?.includes("driverbata")}
                   onChange={(value) => {
                     valueHandle("driverbata", value);
                   }}
@@ -683,10 +871,10 @@ const TarrifFormTable = (props) => {
           </td>
 
           <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200">
-            {enableinput.includes("segment") ? (
+            {enableinput?.includes("segment") ? (
               <Select
                 style={{ width: "140px" }}
-                disabled={!enableinput.includes("segment")}
+                disabled={!enableinput?.includes("segment")}
                 defaultValue={tarrif?.selectedSegment}
                 value={tarrif?.selectedSegment}
                 onChange={(value) => {
@@ -704,10 +892,10 @@ const TarrifFormTable = (props) => {
             ) : null}
           </td>
           <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200">
-            {enableinput.includes("area") ? (
+            {enableinput?.includes("area") ? (
               <Select
                 style={{ width: "140px" }}
-                disabled={!enableinput.includes("area")}
+                disabled={!enableinput?.includes("area")}
                 defaultValue={tarrif?.selectedArea}
                 value={tarrif?.selectedArea}
                 onChange={(value) => {
@@ -725,10 +913,10 @@ const TarrifFormTable = (props) => {
             ) : null}
           </td>
           <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200">
-            {enableinput.includes("slabhrs") ? (
+            {enableinput?.includes("slabhrs") ? (
               <Select
                 style={{ width: "140px" }}
-                disabled={!enableinput.includes("slabhrs")}
+                disabled={!enableinput?.includes("slabhrs")}
                 onChange={(value) => {
                   valueHandle("selectedSlabhrs", value);
                 }}
@@ -746,12 +934,12 @@ const TarrifFormTable = (props) => {
             ) : null}
           </td>
           <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200">
-            {enableinput.includes("slabkms") ? (
+            {enableinput?.includes("slabkms") ? (
               <Select
                 style={{ width: "140px" }}
                 defaultValue={tarrif.selectedSlabkms}
                 value={tarrif.selectedSlabkms}
-                disabled={!enableinput.includes("slabkms")}
+                disabled={!enableinput?.includes("slabkms")}
                 onChange={(value) => {
                   valueHandle("selectedSlabkms", value);
                 }}
@@ -767,13 +955,13 @@ const TarrifFormTable = (props) => {
             ) : null}
           </td>
           <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200">
-            {enableinput.includes("slabfrom") ? (
+            {enableinput?.includes("slabfrom") ? (
               <Select
                 style={{ width: "140px" }}
                 defaultValue={tarrif.selectedSlabfrom}
                 value={tarrif.selectedSlabfrom}
                 placeholder="Slab From"
-                disabled={!enableinput.includes("slabfrom")}
+                disabled={!enableinput?.includes("slabfrom")}
                 onChange={(value) => {
                   valueHandle("selectedSlabfrom", value);
                 }}
@@ -789,12 +977,12 @@ const TarrifFormTable = (props) => {
             ) : null}
           </td>
           <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200">
-            {enableinput.includes("slabto") ? (
+            {enableinput?.includes("slabto") ? (
               <Select
                 style={{ width: "140px" }}
                 defaultValue={tarrif.selectedSlabto}
                 value={tarrif.selectedSlabto}
-                disabled={!enableinput.includes("slabto")}
+                disabled={!enableinput?.includes("slabto")}
                 onChange={(value) => {
                   valueHandle("selectedSlabto", value);
                 }}
@@ -810,12 +998,12 @@ const TarrifFormTable = (props) => {
             ) : null}
           </td>
           <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200">
-            {enableinput.includes("addon") ? (
+            {enableinput?.includes("addon") ? (
               <Select
                 style={{ width: "140px" }}
                 defaultValue={tarrif.selectedAddon}
                 value={tarrif.selectedAddon}
-                disabled={!enableinput.includes("addon")}
+                disabled={!enableinput?.includes("addon")}
                 onChange={(value) => {
                   valueHandle("selectedAddon", value);
                 }}
@@ -831,12 +1019,12 @@ const TarrifFormTable = (props) => {
             ) : null}
           </td>
           <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200">
-            {enableinput.includes("salesRate") ? (
+            {enableinput?.includes("salesRate") ? (
               <NumericInput
                 style={{ width: "140px" }}
                 defaultValue={tarrif.salesRate}
                 value={tarrif.salesRate}
-                disabled={!enableinput.includes("salesRate")}
+                disabled={!enableinput?.includes("salesRate")}
                 onChange={(value) => {
                   valueHandle("salesRate", value);
                 }}
@@ -844,12 +1032,12 @@ const TarrifFormTable = (props) => {
             ) : null}
           </td>
           <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200">
-            {enableinput.includes("purchaseRate") ? (
+            {enableinput?.includes("purchaseRate") ? (
               <NumericInput
                 style={{ width: "140px" }}
                 defaultValue={tarrif.purchaseRate}
                 value={tarrif.purchaseRate}
-                disabled={!enableinput.includes("purchaseRate")}
+                disabled={!enableinput?.includes("purchaseRate")}
                 onChange={(value) => {
                   valueHandle("purchaseRate", value);
                 }}
@@ -857,12 +1045,12 @@ const TarrifFormTable = (props) => {
             ) : null}
           </td>
           <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200">
-            {enableinput.includes("salesExKmsRate") ? (
+            {enableinput?.includes("salesExKmsRate") ? (
               <NumericInput
                 style={{ width: "140px" }}
                 defaultValue={tarrif.salesExKmsRate}
                 value={tarrif.salesExKmsRate}
-                disabled={!enableinput.includes("salesExKmsRate")}
+                disabled={!enableinput?.includes("salesExKmsRate")}
                 onChange={(value) => {
                   valueHandle("salesExKmsRate", value);
                 }}
@@ -870,12 +1058,12 @@ const TarrifFormTable = (props) => {
             ) : null}
           </td>
           <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200">
-            {enableinput.includes("salesExHrsRate") ? (
+            {enableinput?.includes("salesExHrsRate") ? (
               <NumericInput
                 style={{ width: "140px" }}
                 defaultValue={tarrif.salesExHrsRate}
                 value={tarrif.salesExHrsRate}
-                disabled={!enableinput.includes("salesExHrsRate")}
+                disabled={!enableinput?.includes("salesExHrsRate")}
                 onChange={(value) => {
                   valueHandle("salesExHrsRate", value);
                 }}
@@ -883,12 +1071,12 @@ const TarrifFormTable = (props) => {
             ) : null}
           </td>
           <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200">
-            {enableinput.includes("purchaseExHrsRate") ? (
+            {enableinput?.includes("purchaseExHrsRate") ? (
               <NumericInput
                 style={{ width: "140px" }}
                 defaultValue={tarrif.purchaseExHrsRate}
                 value={tarrif.purchaseExHrsRate}
-                disabled={!enableinput.includes("purchaseExHrsRate")}
+                disabled={!enableinput?.includes("purchaseExHrsRate")}
                 onChange={(value) => {
                   valueHandle("purchaseExHrsRate", value);
                 }}
@@ -896,12 +1084,12 @@ const TarrifFormTable = (props) => {
             ) : null}
           </td>
           <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200">
-            {enableinput.includes("purchaseExKmsRate") ? (
+            {enableinput?.includes("purchaseExKmsRate") ? (
               <NumericInput
                 style={{ width: "140px" }}
                 defaultValue={tarrif.purchaseExKmsRate}
                 value={tarrif.purchaseExKmsRate}
-                disabled={!enableinput.includes("purchaseExKmsRate")}
+                disabled={!enableinput?.includes("purchaseExKmsRate")}
                 onChange={(value) => {
                   valueHandle("purchaseExKmsRate", value);
                 }}
@@ -909,12 +1097,12 @@ const TarrifFormTable = (props) => {
             ) : null}
           </td>
           <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200">
-            {enableinput.includes("salesGraceTime") ? (
-              <Input
+            {enableinput?.includes("salesGraceTime") ? (
+              <NumericInput
                 style={{ width: "140px" }}
                 defaultValue={tarrif.salesGraceTime}
                 value={tarrif.salesGraceTime}
-                disabled={!enableinput.includes("salesGraceTime")}
+                disabled={!enableinput?.includes("salesGraceTime")}
                 onChange={(value) => {
                   valueHandle("salesGraceTime", value);
                 }}
@@ -922,12 +1110,12 @@ const TarrifFormTable = (props) => {
             ) : null}
           </td>
           <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200">
-            {enableinput.includes("purchaseGraceTime") ? (
-              <Input
+            {enableinput?.includes("purchaseGraceTime") ? (
+              <NumericInput
                 style={{ width: "140px" }}
                 defaultValue={tarrif.purchaseGraceTime}
                 value={tarrif.purchaseGraceTime}
-                disabled={!enableinput.includes("purchaseGraceTime")}
+                disabled={!enableinput?.includes("purchaseGraceTime")}
                 onChange={(value) => {
                   valueHandle("purchaseGraceTime", value);
                 }}
@@ -935,12 +1123,12 @@ const TarrifFormTable = (props) => {
             ) : null}
           </td>
           <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200">
-            {enableinput.includes("driverbata") ? (
+            {enableinput?.includes("driverbata") ? (
               <NumericInput
                 style={{ width: "140px" }}
                 defaultValue={tarrif.driverbata}
                 value={tarrif.driverbata}
-                disabled={!enableinput.includes("driverbata")}
+                disabled={!enableinput?.includes("driverbata")}
                 onChange={(value) => {
                   valueHandle("driverbata", value);
                 }}

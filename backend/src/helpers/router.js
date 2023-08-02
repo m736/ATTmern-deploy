@@ -20,5 +20,13 @@ router.use(
   "/update_tarrif",
   require("src/helpers/base.crud")(models.Createtarrif)
 );
+router.use(
+  "/create_new_tripsheet_entry",
+  require("src/helpers/base.crud")(models.NewTripSheetEntry)
+);
+router.use(
+  "/get_tripsheet_list",
+  require("src/helpers/base.crud")(models.NewTripSheetEntry)
+);
 
 module.exports = router;

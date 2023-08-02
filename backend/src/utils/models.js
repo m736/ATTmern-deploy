@@ -110,9 +110,45 @@ const CreatetarrifShema = new mongoose.Schema(
   },
   { timestamps: true }
 );
-
+const newTripSheetEntryShema = new mongoose.Schema(
+  {
+    acType: String,
+    addon: String,
+    address: String,
+    advance: Number,
+    area: String,
+    bookedBy: String,
+    companyName: String,
+    department: String,
+    dutySlipNo: String,
+    journeyStart: Array,
+    location: String,
+    others: Number,
+    outstationBata: Number,
+    parking: Number,
+    passenger: Number,
+    permit: Number,
+    placeOfVisit: String,
+    purchaseEscort: Number,
+    purchaseNightBata: Number,
+    rental: String,
+    salesEscort: Number,
+    salesNightBata: Number,
+    tripDate: String,
+    tripId: String,
+    vehicleBilled: String,
+    vehicleNum: String,
+    vehicleType: String,
+    totalHrs: Number,
+  },
+  { timestamps: true }
+);
 module.exports = {
   Vehicle: mongoose.model("vehicles", vehicleSchema),
   AddVehicle: mongoose.model("addvehicles", addVehicleSchema),
   Createtarrif: mongoose.model("createtarrif", CreatetarrifShema),
+  NewTripSheetEntry: mongoose.model(
+    "new_tripsheet_entry",
+    newTripSheetEntryShema
+  ),
 };

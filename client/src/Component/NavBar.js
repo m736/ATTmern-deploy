@@ -62,13 +62,27 @@ const NavBar = () => {
         },
       ],
     },
+    {
+      title: "Trip Sheet Entry",
+      icon: <BsChatRightDots />,
+      submenu: true,
+      name: "tripsheet",
+      spacing: "true",
+      submenuItems: [
+        {
+          title: "New Trip Sheet Entry",
+          icon: <BsBuildingAdd />,
+          href: "/tripsheet/new_tripsheet_entry",
+        },
+      ],
+    },
   ];
   const [menuOption, setMenuOption] = useState(Menus);
 
   return (
     <>
       <div
-        className={`bg-dark-blue h-screen p-5 pt-8 ${
+        className={`bg-dark-blue h-full min-h-screen p-5 pt-8 ${
           open ? "" : "w-20"
         } duration-300 relative`}
       >

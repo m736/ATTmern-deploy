@@ -23,6 +23,8 @@ import AddVehicleList from "./Vehicle/AddVehicleList";
 import { ToastContainer, toast } from "react-toastify";
 import { CreateNewTarrif } from "./Tarrif/CreateNewTarrif";
 import ReadUpdateDeleteTarrif from "./Tarrif/ReadUpdateDeleteTarrif";
+import NewTripSheetEntry from "./TripSheetEntry/NewTripSheetEntry";
+import SalesAndPurchaseCalculation from "./TripSheetEntry/SalesAndPurchaseCalculation";
 
 function App() {
   const [rows, setRows] = useState([]);
@@ -49,7 +51,7 @@ function App() {
   return (
     <BrowserRouter>
       <div className="flex">
-        <aside className="h-screen sticky top-0 w-2/12">
+        <aside className="w-2/12">
           <NavBar />
         </aside>
         <main className="px-3 pt-20 w-10/12">
@@ -65,6 +67,16 @@ function App() {
                 <Route
                   path="tarrif_list"
                   element={<ReadUpdateDeleteTarrif />}
+                />
+              </Route>
+              <Route path="/tripsheet">
+                <Route
+                  path="new_tripsheet_entry"
+                  element={<NewTripSheetEntry />}
+                />
+                <Route
+                  path="tripsheet_calculation"
+                  element={<SalesAndPurchaseCalculation />}
                 />
               </Route>
             </Routes>

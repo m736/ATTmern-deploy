@@ -38,6 +38,7 @@ require("src/utils/database");
 // // Api Routes
 app.get("/", (req, res) => res.json("Server working..."));
 app.use("/api/v1", require("src/helpers/router"));
+app.use("/api/v1/tripsheet_entry", require("src/helpers/router"));
 app.use("/bulk", require("src/controllers/bulk.controller"));
 app.use("/vehicle", require("src/controllers/vehicle.controller"));
 app.use("/tarrif", require("src/controllers/tarrif.controller"));
