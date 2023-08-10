@@ -5,20 +5,25 @@ const TableSalesTripSheetCalculation = (props) => {
 
   const tarrrifSlabKms = calculationItem?.selectedSlabkms ?? 0;
   const OurTotalKms = data?.totalKm ?? 0;
-  const tarrifSlabHrs = calculationItem?.selectedSlabhrs ?? 0;
-  console.log(tarrifSlabHrs);
+  const tarrifSlabHrs = Number(calculationItem?.selectedSlabhrs ?? 0);
+
   const OurTotalHrs = data?.totalHrs ?? 0;
   const OurTotalDays = data?.totalDays ?? 0;
-  const remainingHrs =
-    OurTotalHrs >= tarrifSlabHrs ? OurTotalHrs - tarrifSlabHrs : 0;
-  let remainingKms =
-    OurTotalKms >= tarrrifSlabKms ? OurTotalKms - tarrrifSlabKms : 0;
-
-  const remainingKmsForOutAndDay =
-    OurTotalDays > 0 ? OurTotalDays * tarrrifSlabKms : 0;
-
   const tarrifSlabExHrsRate = calculationItem?.salesExHrsRate ?? 0;
   const tarrifSlabExKmsRate = calculationItem?.salesExKmsRate ?? 0;
+  const remainingHrs =
+    tarrifSlabHrs && OurTotalHrs >= tarrifSlabHrs
+      ? OurTotalHrs - tarrifSlabHrs
+      : 0;
+  let remainingKms =
+    tarrrifSlabKms && OurTotalKms >= tarrrifSlabKms
+      ? OurTotalKms - tarrrifSlabKms
+      : 0;
+
+  const remainingKmsForOutAndDay =
+    OurTotalDays > 0 && OurTotalDays * tarrrifSlabKms >= OurTotalKms
+      ? OurTotalDays * tarrrifSlabKms
+      : OurTotalKms;
   const totalHrsPrice = remainingHrs * tarrifSlabExHrsRate;
   const totalKmsPrice = remainingKms * tarrifSlabExKmsRate;
   const totalKmsPriceForOutAndDay =
@@ -32,7 +37,7 @@ const TableSalesTripSheetCalculation = (props) => {
     <>
       <table>
         <tbody>
-          {data?.rental !== "out_station" && data?.rental !== "day_rate" ? (
+          {data?.rental !== "out_station" ? (
             <tr>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border font-bold border-gray-200 uppercase w-10/12">
                 Total Hours
@@ -108,7 +113,7 @@ const TableSalesTripSheetCalculation = (props) => {
               </td>
             </tr>
           ) : null}
-          {data?.rental !== "out_station" && data?.rental !== "day_rate" ? (
+          {data?.rental !== "out_station" ? (
             <tr>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border font-bold border-gray-200 uppercase w-10/12">
                 Remaining Hours(Total-Slab)
@@ -119,7 +124,7 @@ const TableSalesTripSheetCalculation = (props) => {
               </td>
             </tr>
           ) : null}
-          {data?.rental !== "out_station" && data?.rental !== "day_rate" ? (
+          {data?.rental !== "out_station" ? (
             <tr>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border font-bold border-gray-200 uppercase w-10/12">
                 Remaining Kms(Total-Slab):
@@ -161,7 +166,7 @@ const TableSalesTripSheetCalculation = (props) => {
               ₹ {calculationItem?.salesExKmsRate ?? 0}
             </td>
           </tr>
-          {data?.rental !== "out_station" && data?.rental !== "day_rate" ? (
+          {data?.rental !== "out_station" ? (
             <tr>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border font-bold border-gray-200 uppercase w-10/12">
                 Total Hours Price:
@@ -172,7 +177,7 @@ const TableSalesTripSheetCalculation = (props) => {
               </td>
             </tr>
           ) : null}
-          {data?.rental !== "out_station" && data?.rental !== "day_rate" ? (
+          {data?.rental !== "out_station" ? (
             <tr>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border font-bold border-gray-200 uppercase w-10/12">
                 Total Kms Price:
@@ -193,7 +198,7 @@ const TableSalesTripSheetCalculation = (props) => {
               </td>
             </tr>
           )}
-          {data?.rental !== "out_station" && data?.rental !== "day_rate" ? (
+          {data?.rental !== "out_station" ? (
             <tr>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border font-bold border-gray-200 uppercase w-10/12">
                 Gross:

@@ -1,5 +1,5 @@
 import { Button, Form, Input, Select, DatePicker } from "antd";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { NumericInput } from "../Tarrif/NumericInput";
 import { useDispatch, useSelector } from "react-redux";
 import { getTarrif } from "../action/tarrifAction";
@@ -65,16 +65,19 @@ const NewTripSheetEntry = () => {
   const [vehicleList, setvehicleList] = useState([]);
   const [rentalList, setRentalList] = useState([]);
   const [acType, setAcType] = useState([]);
+  const [selectedCompany, setSelectedCompany] = useState("");
+  const [selectedVehicle, setSelectedVehicle] = useState("");
+  const [selectedRental, setSelectedRental] = useState("");
+  const [selectedSegment, setSelectedSegment] = useState("");
 
   useEffect(() => {
-    if (tarrifData?.length) {
+    if (tarrifData && tarrifData.length) {
       let updatedClient = tarrifData.map((item) => item.company);
       setClientList([...new Set(updatedClient)]);
     } else {
       dispatch(getTarrif);
     }
   }, [tarrifData]);
-
   const onFinish = (fieldsValue) => {
     const totalKm = fieldsValue["closingkm"] - fieldsValue["startingkm"];
     const rangeTimejourney = fieldsValue["journeyStart"];
@@ -82,15 +85,16 @@ const NewTripSheetEntry = () => {
     const startJourney = moment(
       rangeTimejourney[0]?.format("YYYY-MM-DD HH:mm")
     );
-
     const endJourney = moment(rangeTimejourney[1]?.format("YYYY-MM-DD HH:mm"));
+    var ms = moment(endJourney, "DD/MM/YYYY HH:mm").diff(
+      moment(startJourney, "DD/MM/YYYY HH:mm")
+    );
+    var duration = moment.duration(ms);
+    var totalHrs =
+      Math.floor(duration?.asHours()) + moment.utc(ms).format(".mm");
 
-    const ms = moment.duration(endJourney?.diff(startJourney));
-    const duration = moment.duration(ms);
     const totalDays = Math.ceil(duration?.asDays());
-    const totalHrs = Math.ceil(duration?.asHours());
-    console.log(duration?.asDays());
-    console.log(totalHrs);
+
     const values = {
       ...fieldsValue,
       totalDays: totalDays,
@@ -98,11 +102,10 @@ const NewTripSheetEntry = () => {
       totalKm: totalKm,
     };
     console.log("Received values of form: ", values);
-
+    // console.log(fieldsValue);
     navigate("/tripsheet/tripsheet_calculation", { state: values });
     // dispatch(createTripSheetAction(values));
   };
-
   // useEffect(() => {
   //   if (isTripSheetCreated) {
   //     toast("New Trip Sheet Created Succesfully!", {
@@ -113,7 +116,6 @@ const NewTripSheetEntry = () => {
   //     navigate("/tripsheet/tripsheet_calculation");
   //     return;
   //   }
-
   //   if (error) {
   //     toast(error, {
   //       position: toast.POSITION.BOTTOM_CENTER,
@@ -251,23 +253,15 @@ const NewTripSheetEntry = () => {
           <Option value="">Select</Option>
         </Select>
       </Form.Item> */}
-
-      <Form.Item
-        name="companyName"
-        label="Client/Company Name"
-        // rules={[
-        //   {
-        //     required: true,
-        //     message: "Please select Company name!",
-        //   },
-        // ]}
-      >
+      <Form.Item name="companyName" label="Client/Company Name">
         <Select
           onChange={(e) => {
             let updated = tarrifData.filter((item) => e == item.company);
             let updatedVehicle = updated.map((item) => item.vehicleType);
             setvehicleList([...new Set(updatedVehicle)]);
+            setSelectedCompany(e);
           }}
+          value={selectedCompany}
         >
           {clientList.map((item) => {
             return (
@@ -281,20 +275,20 @@ const NewTripSheetEntry = () => {
       <Form.Item
         name="vehicleBilled"
         label="Vehicle Billed As"
-        // rules={[
-        //   {
-        //     required: true,
-        //     message: "Please select Vehicle Billed As!",
-        //   },
-        // ]}
+        initialValue={selectedVehicle}
       >
         <Select
           className="uppercase"
           onChange={(e) => {
-            let updated = tarrifData.filter((item) => e == item.vehicleType);
-            let updatedRental = updated.map((item) => item.selectedRental);
+            let updated = tarrifData.filter(
+              (item) =>
+                e == item?.vehicleType && selectedCompany == item?.company
+            );
+            let updatedRental = updated.map((item) => item?.selectedRental);
             setRentalList([...new Set(updatedRental)]);
+            setSelectedVehicle(e);
           }}
+          value={[]}
         >
           {vehicleList.map((item) => {
             return (
@@ -305,24 +299,19 @@ const NewTripSheetEntry = () => {
           })}
         </Select>
       </Form.Item>
-      <Form.Item
-        name="rental"
-        label="Rental"
-        // rules={[
-        //   {
-        //     required: true,
-        //     message: "Please select Rental!",
-        //   },
-        // ]}
-      >
+      <Form.Item name="rental" label="Rental">
         <Select
           className="uppercase"
           onChange={(e) => {
-            let updated = tarrifData.filter((item) => e == item.selectedRental);
-            console.log(updated);
+            let updated = tarrifData.filter(
+              (item) =>
+                e == item.selectedRental && selectedVehicle == item.vehicleType
+            );
             let updatedAcType = updated.map((item) => item.selectedSegment);
             setAcType([...new Set(updatedAcType)]);
+            setSelectedRental(e);
           }}
+          value={selectedRental}
         >
           {rentalList.map((item) => {
             return (
@@ -333,17 +322,14 @@ const NewTripSheetEntry = () => {
           })}
         </Select>
       </Form.Item>
-      <Form.Item
-        name="acType"
-        label="Ac Type"
-        // rules={[
-        //   {
-        //     required: true,
-        //     message: "Please select Ac Type!",
-        //   },
-        // ]}
-      >
-        <Select className="uppercase">
+      <Form.Item name="acType" label="Ac Type">
+        <Select
+          className="uppercase"
+          onChange={(e) => {
+            setSelectedSegment(e);
+          }}
+          value={selectedSegment}
+        >
           {acType.map((item) => {
             return (
               <Option key={item} value={item} className="uppercase">
@@ -390,7 +376,6 @@ const NewTripSheetEntry = () => {
       <Form.Item name="closingkm" label="Closing Km" initialValue="">
         <NumericInput />
       </Form.Item>
-
       {/* <Form.Item name="department" label="Department" initialValue="">
         <NumericInput />
       </Form.Item>
@@ -425,7 +410,6 @@ const NewTripSheetEntry = () => {
       <Form.Item name="others" label="Others" initialValue="">
         <NumericInput />
       </Form.Item> */}
-
       <Form.Item {...tailFormItemLayout}>
         <Button type="primary" htmlType="submit">
           Next

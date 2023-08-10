@@ -264,7 +264,6 @@ const TarrifFormTable = (props) => {
         return item;
       }
     });
-    console.log(updated);
     setEditableIndex(activeIndex);
     setTarrifInput(updated);
   };

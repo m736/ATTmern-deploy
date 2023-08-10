@@ -23,7 +23,7 @@ module.exports = (Collection) => {
   // =========
   const readMany = (req, res) => {
     let query = res.locals.query || {};
-
+    console.log(query);
     Collection.find(query, (e, result) => {
       if (e) {
         console.log("baseCrud.find error: ", e.message || e);

@@ -19,7 +19,6 @@ export const createTarrif = (formData) => async (dispatch) => {
     dispatch(createTarrifRequest());
     const { data } = await axios.post(
       `http://localhost:4000/tarrif/add_tarrif`,
-
       formData
     );
     console.log(data);

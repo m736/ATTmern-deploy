@@ -20,10 +20,15 @@ export const tarrifInputField = {
       value: "ANZ MTP",
       text: "ANZ MTP",
     },
+
     { value: "GE-JFWTC", text: "IBGE-JFWTCM" },
     { value: "GE", text: "GE" },
     { value: "IBM EGL", text: "IBM EGL" },
     { value: "IBM MTP", text: "IBM MTP" },
+    {
+      value: "IBS Software Private Limited",
+      text: "IBS Software Private Limited",
+    },
   ],
   vehicleTypes: [
     { value: "DZIRE", text: "DZIRE" },
@@ -102,3 +107,12 @@ export const tarrifInputField = {
   selectedDriverbata: "",
   position: 1,
 };
+export const onCallMisrequiredFields = [
+  "Usage_Date",
+  "Vehicle_No",
+  "Vehicle_Type",
+  "Vehicle_Billed_As",
+  "Segment",
+  "Rental",
+  "Company_Name",
+];

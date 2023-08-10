@@ -5,6 +5,10 @@ const models = require("./../utils/models");
 // Api Routes
 router.use("/jokes", require("src/helpers/base.crud")(models.Vehicle));
 router.use(
+  "/oncall_mis_data",
+  require("src/helpers/base.crud")(models.OnCallMisUploadData)
+);
+router.use(
   "/vehicle_list",
   require("src/helpers/base.crud")(models.AddVehicle)
 );

@@ -76,6 +76,25 @@ const NavBar = () => {
         },
       ],
     },
+    {
+      title: "MIS",
+      icon: <BsChatRightDots />,
+      submenu: true,
+      name: "mis",
+      spacing: "true",
+      submenuItems: [
+        {
+          title: "On Call MIS Upload",
+          icon: <BsBuildingAdd />,
+          href: "/mis/oncall_mis_upload",
+        },
+        {
+          title: "DownloadOn Call MIS",
+          icon: <BsBuildingAdd />,
+          href: "/mis/download_oncall_mis_upload",
+        },
+      ],
+    },
   ];
   const [menuOption, setMenuOption] = useState(Menus);
 

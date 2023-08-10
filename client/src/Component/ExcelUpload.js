@@ -22,9 +22,7 @@ function ExcelUpload() {
   const fetchData = useCallback(async () => {
     try {
       dispatch(vechicleRequest());
-      const { data } = await axios.get(
-        "https://creo-8w4j.onrender.com/api/v1/jokes"
-      );
+      const { data } = await axios.get("http://localhost:4000/api/v1/jokes");
       setRows(data);
       dispatch(vechicleSuccess(data));
     } catch (error) {
@@ -84,6 +82,7 @@ function ExcelUpload() {
         return;
       }
       const jokeList = misvehicle_list || [];
+
       const jokes = excelRows.map((obj) => ({
         _id: jokeList.find((x) => x.slipno === obj["Slip No"])?._id,
         jokeId: obj["ID"] || "",
@@ -103,7 +102,7 @@ function ExcelUpload() {
       if (updatedJokes.length) {
         const result = (
           await axios.post(
-            "https://creo-8w4j.onrender.com/bulk/jokes-bulk-update",
+            "http://localhost:4000/bulk/jokes-bulk-update",
             updatedJokes
           )
         ).data;
@@ -114,7 +113,7 @@ function ExcelUpload() {
       if (newJokes.length) {
         const result = (
           await axios.post(
-            "https://creo-8w4j.onrender.com/bulk/jokes-bulk-insert",
+            "http://localhost:4000/bulk/jokes-bulk-insert",
             newJokes
           )
         ).data;

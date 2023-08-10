@@ -126,7 +126,7 @@ const MisTable = ({ data }) => {
     }
   }, [data]);
 
-  const handleClick = () => {
+  const downloadSearchMisData = () => {
     const excel = new Excel();
     excel
       .addSheet("test")
@@ -139,7 +139,7 @@ const MisTable = ({ data }) => {
   const deleteStudent = () => {
     try {
       const { res } = axios.delete(
-        "https://creo-8w4j.onrender.com/bulk/delete-vehiclelist",
+        "https://localhost:4000/bulk/delete-vehiclelist",
         { data: data }
       );
       alert(`${data.length} vechicle data deleted successfully`);
@@ -153,7 +153,11 @@ const MisTable = ({ data }) => {
       {data.length ? (
         <>
           <Row>
-            <Button className="mb-3 me-3" type="success" onClick={handleClick}>
+            <Button
+              className="mb-3 me-3"
+              type="success"
+              onClick={downloadSearchMisData}
+            >
               Download MIS Data
             </Button>
             <Button type="warning" onClick={deleteStudent}>

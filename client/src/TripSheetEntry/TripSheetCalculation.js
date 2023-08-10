@@ -3,30 +3,52 @@ import { useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { getTarrif } from "../action/tarrifAction";
 import TableSalesTripSheetCalculation from "./TableSalesTripSheetCalculation";
+
 const TripSheetCalculation = () => {
   const location = useLocation();
   const data = location.state;
-  console.log(data);
+
   const [calculation, setCalculation] = useState([]);
   const dispatch = useDispatch();
   const { tarrifData, loading } = useSelector((state) => state.TarrifState);
 
   useEffect(() => {
     if (tarrifData?.length) {
-      const filterData = tarrifData.filter(
+      let filterData = tarrifData.filter(
         (item) =>
           data?.companyName == item?.company &&
           data?.vehicleBilled == item?.vehicleType &&
           data?.rental == item?.selectedRental &&
           data?.acType == item?.selectedSegment
       );
-      console.log(filterData);
-      setCalculation(filterData);
+      if (data?.rental != "out_station") {
+        if (data?.totalHrs) {
+          let graceTimeFilter = filterData.filter((item) => {
+            let totalHrs = Number(item?.selectedSlabhrs);
+            if (item?.salesGraceTime) {
+              totalHrs += Number(item?.salesGraceTime);
+            }
+
+            return Number(data?.totalHrs) <= totalHrs;
+          });
+          if (graceTimeFilter.length) {
+            filterData = [...graceTimeFilter];
+          } else {
+            filterData = [filterData[filterData.length - 1]];
+          }
+        }
+      }
+      filterData = filterData?.sort(
+        (a, b) => Number(a?.selectedSlabhrs) - Number(b?.selectedSlabhrs)
+      );
+      setCalculation([filterData[0]]);
     } else {
       dispatch(getTarrif);
     }
   }, [tarrifData]);
-  console.log(calculation);
+  // console.log(tarrifData);
+  // console.log(singleOnCallData);
+
   return (
     <>
       <tr className="w-full">
