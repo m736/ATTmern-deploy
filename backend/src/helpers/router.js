@@ -9,6 +9,10 @@ router.use(
   require("src/helpers/base.crud")(models.OnCallMisUploadData)
 );
 router.use(
+  "/slabbase_mis_data",
+  require("src/helpers/base.crud")(models.SlabBaseMisUploadData)
+);
+router.use(
   "/vehicle_list",
   require("src/helpers/base.crud")(models.AddVehicle)
 );

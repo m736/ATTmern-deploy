@@ -1,22 +1,6 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-// =====RefreshToken Model=====
-const refreshTokenSchema = new Schema({
-  account: { type: Schema.Types.ObjectId, ref: "Account" },
-  token: String,
-  expires: Date,
-  created: { type: Date, default: Date.now },
-  createdByIp: String,
-  revoked: Date,
-  revokedByIp: String,
-  replacedByToken: String,
-});
-refreshTokenSchema.virtual("isExpired").get(function () {
-  return Date.now() >= this.expires;
-});
-refreshTokenSchema.virtual("isActive").get(function () {
-  return !this.revoked && !this.isExpired;
-});
+
 // =====Vehicle Model=====
 const vehicleSchema = new Schema(
   {
@@ -102,6 +86,7 @@ const addVehicleSchema = new mongoose.Schema(
 );
 const CreatetarrifShema = new mongoose.Schema(
   {
+    "S.No": String,
     rental: Array,
     company: String,
     vehicleType: String,
@@ -123,23 +108,14 @@ const CreatetarrifShema = new mongoose.Schema(
     addon: Array,
     selectedAddon: String,
     salesRate: Number,
-    selectedSalesRate: String,
     purchaseRate: Number,
-    selectedPurchaseRate: String,
     salesExKmsRate: Number,
-    selectedSalesExKmsRate: String,
     salesExHrsRate: Number,
-    selectedSalesExHrsRate: String,
     purchaseExHrsRate: Number,
-    selectedPurchaseExHrsRate: String,
     purchaseExKmsRate: Number,
-    selectedPurchaseExKmsRate: String,
     purchaseGraceTime: String,
-    selectedPurchaseGraceTime: String,
     salesGraceTime: String,
-    selectedSalesGraceTime: String,
     driverbata: String,
-    selectedDriverbata: String,
     position: Number,
   },
   { timestamps: true }
@@ -177,27 +153,39 @@ const newTripSheetEntryShema = new mongoose.Schema(
   },
   { timestamps: true }
 );
-const onCallMisCalculationSchema = new Schema(
+const slabBaseMisSchema = new Schema(
   {
-    Dutyslip_No: String,
-    Usage_Date: String,
-    Vehicle_No: String,
-    Vehicle_Type: String,
-    Vehicle_Billed_As: String,
+    date: String,
+    "Trip ID": String,
+    "Vehicle No": String,
+    "Vehicle TYPE": String,
+    "Vehicle Billed as": String,
     Segment: String,
-    Rental: String,
-    Total_Kms: Number,
-    Total_Hrs: Number,
-    Toll: Number,
-    Parking: Number,
-    Permit: Number,
-    Driver_Batta: Number,
-    Day_Bata: Number,
-    Night_Sales_Bata: Number,
-    Night_Purchase_Bata: Number,
-    Others: Number,
-    Fuel_Difference: Number,
-    Company_Name: String,
+    "Tot Kms": Number,
+    "Trip Type": String,
+    "Duty Type": String,
+    Slab1: Number,
+    Slab2: String,
+    Slab3: Number,
+    Slab4: Number,
+    Slab5: Number,
+    "Slab1 - E": Number,
+    "Slab2 - E": Number,
+    "Slab3 - E": Number,
+    "Slab4 - E": Number,
+    "Slab5 - E": Number,
+    "Slab1 - Single": Number,
+    "Slab2 - Single": Number,
+    "Slab3 - Single": Number,
+    "Slab4 - Single": Number,
+    "Slab5 - Single": Number,
+    "Slab1 - Single": Number,
+    Bata: Number,
+    "Fuel Difference": Number,
+    Company: String,
+    AREA: String,
+    "sale Bhata": String,
+    "Purchase Bhata": String,
   },
   { strict: false, timestamps: true }
 );
@@ -206,7 +194,10 @@ module.exports = {
   AddVehicle: mongoose.model("addvehicles", addVehicleSchema),
   Createtarrif: mongoose.model("createtarrif", CreatetarrifShema),
   OnCallMisUploadData: mongoose.model("on_call_mis_table", onCallMisSchema),
-
+  SlabBaseMisUploadData: mongoose.model(
+    "slab_base_mis_table",
+    slabBaseMisSchema
+  ),
   NewTripSheetEntry: mongoose.model(
     "new_tripsheet_entry",
     newTripSheetEntryShema

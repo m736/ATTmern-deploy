@@ -37,7 +37,7 @@ const TableSalesTripSheetCalculation = (props) => {
     <>
       <table>
         <tbody>
-          {data?.rental !== "out_station" ? (
+          {data?.rental !== "Out Station" ? (
             <tr>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border font-bold border-gray-200 uppercase w-10/12">
                 Total Hours
@@ -113,7 +113,7 @@ const TableSalesTripSheetCalculation = (props) => {
               </td>
             </tr>
           ) : null}
-          {data?.rental !== "out_station" ? (
+          {data?.rental !== "Out Station" ? (
             <tr>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border font-bold border-gray-200 uppercase w-10/12">
                 Remaining Hours(Total-Slab)
@@ -124,7 +124,7 @@ const TableSalesTripSheetCalculation = (props) => {
               </td>
             </tr>
           ) : null}
-          {data?.rental !== "out_station" ? (
+          {data?.rental !== "Out Station" ? (
             <tr>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border font-bold border-gray-200 uppercase w-10/12">
                 Remaining Kms(Total-Slab):
@@ -166,7 +166,7 @@ const TableSalesTripSheetCalculation = (props) => {
               ₹ {calculationItem?.salesExKmsRate ?? 0}
             </td>
           </tr>
-          {data?.rental !== "out_station" ? (
+          {data?.rental !== "Out Station" ? (
             <tr>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border font-bold border-gray-200 uppercase w-10/12">
                 Total Hours Price:
@@ -177,7 +177,7 @@ const TableSalesTripSheetCalculation = (props) => {
               </td>
             </tr>
           ) : null}
-          {data?.rental !== "out_station" ? (
+          {data?.rental !== "Out Station" ? (
             <tr>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border font-bold border-gray-200 uppercase w-10/12">
                 Total Kms Price:
@@ -198,7 +198,7 @@ const TableSalesTripSheetCalculation = (props) => {
               </td>
             </tr>
           )}
-          {data?.rental !== "out_station" ? (
+          {data?.rental !== "Out Station" ? (
             <tr>
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border font-bold border-gray-200 uppercase w-10/12">
                 Gross:

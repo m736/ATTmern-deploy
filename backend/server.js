@@ -41,6 +41,8 @@ app.use("/api/v1", require("src/helpers/router"));
 app.use("/api/v1/tripsheet_entry", require("src/helpers/router"));
 app.use("/bulk", require("src/controllers/bulk.controller"));
 app.use("/oncall_bulk", require("src/controllers/oncallbulk.controller"));
+app.use("/slabmis_bulk", require("src/controllers/slabmis.controller"));
+app.use("/tarrifexcel_bulk", require("src/controllers/tarrifbulk.controller"));
 app.use("/vehicle", require("src/controllers/vehicle.controller"));
 app.use("/tarrif", require("src/controllers/tarrif.controller"));
 app.get("*", (req, res) => res.status(404).json("API route not found"));

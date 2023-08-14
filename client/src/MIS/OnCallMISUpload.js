@@ -153,7 +153,7 @@ const OnCallMISUpload = () => {
             singleOnCallData?.Segment == item?.selectedSegment
         );
 
-        if (singleOnCallData?.Rental != "out_station") {
+        if (singleOnCallData?.Rental != "Out Station") {
           if (singleOnCallData?.Total_Hrs) {
             let graceTimeFilter = filterData.filter((item) => {
               let totalHrs = Number(item?.selectedSlabhrs);
@@ -223,9 +223,9 @@ const OnCallMISUpload = () => {
             ? OurTotalDays * tarrrifSlabKms
             : OurTotalKms;
         const exHrs =
-          singleOnCallData?.Rental !== "out_station" ? remainingHrs : 0;
+          singleOnCallData?.Rental !== "Out Station" ? remainingHrs : 0;
         const exKms =
-          singleOnCallData?.Rental !== "out_station"
+          singleOnCallData?.Rental !== "Out Station"
             ? remainingKms
             : remainingKmsForOutAndDay;
         // console.log(exKms);
@@ -240,7 +240,7 @@ const OnCallMISUpload = () => {
         const tarrifPurchaseRate = Number(calculationItem?.purchaseRate ?? 0);
 
         const salesGross =
-          singleOnCallData?.Rental !== "out_station"
+          singleOnCallData?.Rental !== "Out Station"
             ? totalSalesHrsPrice + totalSalesKmsPrice + tarrifSalesRate
             : totalKmsPriceForSalesOutAndDay;
         const salesNett =
@@ -254,7 +254,7 @@ const OnCallMISUpload = () => {
           Others +
           Fuel_Difference;
         const purchaseGross =
-          singleOnCallData?.Rental !== "out_station"
+          singleOnCallData?.Rental !== "Out Station"
             ? totalPurchaseHrsPrice + totalPurchaseKmsPrice + tarrifPurchaseRate
             : totalKmsPriceForPurchasesOutAndDay;
         const purchaseNett =

@@ -1,8 +1,5 @@
 import axios from "axios";
 import {
-  onCallMisCalculationFail,
-  onCallMisCalculationRequest,
-  onCallMisCalculationSuccess,
   onCallMisUploadFail,
   onCallMisUploadRequest,
   onCallMisUploadSuccess,

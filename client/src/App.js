@@ -27,6 +27,8 @@ import NewTripSheetEntry from "./TripSheetEntry/NewTripSheetEntry";
 import SalesAndPurchaseCalculation from "./TripSheetEntry/SalesAndPurchaseCalculation";
 import OnCallMISUpload from "./MIS/OnCallMISUpload";
 import DownloadOnCallMisData from "./MIS/DownloadOnCallMisData";
+import TarrifExcelUpload from "./Tarrif/TarrifExcelUpload";
+import SlabBaseMisUpload from "./MIS/SlabBaseMisUpload";
 
 function App() {
   const [rows, setRows] = useState([]);
@@ -66,6 +68,7 @@ function App() {
               <Route path="/vehicle_list" element={<VehicleList />} />
               <Route path="/tarrif">
                 <Route path="new_tarrif" element={<CreateNewTarrif />} />
+                <Route path="upload_tarrif" element={<TarrifExcelUpload />} />
                 <Route
                   path="tarrif_list"
                   element={<ReadUpdateDeleteTarrif />}
@@ -83,6 +86,7 @@ function App() {
               </Route>
               <Route path="/mis">
                 <Route path="oncall_mis_upload" element={<OnCallMISUpload />} />
+                <Route path="slab_mis_upload" element={<SlabBaseMisUpload />} />
                 <Route
                   path="download_oncall_mis_upload"
                   element={<DownloadOnCallMisData />}

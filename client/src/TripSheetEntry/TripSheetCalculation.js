@@ -21,7 +21,7 @@ const TripSheetCalculation = () => {
           data?.rental == item?.selectedRental &&
           data?.acType == item?.selectedSegment
       );
-      if (data?.rental != "out_station") {
+      if (data?.rental != "Out Station") {
         if (data?.totalHrs) {
           let graceTimeFilter = filterData.filter((item) => {
             let totalHrs = Number(item?.selectedSlabhrs);

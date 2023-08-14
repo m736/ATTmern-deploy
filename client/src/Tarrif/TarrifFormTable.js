@@ -1,6 +1,8 @@
 import { Button, Form, Input, Popconfirm, Select, Space } from "antd";
 import React, { useEffect, useState } from "react";
 import { NumericInput } from "./NumericInput";
+
+
 import {
   deleteTarrif,
   getTarrif,
@@ -24,27 +26,9 @@ const TarrifFormTable = (props) => {
     editableRow,
   } = props;
   const [form] = Form.useForm();
-  const sample = [
-    "segment",
-    "area",
-    "slabhrs",
-    "slabkms",
-
-    "slabfrom",
-    "slabto",
-    "addon",
-    "salesRate",
-    "purchaseRate",
-    "salesExKmsRate",
-    "salesExHrsRate",
-    "purchaseExHrsRate",
-    "purchaseExKmsRate",
-    "purchaseGraceTime",
-    "salesGraceTime",
-    "driverbata",
-  ];
+  
   const EnableTarrifRentalInput = {
-    local: [
+    Local: [
       "segment",
       "area",
       "slabhrs",
@@ -58,7 +42,7 @@ const TarrifFormTable = (props) => {
       "purchaseGraceTime",
       "salesGraceTime",
     ],
-    out_station: [
+    "Out Station": [
       "segment",
       "slabhrs",
       "slabkms",
@@ -67,7 +51,7 @@ const TarrifFormTable = (props) => {
       "purchaseExKmsRate",
       "driverbata",
     ],
-    flat_rate: [
+    "Flat Rate": [
       "segment",
       "slabhrs",
       "slabkms",
@@ -80,7 +64,7 @@ const TarrifFormTable = (props) => {
       "purchaseGraceTime",
       "salesGraceTime",
     ],
-    airport_transfer: [
+    "Airport Transfer": [
       "segment",
       "area",
       "slabhrs",
@@ -89,7 +73,7 @@ const TarrifFormTable = (props) => {
       "purchaseRate",
       "driverbata",
     ],
-    hotel_transfer: [
+    "Hotel Transfer": [
       "segment",
       "slabhrs",
       "slabkms",
@@ -102,7 +86,7 @@ const TarrifFormTable = (props) => {
       "purchaseGraceTime",
       "salesGraceTime",
     ],
-    slab_rate: [
+    "Slab Rate": [
       "segment",
       "area",
       "slabfrom",
@@ -111,10 +95,10 @@ const TarrifFormTable = (props) => {
       "purchaseRate",
       "salesRate",
     ],
-    trip_rate: ["segment", "area", "addon", "purchaseRate", "salesRate"],
-    shift_rate: ["segment", "area", "purchaseRate", "salesRate"],
-    day_rate: ["segment", "area", "purchaseRate", "salesRate"],
-    escort_airport_transfer: [
+    "Trip rate": ["segment", "area", "addon", "purchaseRate", "salesRate"],
+    "Shift Rate": ["segment", "area", "purchaseRate", "salesRate"],
+    "Day Rate": ["segment", "area", "purchaseRate", "salesRate"],
+    "Escort Airport Transfer": [
       "segment",
       "slabhrs",
       "slabkms",
@@ -127,7 +111,7 @@ const TarrifFormTable = (props) => {
       "purchaseGraceTime",
       "salesGraceTime",
     ],
-    one_way: [
+    "One Way": [
       "segment",
       "slabhrs",
       "slabkms",
@@ -140,7 +124,7 @@ const TarrifFormTable = (props) => {
       "purchaseGraceTime",
       "salesGraceTime",
     ],
-    two_way: [
+    "Two Way": [
       "segment",
       "slabhrs",
       "slabkms",
@@ -153,7 +137,7 @@ const TarrifFormTable = (props) => {
       "purchaseGraceTime",
       "salesGraceTime",
     ],
-    railway_bus_transfer: [
+    "Railway Bus Transfer": [
       "segment",
       "slabhrs",
       "slabkms",
@@ -166,7 +150,7 @@ const TarrifFormTable = (props) => {
       "purchaseGraceTime",
       "salesGraceTime",
     ],
-    KMS_rate: ["segment", "salesRate", "purchaseRate"],
+    "KMS Rate": ["segment", "salesRate", "purchaseRate"],
   };
   const [enableinput, setEnableInput] = useState([]);
 
@@ -180,6 +164,7 @@ const TarrifFormTable = (props) => {
   }, [tarrif]);
 
   const RentalChange = (value) => {
+    console.log(value);
     form.resetFields();
     valueHandle("selectedRental", value);
   };
@@ -301,108 +286,80 @@ const TarrifFormTable = (props) => {
   return (
     <>
       {screenEdit == "edit" && (
-        <tr>
-          {!tarrif.editable ? (
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
-              {tarrif?.company == null ? (
-                <span className="text-red-600">{tarrif.empty}</span>
-              ) : (
-                tarrif?.company
-              )}
-            </td>
-          ) : (
-            <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
-              <Select
-                style={{ width: "140px" }}
-                defaultValue={tarrif?.company}
-                value={tarrif?.company}
-                onChange={(value) => {
-                  valueHandle("company", value);
-                }}
-              >
-                {tarrif?.companies?.map((item) => {
-                  return (
-                    <Option key={item.value} value={item.value}>
-                      {item.text}
-                    </Option>
-                  );
-                })}
-              </Select>
-            </td>
-          )}
+        <>
+         
+          <tr>
+            {!tarrif.editable ? (
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
+                {tarrif?.company == null ? (
+                  <span className="text-red-600">{tarrif.empty}</span>
+                ) : (
+                  tarrif?.company
+                )}
+              </td>
+            ) : (
+              <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
+                <Select
+                  style={{ width: "140px" }}
+                  defaultValue={tarrif?.company}
+                  value={tarrif?.company}
+                  onChange={(value) => {
+                    valueHandle("company", value);
+                  }}
+                >
+                  {tarrif?.companies?.map((item) => {
+                    return (
+                      <Option key={item.value} value={item.value}>
+                        {item.text}
+                      </Option>
+                    );
+                  })}
+                </Select>
+              </td>
+            )}
 
-          {!tarrif.editable ? (
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
-              {tarrif?.vehicleType == null ? (
-                <span className="text-red-600">{tarrif.empty}</span>
-              ) : (
-                tarrif?.vehicleType
-              )}
-            </td>
-          ) : (
-            <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
-              <Select
-                style={{ width: "140px" }}
-                defaultValue={tarrif?.vehicleType}
-                value={tarrif?.vehicleType}
-                onChange={(value) => {
-                  valueHandle("vehicleType", value);
-                }}
-              >
-                {tarrif?.vehicleTypes?.map((item) => {
-                  return (
-                    <Option key={item.value} value={item.value}>
-                      {item.text}
-                    </Option>
-                  );
-                })}
-              </Select>
-            </td>
-          )}
+            {!tarrif.editable ? (
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
+                {tarrif?.vehicleType == null ? (
+                  <span className="text-red-600">{tarrif.empty}</span>
+                ) : (
+                  tarrif?.vehicleType
+                )}
+              </td>
+            ) : (
+              <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
+                <Select
+                  style={{ width: "140px" }}
+                  defaultValue={tarrif?.vehicleType}
+                  value={tarrif?.vehicleType}
+                  onChange={(value) => {
+                    valueHandle("vehicleType", value);
+                  }}
+                >
+                  {tarrif?.vehicleTypes?.map((item) => {
+                    return (
+                      <Option key={item.value} value={item.value}>
+                        {item.text}
+                      </Option>
+                    );
+                  })}
+                </Select>
+              </td>
+            )}
 
-          {!tarrif.editable ? (
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
-              {tarrif?.selectedRental}
-            </td>
-          ) : (
-            <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
-              <Select
-                style={{ width: "140px" }}
-                defaultValue={tarrif?.selectedRental}
-                value={tarrif?.selectedRental}
-                onChange={RentalChange}
-              >
-                {tarrif?.rental?.map((item) => {
-                  return (
-                    <Option key={item.value} value={item.value}>
-                      {item.text}
-                    </Option>
-                  );
-                })}
-              </Select>
-            </td>
-          )}
-          {!tarrif.editable ? (
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
-              {tarrif?.selectedSegment == "" ? (
-                <span className="text-red-600">{tarrif.empty}</span>
-              ) : (
-                tarrif?.selectedSegment
-              )}
-            </td>
-          ) : (
-            <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
-              {enableinput?.includes("segment") ? (
+            {!tarrif.editable ? (
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
+                {tarrif?.selectedRental}
+              </td>
+            ) : (
+              <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
                 <Select
                   style={{ width: "140px" }}
-                  disabled={!enableinput?.includes("segment")}
-                  defaultValue={tarrif?.selectedSegment}
-                  value={tarrif?.selectedSegment}
-                  onChange={(value) => {
-                    valueHandle("selectedSegment", value);
-                  }}
+                  defaultValue={tarrif?.selectedRental}
+                  value={tarrif?.selectedRental}
+                  onChange={RentalChange}
                 >
-                  {tarrif?.segment?.map((item) => {
+                  {tarrif?.rental?.map((item) => {
                     return (
                       <Option key={item.value} value={item.value}>
                         {item.text}
@@ -410,446 +367,482 @@ const TarrifFormTable = (props) => {
                     );
                   })}
                 </Select>
-              ) : null}
-            </td>
-          )}
-          {!tarrif.editable ? (
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
-              {tarrif?.selectedArea == "" ? (
-                <span className="text-red-600">{tarrif.empty}</span>
-              ) : (
-                tarrif?.selectedArea
-              )}
-            </td>
-          ) : (
-            <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
-              {enableinput?.includes("area") ? (
-                <Select
-                  style={{ width: "140px" }}
-                  disabled={!enableinput?.includes("area")}
-                  defaultValue={tarrif?.selectedArea}
-                  value={tarrif?.selectedArea}
-                  onChange={(value) => {
-                    valueHandle("selectedArea", value);
-                  }}
-                >
-                  {tarrif?.area?.map((item) => {
-                    return (
-                      <Option key={item.value} value={item.value}>
-                        {item.text}
-                      </Option>
-                    );
-                  })}
-                </Select>
-              ) : null}
-            </td>
-          )}
-          {!tarrif.editable ? (
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
-              {tarrif?.selectedSlabhrs == "" ? (
-                <span className="text-red-600">{tarrif.empty}</span>
-              ) : (
-                tarrif?.selectedSlabhrs
-              )}
-            </td>
-          ) : (
-            <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
-              {enableinput?.includes("slabhrs") ? (
-                <Select
-                  style={{ width: "140px" }}
-                  disabled={!enableinput?.includes("slabhrs")}
-                  onChange={(value) => {
-                    valueHandle("selectedSlabhrs", value);
-                  }}
-                  defaultValue={tarrif?.selectedSlabhrs}
-                  value={tarrif?.selectedSlabhrs}
-                >
-                  {tarrif?.slabhrs?.map((item) => {
-                    return (
-                      <Option key={item.value} value={item.value}>
-                        {item.text}
-                      </Option>
-                    );
-                  })}
-                </Select>
-              ) : null}
-            </td>
-          )}
-          {!tarrif.editable ? (
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
-              {tarrif?.selectedSlabkms == "" ? (
-                <span className="text-red-600">{tarrif.empty}</span>
-              ) : (
-                tarrif?.selectedSlabkms
-              )}
-            </td>
-          ) : (
-            <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
-              {enableinput?.includes("slabkms") ? (
-                <Select
-                  style={{ width: "140px" }}
-                  defaultValue={tarrif.selectedSlabkms}
-                  value={tarrif.selectedSlabkms}
-                  disabled={!enableinput?.includes("slabkms")}
-                  onChange={(value) => {
-                    valueHandle("selectedSlabkms", value);
-                  }}
-                >
-                  {tarrif?.slabkms?.map((item) => {
-                    return (
-                      <Option key={item.value} value={item.value}>
-                        {item.text}
-                      </Option>
-                    );
-                  })}
-                </Select>
-              ) : null}
-            </td>
-          )}
-          {!tarrif.editable ? (
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
-              {tarrif?.selectedSlabfrom == "" ? (
-                <span className="text-red-600">{tarrif.empty}</span>
-              ) : (
-                tarrif?.selectedSlabfrom
-              )}
-            </td>
-          ) : (
-            <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
-              {enableinput?.includes("slabfrom") ? (
-                <Select
-                  style={{ width: "140px" }}
-                  defaultValue={tarrif.selectedSlabfrom}
-                  value={tarrif.selectedSlabfrom}
-                  placeholder="Slab From"
-                  disabled={!enableinput?.includes("slabfrom")}
-                  onChange={(value) => {
-                    valueHandle("selectedSlabfrom", value);
-                  }}
-                >
-                  {tarrif?.slabfrom?.map((item) => {
-                    return (
-                      <Option key={item.value} value={item.value}>
-                        {item.text}
-                      </Option>
-                    );
-                  })}
-                </Select>
-              ) : null}
-            </td>
-          )}
-          {!tarrif.editable ? (
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
-              {tarrif?.selectedSlabto == "" ? (
-                <span className="text-red-600">{tarrif.empty}</span>
-              ) : (
-                tarrif?.selectedSlabto
-              )}
-            </td>
-          ) : (
-            <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
-              {enableinput?.includes("slabto") ? (
-                <Select
-                  style={{ width: "140px" }}
-                  defaultValue={tarrif.selectedSlabto}
-                  value={tarrif.selectedSlabto}
-                  disabled={!enableinput?.includes("slabto")}
-                  onChange={(value) => {
-                    valueHandle("selectedSlabto", value);
-                  }}
-                >
-                  {tarrif?.slabto?.map((item) => {
-                    return (
-                      <Option key={item.value} value={item.value}>
-                        {item.text}
-                      </Option>
-                    );
-                  })}
-                </Select>
-              ) : null}
-            </td>
-          )}
-          {!tarrif.editable ? (
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
-              {tarrif?.selectedAddon == "" ? (
-                <span className="text-red-600">{tarrif.empty}</span>
-              ) : (
-                tarrif?.selectedAddon
-              )}
-            </td>
-          ) : (
-            <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
-              {enableinput?.includes("addon") ? (
-                <Select
-                  style={{ width: "140px" }}
-                  defaultValue={tarrif.selectedAddon}
-                  value={tarrif.selectedAddon}
-                  disabled={!enableinput?.includes("addon")}
-                  onChange={(value) => {
-                    valueHandle("selectedAddon", value);
-                  }}
-                >
-                  {tarrif?.addon?.map((item) => {
-                    return (
-                      <Option key={item.value} value={item.value}>
-                        {item.text}
-                      </Option>
-                    );
-                  })}
-                </Select>
-              ) : null}
-            </td>
-          )}
-          {!tarrif.editable ? (
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
-              {tarrif?.salesRate == null ? (
-                <span className="text-red-600">{tarrif.empty}</span>
-              ) : (
-                tarrif?.salesRate
-              )}
-            </td>
-          ) : (
-            <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
-              {enableinput?.includes("salesRate") ? (
-                <NumericInput
-                  style={{ width: "140px" }}
-                  defaultValue={tarrif.salesRate}
-                  value={tarrif.salesRate}
-                  disabled={!enableinput?.includes("salesRate")}
-                  onChange={(value) => {
-                    valueHandle("salesRate", value);
-                  }}
-                />
-              ) : null}
-            </td>
-          )}
-          {!tarrif.editable ? (
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
-              {tarrif?.purchaseRate == null ? (
-                <span className="text-red-600">{tarrif.empty}</span>
-              ) : (
-                tarrif?.purchaseRate
-              )}
-            </td>
-          ) : (
-            <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
-              {enableinput?.includes("purchaseRate") ? (
-                <NumericInput
-                  style={{ width: "140px" }}
-                  defaultValue={tarrif.purchaseRate}
-                  value={tarrif.purchaseRate}
-                  disabled={!enableinput?.includes("purchaseRate")}
-                  onChange={(value) => {
-                    valueHandle("purchaseRate", value);
-                  }}
-                />
-              ) : null}
-            </td>
-          )}
-          {!tarrif.editable ? (
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
-              {tarrif?.salesExKmsRate == null ? (
-                <span className="text-red-600">{tarrif.empty}</span>
-              ) : (
-                tarrif?.salesExKmsRate
-              )}
-            </td>
-          ) : (
-            <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
-              {enableinput?.includes("salesExKmsRate") ? (
-                <NumericInput
-                  style={{ width: "140px" }}
-                  defaultValue={tarrif.salesExKmsRate}
-                  value={tarrif.salesExKmsRate}
-                  disabled={!enableinput?.includes("salesExKmsRate")}
-                  onChange={(value) => {
-                    valueHandle("salesExKmsRate", value);
-                  }}
-                />
-              ) : null}
-            </td>
-          )}
-          {!tarrif.editable ? (
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
-              {tarrif?.salesExHrsRate == null ? (
-                <span className="text-red-600">{tarrif.empty}</span>
-              ) : (
-                tarrif?.salesExHrsRate
-              )}
-            </td>
-          ) : (
-            <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
-              {enableinput?.includes("salesExHrsRate") ? (
-                <NumericInput
-                  style={{ width: "140px" }}
-                  defaultValue={tarrif.salesExHrsRate}
-                  value={tarrif.salesExHrsRate}
-                  disabled={!enableinput?.includes("salesExHrsRate")}
-                  onChange={(value) => {
-                    valueHandle("salesExHrsRate", value);
-                  }}
-                />
-              ) : null}
-            </td>
-          )}
-          {!tarrif.editable ? (
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
-              {tarrif?.purchaseExHrsRate == null ? (
-                <span className="text-red-600">{tarrif.empty}</span>
-              ) : (
-                tarrif?.purchaseExHrsRate
-              )}
-            </td>
-          ) : (
-            <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
-              {enableinput?.includes("purchaseExHrsRate") ? (
-                <NumericInput
-                  style={{ width: "140px" }}
-                  defaultValue={tarrif.purchaseExHrsRate}
-                  value={tarrif.purchaseExHrsRate}
-                  disabled={!enableinput?.includes("purchaseExHrsRate")}
-                  onChange={(value) => {
-                    valueHandle("purchaseExHrsRate", value);
-                  }}
-                />
-              ) : null}
-            </td>
-          )}
-          {!tarrif.editable ? (
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
-              {tarrif?.purchaseExKmsRate == null ? (
-                <span className="text-red-600">{tarrif.empty}</span>
-              ) : (
-                tarrif?.purchaseExKmsRate
-              )}
-            </td>
-          ) : (
-            <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
-              {enableinput?.includes("purchaseExKmsRate") ? (
-                <NumericInput
-                  style={{ width: "140px" }}
-                  defaultValue={tarrif.purchaseExKmsRate}
-                  value={tarrif.purchaseExKmsRate}
-                  disabled={!enableinput?.includes("purchaseExKmsRate")}
-                  onChange={(value) => {
-                    valueHandle("purchaseExKmsRate", value);
-                  }}
-                />
-              ) : null}
-            </td>
-          )}
-          {!tarrif.editable ? (
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
-              {tarrif?.salesGraceTime == null ? (
-                <span className="text-red-600">{tarrif.empty}</span>
-              ) : (
-                tarrif?.salesGraceTime
-              )}
-            </td>
-          ) : (
-            <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
-              {enableinput?.includes("salesGraceTime") ? (
-                <NumericInput
-                  style={{ width: "140px" }}
-                  defaultValue={tarrif.salesGraceTime}
-                  value={tarrif.salesGraceTime}
-                  disabled={!enableinput?.includes("salesGraceTime")}
-                  onChange={(value) => {
-                    valueHandle("salesGraceTime", value);
-                  }}
-                />
-              ) : null}
-            </td>
-          )}
-          {!tarrif.editable ? (
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
-              {tarrif?.purchaseGraceTime == null ? (
-                <span className="text-red-600">{tarrif.empty}</span>
-              ) : (
-                tarrif?.purchaseGraceTime
-              )}
-            </td>
-          ) : (
-            <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
-              {enableinput?.includes("purchaseGraceTime") ? (
-                <NumericInput
-                  style={{ width: "140px" }}
-                  defaultValue={tarrif.purchaseGraceTime}
-                  value={tarrif.purchaseGraceTime}
-                  disabled={!enableinput?.includes("purchaseGraceTime")}
-                  onChange={(value) => {
-                    valueHandle("purchaseGraceTime", value);
-                  }}
-                />
-              ) : null}
-            </td>
-          )}
-          {!tarrif.editable ? (
-            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
-              {tarrif?.driverbata == null ? (
-                <span className="text-red-600">{tarrif.empty}</span>
-              ) : (
-                tarrif?.driverbata
-              )}
-            </td>
-          ) : (
-            <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
-              {enableinput?.includes("driverbata") ? (
-                <NumericInput
-                  style={{ width: "140px" }}
-                  defaultValue={tarrif.driverbata}
-                  value={tarrif.driverbata}
-                  disabled={!enableinput?.includes("driverbata")}
-                  onChange={(value) => {
-                    valueHandle("driverbata", value);
-                  }}
-                />
-              ) : null}
-            </td>
-          )}
-          <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200">
-            <Space>
-              {tarrif.editable ? (
-                <>
-                  <Button
-                    type="primary"
-                    className="mt-3"
-                    onClick={() => updateTarrifData(index)}
+              </td>
+            )}
+            {!tarrif.editable ? (
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
+                {tarrif?.selectedSegment == "" ? (
+                  <span className="text-red-600">{tarrif.empty}</span>
+                ) : (
+                  tarrif?.selectedSegment
+                )}
+              </td>
+            ) : (
+              <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
+                {enableinput?.includes("segment") ? (
+                  <Select
+                    style={{ width: "140px" }}
+                    disabled={!enableinput?.includes("segment")}
+                    defaultValue={tarrif?.selectedSegment}
+                    value={tarrif?.selectedSegment}
+                    onChange={(value) => {
+                      valueHandle("selectedSegment", value);
+                    }}
                   >
-                    Save
-                  </Button>
-                  <Button className="mt-3">
-                    <Popconfirm
-                      title="Sure to cancel?"
-                      onConfirm={() => cancelTarrifData(index)}
+                    {tarrif?.segment?.map((item) => {
+                      return (
+                        <Option key={item.value} value={item.value}>
+                          {item.text}
+                        </Option>
+                      );
+                    })}
+                  </Select>
+                ) : null}
+              </td>
+            )}
+            {!tarrif.editable ? (
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
+                {tarrif?.selectedArea == "" ? (
+                  <span className="text-red-600">{tarrif.empty}</span>
+                ) : (
+                  tarrif?.selectedArea
+                )}
+              </td>
+            ) : (
+              <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
+                {enableinput?.includes("area") ? (
+                  <Select
+                    style={{ width: "140px" }}
+                    disabled={!enableinput?.includes("area")}
+                    defaultValue={tarrif?.selectedArea}
+                    value={tarrif?.selectedArea}
+                    onChange={(value) => {
+                      valueHandle("selectedArea", value);
+                    }}
+                  >
+                    {tarrif?.area?.map((item) => {
+                      return (
+                        <Option key={item.value} value={item.value}>
+                          {item.text}
+                        </Option>
+                      );
+                    })}
+                  </Select>
+                ) : null}
+              </td>
+            )}
+            {!tarrif.editable ? (
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
+                {tarrif?.selectedSlabhrs == "" ? (
+                  <span className="text-red-600">{tarrif.empty}</span>
+                ) : (
+                  tarrif?.selectedSlabhrs
+                )}
+              </td>
+            ) : (
+              <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
+                {enableinput?.includes("slabhrs") ? (
+                  <Select
+                    style={{ width: "140px" }}
+                    disabled={!enableinput?.includes("slabhrs")}
+                    onChange={(value) => {
+                      valueHandle("selectedSlabhrs", value);
+                    }}
+                    defaultValue={tarrif?.selectedSlabhrs}
+                    value={tarrif?.selectedSlabhrs}
+                  >
+                    {tarrif?.slabhrs?.map((item) => {
+                      return (
+                        <Option key={item.value} value={item.value}>
+                          {item.text}
+                        </Option>
+                      );
+                    })}
+                  </Select>
+                ) : null}
+              </td>
+            )}
+            {!tarrif.editable ? (
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
+                {tarrif?.selectedSlabkms == "" ? (
+                  <span className="text-red-600">{tarrif.empty}</span>
+                ) : (
+                  tarrif?.selectedSlabkms
+                )}
+              </td>
+            ) : (
+              <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
+                {enableinput?.includes("slabkms") ? (
+                  <Select
+                    style={{ width: "140px" }}
+                    defaultValue={tarrif.selectedSlabkms}
+                    value={tarrif.selectedSlabkms}
+                    disabled={!enableinput?.includes("slabkms")}
+                    onChange={(value) => {
+                      valueHandle("selectedSlabkms", value);
+                    }}
+                  >
+                    {tarrif?.slabkms?.map((item) => {
+                      return (
+                        <Option key={item.value} value={item.value}>
+                          {item.text}
+                        </Option>
+                      );
+                    })}
+                  </Select>
+                ) : null}
+              </td>
+            )}
+            {!tarrif.editable ? (
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
+                {tarrif?.selectedSlabfrom == "" ? (
+                  <span className="text-red-600">{tarrif.empty}</span>
+                ) : (
+                  tarrif?.selectedSlabfrom
+                )}
+              </td>
+            ) : (
+              <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
+                {enableinput?.includes("slabfrom") ? (
+                  <Select
+                    style={{ width: "140px" }}
+                    defaultValue={tarrif.selectedSlabfrom}
+                    value={tarrif.selectedSlabfrom}
+                    placeholder="Slab From"
+                    disabled={!enableinput?.includes("slabfrom")}
+                    onChange={(value) => {
+                      valueHandle("selectedSlabfrom", value);
+                    }}
+                  >
+                    {tarrif?.slabfrom?.map((item) => {
+                      return (
+                        <Option key={item.value} value={item.value}>
+                          {item.text}
+                        </Option>
+                      );
+                    })}
+                  </Select>
+                ) : null}
+              </td>
+            )}
+            {!tarrif.editable ? (
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
+                {tarrif?.selectedSlabto == "" ? (
+                  <span className="text-red-600">{tarrif.empty}</span>
+                ) : (
+                  tarrif?.selectedSlabto
+                )}
+              </td>
+            ) : (
+              <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
+                {enableinput?.includes("slabto") ? (
+                  <Select
+                    style={{ width: "140px" }}
+                    defaultValue={tarrif.selectedSlabto}
+                    value={tarrif.selectedSlabto}
+                    disabled={!enableinput?.includes("slabto")}
+                    onChange={(value) => {
+                      valueHandle("selectedSlabto", value);
+                    }}
+                  >
+                    {tarrif?.slabto?.map((item) => {
+                      return (
+                        <Option key={item.value} value={item.value}>
+                          {item.text}
+                        </Option>
+                      );
+                    })}
+                  </Select>
+                ) : null}
+              </td>
+            )}
+            {!tarrif.editable ? (
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
+                {tarrif?.selectedAddon == "" ? (
+                  <span className="text-red-600">{tarrif.empty}</span>
+                ) : (
+                  tarrif?.selectedAddon
+                )}
+              </td>
+            ) : (
+              <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
+                {enableinput?.includes("addon") ? (
+                  <Select
+                    style={{ width: "140px" }}
+                    defaultValue={tarrif.selectedAddon}
+                    value={tarrif.selectedAddon}
+                    disabled={!enableinput?.includes("addon")}
+                    onChange={(value) => {
+                      valueHandle("selectedAddon", value);
+                    }}
+                  >
+                    {tarrif?.addon?.map((item) => {
+                      return (
+                        <Option key={item.value} value={item.value}>
+                          {item.text}
+                        </Option>
+                      );
+                    })}
+                  </Select>
+                ) : null}
+              </td>
+            )}
+            {!tarrif.editable ? (
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
+                {tarrif?.salesRate == null ? (
+                  <span className="text-red-600">{tarrif.empty}</span>
+                ) : (
+                  tarrif?.salesRate
+                )}
+              </td>
+            ) : (
+              <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
+                {enableinput?.includes("salesRate") ? (
+                  <NumericInput
+                    style={{ width: "140px" }}
+                    defaultValue={tarrif.salesRate}
+                    value={tarrif.salesRate}
+                    disabled={!enableinput?.includes("salesRate")}
+                    onChange={(value) => {
+                      valueHandle("salesRate", value);
+                    }}
+                  />
+                ) : null}
+              </td>
+            )}
+            {!tarrif.editable ? (
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
+                {tarrif?.purchaseRate == null ? (
+                  <span className="text-red-600">{tarrif.empty}</span>
+                ) : (
+                  tarrif?.purchaseRate
+                )}
+              </td>
+            ) : (
+              <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
+                {enableinput?.includes("purchaseRate") ? (
+                  <NumericInput
+                    style={{ width: "140px" }}
+                    defaultValue={tarrif.purchaseRate}
+                    value={tarrif.purchaseRate}
+                    disabled={!enableinput?.includes("purchaseRate")}
+                    onChange={(value) => {
+                      valueHandle("purchaseRate", value);
+                    }}
+                  />
+                ) : null}
+              </td>
+            )}
+            {!tarrif.editable ? (
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
+                {tarrif?.salesExKmsRate == null ? (
+                  <span className="text-red-600">{tarrif.empty}</span>
+                ) : (
+                  tarrif?.salesExKmsRate
+                )}
+              </td>
+            ) : (
+              <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
+                {enableinput?.includes("salesExKmsRate") ? (
+                  <NumericInput
+                    style={{ width: "140px" }}
+                    defaultValue={tarrif.salesExKmsRate}
+                    value={tarrif.salesExKmsRate}
+                    disabled={!enableinput?.includes("salesExKmsRate")}
+                    onChange={(value) => {
+                      valueHandle("salesExKmsRate", value);
+                    }}
+                  />
+                ) : null}
+              </td>
+            )}
+            {!tarrif.editable ? (
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
+                {tarrif?.salesExHrsRate == null ? (
+                  <span className="text-red-600">{tarrif.empty}</span>
+                ) : (
+                  tarrif?.salesExHrsRate
+                )}
+              </td>
+            ) : (
+              <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
+                {enableinput?.includes("salesExHrsRate") ? (
+                  <NumericInput
+                    style={{ width: "140px" }}
+                    defaultValue={tarrif.salesExHrsRate}
+                    value={tarrif.salesExHrsRate}
+                    disabled={!enableinput?.includes("salesExHrsRate")}
+                    onChange={(value) => {
+                      valueHandle("salesExHrsRate", value);
+                    }}
+                  />
+                ) : null}
+              </td>
+            )}
+            {!tarrif.editable ? (
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
+                {tarrif?.purchaseExHrsRate == null ? (
+                  <span className="text-red-600">{tarrif.empty}</span>
+                ) : (
+                  tarrif?.purchaseExHrsRate
+                )}
+              </td>
+            ) : (
+              <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
+                {enableinput?.includes("purchaseExHrsRate") ? (
+                  <NumericInput
+                    style={{ width: "140px" }}
+                    defaultValue={tarrif.purchaseExHrsRate}
+                    value={tarrif.purchaseExHrsRate}
+                    disabled={!enableinput?.includes("purchaseExHrsRate")}
+                    onChange={(value) => {
+                      valueHandle("purchaseExHrsRate", value);
+                    }}
+                  />
+                ) : null}
+              </td>
+            )}
+            {!tarrif.editable ? (
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
+                {tarrif?.purchaseExKmsRate == null ? (
+                  <span className="text-red-600">{tarrif.empty}</span>
+                ) : (
+                  tarrif?.purchaseExKmsRate
+                )}
+              </td>
+            ) : (
+              <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
+                {enableinput?.includes("purchaseExKmsRate") ? (
+                  <NumericInput
+                    style={{ width: "140px" }}
+                    defaultValue={tarrif.purchaseExKmsRate}
+                    value={tarrif.purchaseExKmsRate}
+                    disabled={!enableinput?.includes("purchaseExKmsRate")}
+                    onChange={(value) => {
+                      valueHandle("purchaseExKmsRate", value);
+                    }}
+                  />
+                ) : null}
+              </td>
+            )}
+            {!tarrif.editable ? (
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
+                {tarrif?.salesGraceTime == null ? (
+                  <span className="text-red-600">{tarrif.empty}</span>
+                ) : (
+                  tarrif?.salesGraceTime
+                )}
+              </td>
+            ) : (
+              <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
+                {enableinput?.includes("salesGraceTime") ? (
+                  <NumericInput
+                    style={{ width: "140px" }}
+                    defaultValue={tarrif.salesGraceTime}
+                    value={tarrif.salesGraceTime}
+                    disabled={!enableinput?.includes("salesGraceTime")}
+                    onChange={(value) => {
+                      valueHandle("salesGraceTime", value);
+                    }}
+                  />
+                ) : null}
+              </td>
+            )}
+            {!tarrif.editable ? (
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
+                {tarrif?.purchaseGraceTime == null ? (
+                  <span className="text-red-600">{tarrif.empty}</span>
+                ) : (
+                  tarrif?.purchaseGraceTime
+                )}
+              </td>
+            ) : (
+              <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
+                {enableinput?.includes("purchaseGraceTime") ? (
+                  <NumericInput
+                    style={{ width: "140px" }}
+                    defaultValue={tarrif.purchaseGraceTime}
+                    value={tarrif.purchaseGraceTime}
+                    disabled={!enableinput?.includes("purchaseGraceTime")}
+                    onChange={(value) => {
+                      valueHandle("purchaseGraceTime", value);
+                    }}
+                  />
+                ) : null}
+              </td>
+            )}
+            {!tarrif.editable ? (
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
+                {tarrif?.driverbata == null ? (
+                  <span className="text-red-600">{tarrif.empty}</span>
+                ) : (
+                  tarrif?.driverbata
+                )}
+              </td>
+            ) : (
+              <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
+                {enableinput?.includes("driverbata") ? (
+                  <NumericInput
+                    style={{ width: "140px" }}
+                    defaultValue={tarrif.driverbata}
+                    value={tarrif.driverbata}
+                    disabled={!enableinput?.includes("driverbata")}
+                    onChange={(value) => {
+                      valueHandle("driverbata", value);
+                    }}
+                  />
+                ) : null}
+              </td>
+            )}
+            <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200">
+              <Space>
+                {tarrif.editable ? (
+                  <>
+                    <Button
+                      type="primary"
+                      className="mt-3"
+                      onClick={() => updateTarrifData(index)}
                     >
-                      <a>Cancel</a>
-                    </Popconfirm>
-                  </Button>
-                </>
-              ) : (
-                <>
-                  <Button
-                    className="mt-3"
-                    onClick={() => editTarrifData(index)}
-                    disabled={editableIndex !== null && editableIndex !== index}
-                  >
-                    Edit
-                  </Button>
+                      Save
+                    </Button>
+                    <Button className="mt-3">
+                      <Popconfirm
+                        title="Sure to cancel?"
+                        onConfirm={() => cancelTarrifData(index)}
+                      >
+                        <a>Cancel</a>
+                      </Popconfirm>
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    <Button
+                      className="mt-3"
+                      onClick={() => editTarrifData(index)}
+                      disabled={
+                        editableIndex !== null && editableIndex !== index
+                      }
+                    >
+                      Edit
+                    </Button>
 
-                  <Button
-                    disabled={editableIndex !== null && editableIndex !== index}
-                    className="bg-red-700 hover:bg-red-400  border-red-700 hover:border-red-500 text-white mt-3"
-                    onClick={() => deleteTarrifData(tarrif?._id)}
-                  >
-                    Delete
-                  </Button>
-                </>
-              )}
-            </Space>
-          </td>
-        </tr>
+                    <Button
+                      disabled={
+                        editableIndex !== null && editableIndex !== index
+                      }
+                      className="bg-red-700 hover:bg-red-400  border-red-700 hover:border-red-500 text-white mt-3"
+                      onClick={() => deleteTarrifData(tarrif?._id)}
+                    >
+                      Delete
+                    </Button>
+                  </>
+                )}
+              </Space>
+            </td>
+          </tr>
+        </>
       )}
+
       {screenAdd == "add" && (
         <tr>
           <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200">

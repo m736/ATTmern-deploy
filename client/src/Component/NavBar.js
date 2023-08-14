@@ -56,6 +56,11 @@ const NavBar = () => {
           href: "/tarrif/new_tarrif",
         },
         {
+          title: "TarrifExcelUpload",
+          icon: <BsBuildingAdd />,
+          href: "/tarrif/upload_tarrif",
+        },
+        {
           title: "TarrifList",
           icon: <BsBuildingAdd />,
           href: "/tarrif/tarrif_list",
@@ -87,6 +92,11 @@ const NavBar = () => {
           title: "On Call MIS Upload",
           icon: <BsBuildingAdd />,
           href: "/mis/oncall_mis_upload",
+        },
+        {
+          title: "Slab Base MIS",
+          icon: <BsBuildingAdd />,
+          href: "/mis/slab_mis_upload",
         },
         {
           title: "DownloadOn Call MIS",
