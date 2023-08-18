@@ -50,7 +50,6 @@ const ReadUpdateDeleteTarrif = () => {
     navigate("/tarrif/new_tarrif");
   };
 
-  console.log(currentTableData);
   return (
     <>
       {tarrifInput?.length > 0 ? (

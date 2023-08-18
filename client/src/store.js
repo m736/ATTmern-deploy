@@ -6,6 +6,8 @@ import TarrifSliceReducer from "./slices/TarrifSlice";
 import TripSheetSliceReducer from "./slices/TripSheetSlice";
 import OnCallMisSliceReducer from "./slices/OnCallMisSlice";
 import SlabBaseMisSliceReducer from "./slices/SlabBaseMisSlice";
+import TripBaseMisSliceReducer from "./slices/TripBaseMisSlice";
+import DayBaseMisSliceReducer from "./slices/DayBaseMisSlice";
 
 const reducer = combineReducers({
   VechicleDetailState: VechicleDetailSliceReducer,
@@ -14,6 +16,8 @@ const reducer = combineReducers({
   TripSheetState: TripSheetSliceReducer,
   OnCallMisState: OnCallMisSliceReducer,
   SlabBaseMisState: SlabBaseMisSliceReducer,
+  TripBaseMisState: TripBaseMisSliceReducer,
+  DayBaseMisState: DayBaseMisSliceReducer,
 });
 
 const store = configureStore({

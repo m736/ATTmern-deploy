@@ -216,7 +216,6 @@ const OnCallMISUpload = () => {
           tarrrifSlabKms && OurTotalKms >= tarrrifSlabKms
             ? OurTotalKms - tarrrifSlabKms
             : 0;
-        console.log(`${tarrrifSlabKms}-${OurTotalKms}-${remainingKms}`);
         // console.log(remainingKms);
         const remainingKmsForOutAndDay =
           OurTotalDays > 0 && OurTotalDays * tarrrifSlabKms >= OurTotalKms

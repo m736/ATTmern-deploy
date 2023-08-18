@@ -40,7 +40,7 @@ export const tarrifInputField = {
   selectedRental: "Local",
   segment: [
     { value: "a/c", text: "a/c" },
-    { value: "non a/s", text: "non a/c" },
+    { value: "non a/c", text: "non a/c" },
   ],
   selectedSegment: "",
   area: [
@@ -84,6 +84,8 @@ export const tarrifInputField = {
   addon: [
     { value: "single", text: "Single" },
     { value: "escort", text: "Escort" },
+    { value: "single_long", text: "Single_Long" },
+    { value: "back_to_back", text: "Back_to_Back" },
   ],
   selectedAddon: "",
   salesRate: null,
@@ -119,4 +121,11 @@ export const slabExcelUploadrequiredFields = [
   "Trip ID",
   "Vehicle Billed as",
   "Segment",
+];
+export const tripExcelUploadrequiredFields = [
+  "Trip_Id",
+  "Company",
+  "Vehicle_Billed_As",
+  "Segment",
+  "Trip_Type",
 ];

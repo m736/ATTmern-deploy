@@ -13,6 +13,14 @@ router.use(
   require("src/helpers/base.crud")(models.SlabBaseMisUploadData)
 );
 router.use(
+  "/tripbase_mis_data",
+  require("src/helpers/base.crud")(models.TripBaseMisUploadData)
+);
+router.use(
+  "/daybase_mis_data",
+  require("src/helpers/base.crud")(models.DayBaseMisUploadData)
+);
+router.use(
   "/vehicle_list",
   require("src/helpers/base.crud")(models.AddVehicle)
 );

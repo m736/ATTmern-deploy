@@ -52,5 +52,27 @@ router.post("/slabbase_mis_bulk_update", async (req, res, next) => {
     });
   }
 });
+router.post("/download_slabBase_misdata", async (req, res, next) => {
+  try {
+    const searchData = req.body;
+    console.log(searchData);
+    let singleSlabData = await SlabBaseMisUploadData.find({
+      $and: [
+        { Company: searchData.company },
+        {
+          date: {
+            $gte: searchData.startJourney,
+            $lte: searchData.endJourney,
+          },
+        },
+      ],
+    }).exec();
+    console.log(singleSlabData);
+    return res.json(singleSlabData);
+  } catch (err) {
+    console.error("download_slabBase_misdata error: ", err);
+    res.status(500).json({ success: false, message: "internal_server_error" });
+  }
+});
 
 module.exports = router;

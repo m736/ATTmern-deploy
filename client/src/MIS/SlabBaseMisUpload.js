@@ -85,21 +85,21 @@ const SlabBaseMisUpload = () => {
         "Tot Kms": obj["Tot Kms"] || 0,
         "Trip Type": obj["Trip Type"] || "",
         "Duty Type": obj["Duty Type"] || "",
-        Slab1: obj["Slab1"] || "",
-        Slab2: obj["Slab2"] || "",
-        Slab3: obj["Slab3"] || "",
-        Slab4: obj["Slab4"] || "",
-        Slab5: obj["Slab5"] || "",
-        "Slab1 - E": obj["Slab1 - E"] || "",
-        "Slab2 - E": obj["Slab2 - E"] || "",
-        "Slab3 - E": obj["Slab3 - E"] || "",
-        "Slab4 - E": obj["Slab4 - E"] || "",
-        "Slab5 - E": obj["Slab5 - E"] || "",
-        "Slab1 - Single": obj["Slab1 - Single"] || "",
-        "Slab2 - Single": obj["Slab2 - Single"] || "",
-        "Slab3 - Single": obj["Slab3 - Single"] || "",
-        "Slab4 - Single": obj["Slab4 - Single"] || "",
-        "Slab5 - Single": obj["Slab5 - Single"] || "",
+        Slab1: obj["Slab1"] || 0,
+        Slab2: obj["Slab2"] || 0,
+        Slab3: obj["Slab3"] || 0,
+        Slab4: obj["Slab4"] || 0,
+        Slab5: obj["Slab5"] || 0,
+        "Slab1 - E": obj["Slab1 - E"] || 0,
+        "Slab2 - E": obj["Slab2 - E"] || 0,
+        "Slab3 - E": obj["Slab3 - E"] || 0,
+        "Slab4 - E": obj["Slab4 - E"] || 0,
+        "Slab5 - E": obj["Slab5 - E"] || 0,
+        "Slab1 - Single": obj["Slab1 - Single"] || 0,
+        "Slab2 - Single": obj["Slab2 - Single"] || 0,
+        "Slab3 - Single": obj["Slab3 - Single"] || 0,
+        "Slab4 - Single": obj["Slab4 - Single"] || 0,
+        "Slab5 - Single": obj["Slab5 - Single"] || 0,
         Bata: obj["Bata"] || 0,
         "Fuel Difference": obj["Fuel Difference"] || 0,
         Company: obj["Company"] || "",
@@ -110,15 +110,36 @@ const SlabBaseMisUpload = () => {
 
       const updatedlistSlabBase = listSlabBase.filter((x) => x._id);
       const newlistSlabBase = listSlabBase.filter((x) => !x._id);
-      console.log(
-        updatedlistSlabBase,
-        getFinalFilteredArray(updatedlistSlabBase)
-      );
-      console.log(newlistSlabBase, getFinalFilteredArray(newlistSlabBase));
-      // const updateFinalSlabBase = getFinalFilteredArray(updatedlistSlabBase);
-      // const newFinalListSlabBase = getFinalFilteredArray(newlistSlabBase);
 
-      // fetchSlabBaseMisUploadData();
+      const updateFinalSlabBase = getFinalFilteredArray(updatedlistSlabBase);
+      const newFinalListSlabBase = getFinalFilteredArray(newlistSlabBase);
+      if (updateFinalSlabBase.length) {
+        const result = (
+          await axios.post(
+            "http://localhost:4000/slabmis_bulk/slabbase_mis_bulk_update",
+            updateFinalSlabBase
+          )
+        ).data;
+        if (result) {
+          alert(
+            "Successfully updated " + updateFinalSlabBase.length + " documents"
+          );
+        }
+      }
+      if (newFinalListSlabBase.length) {
+        const result = (
+          await axios.post(
+            "http://localhost:4000/slabmis_bulk/slabbase_mis_bulk_insert",
+            newFinalListSlabBase
+          )
+        ).data;
+        if (result) {
+          alert(
+            "Successfully added " + newFinalListSlabBase.length + " documents"
+          );
+        }
+      }
+      fetchSlabBaseMisUploadData();
       setLoading(false);
     } catch (error) {
       setLoading(false);
@@ -127,21 +148,23 @@ const SlabBaseMisUpload = () => {
   };
 
   const getFinalFilteredArray = (parentList) => {
-    let finalList = parentList.map((singleOnCallData) => {
-      console.log(singleOnCallData);
-      console.log(singleOnCallData?.["Vehicle Billed as"]);
+    let finalList = parentList.map((singleSlabBaseData) => {
       if (tarrifData?.length) {
         let filterData = tarrifData.filter((item) => {
           return (
-            singleOnCallData?.Company == item?.company &&
-            singleOnCallData?.["Vehicle Billed as"] == item?.vehicleType &&
-            singleOnCallData?.["Duty Type"] == item?.selectedRental &&
-            singleOnCallData?.Segment == item?.selectedSegment
+            singleSlabBaseData?.Company?.toUpperCase() ==
+              item?.company?.toUpperCase() &&
+            singleSlabBaseData?.["Vehicle Billed as"]?.toUpperCase() ==
+              item?.vehicleType?.toUpperCase() &&
+            singleSlabBaseData?.["Duty Type"]?.toUpperCase() ==
+              item?.selectedRental?.toUpperCase() &&
+            singleSlabBaseData?.Segment?.toUpperCase() ==
+              item?.selectedSegment?.toUpperCase()
           );
         });
-        console.log(filterData);
+        // console.log(filterData);
         let ActiveSlabs = [];
-        for (let [key, value] of Object.entries(singleOnCallData)) {
+        for (let [key, value] of Object.entries(singleSlabBaseData)) {
           if (key.includes("Slab") && value == 1) {
             ActiveSlabs.push(key.replace("Slab", ""));
           }
@@ -152,6 +175,7 @@ const SlabBaseMisUpload = () => {
             let emptyAddOn = filterData.filter(
               (addon) => addon.selectedAddon == "escort"
             );
+
             if (emptyAddOn[Number(slab.replace(" - E", "")) - 1]) {
               SlabFilterData.push(
                 emptyAddOn[Number(slab.replace(" - E", "")) - 1]
@@ -177,36 +201,51 @@ const SlabBaseMisUpload = () => {
             }
           }
         });
-        let escortBata;
-        let salesBata;
-        let singleBata;
-        const newMethod = SlabFilterData.map((item) => {
+        console.log(SlabFilterData);
+        let salesEscortBata = 0;
+        let salesBata = 0;
+        let salesSingleBata = 0;
+        SlabFilterData.map((item) => {
+          // console.log(item);
           if (item.selectedAddon == "") {
-            return (salesBata = item?.salesRate ?? 0);
-          } else if (item.selectedAddon == "escort") {
-            return (escortBata = item?.salesRate ?? 0);
-          } else if (item.selectedAddon == "single") {
-            return (singleBata = item?.salesRate ?? 0);
+            return (salesBata = Number(item?.salesRate ?? 0));
+          } else if (item?.selectedAddon == "escort") {
+            return (salesEscortBata = Number(item?.salesRate ?? 0));
+          } else if (item?.selectedAddon == "single") {
+            return (salesSingleBata = Number(item?.salesRate ?? 0));
           }
         });
-
-        console.log({
-          salesBata: salesBata,
-          escortBata: escortBata,
-          singleBata: singleBata,
-          ...singleOnCallData,
+        let total = 0;
+        SlabFilterData.map((item) => {
+          return (total = Number(
+            `${
+              Number(item?.Bata ?? 0) +
+              Number(item?.["Fuel Difference"] ?? 0) +
+              salesEscortBata +
+              salesBata +
+              salesSingleBata
+            }`
+          ));
         });
+
+        return {
+          salesBata: salesBata,
+          salesEscortBata: salesEscortBata,
+          salesSingleBata: salesSingleBata,
+          SalesTotal: total,
+          ...singleSlabBaseData,
+        };
       } else {
-        return singleOnCallData;
+        return singleSlabBaseData;
       }
     });
     return finalList;
   };
-  // const removeFile = () => {
-  //   setSelectedFile(null);
-  //   setExcelRows([]);
-  //   window.location.reload();
-  // };
+  const removeFile = () => {
+    setSelectedFile(null);
+    setExcelRows([]);
+    window.location.reload();
+  };
   return (
     <>
       <h1 className="text-black mt-5 mb-10 text-2xl">
@@ -243,7 +282,7 @@ const SlabBaseMisUpload = () => {
                   UploadMISData
                 </button>
               ) : null}{" "}
-              {/* {selectedFile?.name && excelRows.length ? (
+              {selectedFile?.name && excelRows.length ? (
                 <button
                   class="bg-red-500 hover:bg-red-900 text-white py-3 px-4 ml-3 rounded"
                   disabled={loading}
@@ -251,7 +290,7 @@ const SlabBaseMisUpload = () => {
                 >
                   Remove
                 </button>
-              ) : null} */}
+              ) : null}
             </div>
           </div>
         </div>

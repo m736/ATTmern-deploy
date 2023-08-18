@@ -37,7 +37,7 @@ export const addVehicle =
           },
         }
       );
-      console.log(data);
+
       dispatch(addVehicleSuccess(data));
     } catch (error) {
       dispatch(addVehicleFail(error.response.data.message));
@@ -56,7 +56,7 @@ export const updateVehicleList = (id, vehicleListData) => async (dispatch) => {
         },
       }
     );
-    console.log(data);
+
     dispatch(updateVehicleListSuccess(data));
   } catch (error) {
     //handle error

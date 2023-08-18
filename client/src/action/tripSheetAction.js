@@ -16,10 +16,9 @@ export const createTripSheetAction = (formData) => async (dispatch) => {
 
       formData
     );
-    console.log(data);
+
     dispatch(createTripSheetSuccess(data));
   } catch (error) {
-    console.log(error);
     dispatch(createTripSheetFail(error));
   }
 };
@@ -30,7 +29,6 @@ export const getTripSheetAction = async (dispatch) => {
       "http://localhost:4000/api/v1/tripsheet_entry/get_tripsheet_list"
     );
 
-    console.log(data);
     dispatch(getTripSheetListSuccess(data));
   } catch (error) {
     //handle error

@@ -23,7 +23,6 @@ export const getOnCallMisData = async (dispatch) => {
 };
 export const searchOnOnCallMisAction = (formData) => async (dispatch) => {
   try {
-    console.log(formData);
     dispatch(searchOnCallMisDataRequest());
     const { data } = await axios.post(
       "http://localhost:4000/oncall_bulk/download_oncall_misdata",

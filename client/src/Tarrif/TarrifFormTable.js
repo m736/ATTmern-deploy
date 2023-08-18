@@ -2,7 +2,6 @@ import { Button, Form, Input, Popconfirm, Select, Space } from "antd";
 import React, { useEffect, useState } from "react";
 import { NumericInput } from "./NumericInput";
 
-
 import {
   deleteTarrif,
   getTarrif,
@@ -26,7 +25,7 @@ const TarrifFormTable = (props) => {
     editableRow,
   } = props;
   const [form] = Form.useForm();
-  
+
   const EnableTarrifRentalInput = {
     Local: [
       "segment",
@@ -164,7 +163,6 @@ const TarrifFormTable = (props) => {
   }, [tarrif]);
 
   const RentalChange = (value) => {
-    console.log(value);
     form.resetFields();
     valueHandle("selectedRental", value);
   };
@@ -287,7 +285,6 @@ const TarrifFormTable = (props) => {
     <>
       {screenEdit == "edit" && (
         <>
-         
           <tr>
             {!tarrif.editable ? (
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">

@@ -113,7 +113,7 @@ const FormSelect = (props) => {
       setErrorMsg("");
 
       const res = await axios.post(
-        "https://localhost:4000/bulk/vechicle-attendance-list",
+        "http://localhost:4000/bulk/vechicle-attendance-list",
         {
           example: {
             ...values,

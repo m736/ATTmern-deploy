@@ -89,19 +89,44 @@ const NavBar = () => {
       spacing: "true",
       submenuItems: [
         {
-          title: "On Call MIS Upload",
-          icon: <BsBuildingAdd />,
+          title: "OnCall MIS Upload",
+
           href: "/mis/oncall_mis_upload",
         },
         {
-          title: "Slab Base MIS",
-          icon: <BsBuildingAdd />,
+          title: "SlabBase MIS Upload",
+
           href: "/mis/slab_mis_upload",
         },
         {
-          title: "DownloadOn Call MIS",
-          icon: <BsBuildingAdd />,
-          href: "/mis/download_oncall_mis_upload",
+          title: "TripBase MIS Upload",
+
+          href: "/mis/trip_mis_upload",
+        },
+        {
+          title: "DayBase MIS Upload",
+
+          href: "/mis/day_mis_upload",
+        },
+        {
+          title: "DownloadOnCall MIS",
+
+          href: "/mis/download_onCall_mis",
+        },
+        {
+          title: "DownloadSlabBase MIS",
+
+          href: "/mis/download_slabBase_mis",
+        },
+        {
+          title: "DownloadTripBase MIS",
+
+          href: "/mis/download_tripBase_mis",
+        },
+        {
+          title: "DownloadDayBase MIS",
+
+          href: "/mis/download_dayBase_mis",
         },
       ],
     },
@@ -164,7 +189,7 @@ const NavBar = () => {
                 rounded-md ${menu.spacing ? "mt-9" : "mt-2"}`}
               >
                 <span className="text-2xl block float-left">
-                  {menu.icon ? menu.icon : <RiDashboardFill />}
+                  {menu.icon ? menu.icon : null}
                 </span>
                 <span
                   className={`text-base font-medium flex-1 duration-200 ${
@@ -199,11 +224,7 @@ const NavBar = () => {
                      rounded-md mt-2 ml-5"
                     >
                       <span className="text-xl block float-left">
-                        {submenuItem.icon ? (
-                          submenuItem.icon
-                        ) : (
-                          <RiDashboardFill />
-                        )}
+                        {submenuItem.icon ? submenuItem.icon : null}
                       </span>
                       <NavLink to={`${submenuItem.href}`}>
                         {" "}

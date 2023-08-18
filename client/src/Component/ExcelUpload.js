@@ -167,7 +167,7 @@ function ExcelUpload() {
             <div className="text-sm pt-5">
               {" "}
               {"NOTE: The headers in the Excel file should be as follows!. => "}
-              {requiredFields.join(", ")}
+              {requiredFields?.join(", ")}
             </div>
           </div>
           <div>

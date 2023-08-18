@@ -41,9 +41,7 @@ router.post(
   "/addvehicle",
   upload.any(),
   catchAsyncError(async (req, res, next) => {
-    console.log(req.body);
     let uploadfiles = req.files;
-    console.log(uploadfiles);
     let driverphoto;
     let driver_pcc_file_upload;
     let driver_badgefile_upload;
@@ -53,7 +51,6 @@ router.post(
 
     if (uploadfiles) {
       uploadfiles.map((item) => {
-        console.log(item.fieldname);
         if (item.fieldname === "vehicle_puc") {
           vehicle_puc = `${BASE_URL}/uploads/${item.fieldname}/${item.originalname}`;
         } else if (item.fieldname === "driver_badgefile_upload") {
@@ -115,9 +112,7 @@ router.put(
     req.body.driver_pcc_file_upload = driver_pcc_file_upload;
     req.body.driver_badgefile_upload = driver_badgefile_upload;
     req.body.vehicle_puc = vehicle_puc;
-    console.log(vehicle_puc);
     req.body.driver_bgv_file_upload = driver_bgv_file_upload;
-    console.log(updateVehiclebody);
     vehicleList = await AddVehicle.findByIdAndUpdate(
       req.params.id,
       updateVehiclebody,
@@ -128,7 +123,7 @@ router.put(
         timestamps: { createdAt: false, updatedAt: true },
       }
     );
-    // console.log(vehicleList);
+
     res.status(200).json({
       success: true,
       vehicleList,

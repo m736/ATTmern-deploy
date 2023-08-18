@@ -143,7 +143,7 @@ const VehicleList = () => {
     try {
       dispatch(getVehicleListRequest());
       const { data } = await axios.get(
-        "https://creo-8w4j.onrender.com/api/v1/vehicle_list"
+        "https://localhost:4000/api/v1/vehicle_list"
       );
 
       dispatch(getVehicleListSuccess(data));
@@ -181,7 +181,7 @@ const VehicleList = () => {
   const save = async (key) => {
     try {
       const row = await form.validateFields();
-      console.log(row);
+
       const formData = new FormData();
       formData.append("vehicle_regnumber", row.Registration_No);
       formData.append("vehicle_type", row.Vehicle_Type);

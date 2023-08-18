@@ -24,10 +24,12 @@ import DownloadOnCallMisData from "./MIS/DownloadOnCallMisData";
 import TarrifExcelUpload from "./Tarrif/TarrifExcelUpload";
 import SlabBaseMisUpload from "./MIS/SlabBaseMisUpload";
 import DownloadSlabBaseMis from "./MIS/DownloadSlabBaseMis";
+import {
+  DayBaseMisUploadData,
+  TripBaseMisUploadData,
+} from "../../backend/src/utils/models";
 import DownloadTripBaseMis from "./MIS/DownloadTripBaseMis";
 import DownloadDayBaseMis from "./MIS/DownloadDayBaseMis";
-import TripBaseMisUpload from "./MIS/TripBaseMisUpload";
-import DayBaseMisUpload from "./MIS/DayBaseMisUpload";
 
 function App() {
   const [rows, setRows] = useState([]);
@@ -84,8 +86,14 @@ function App() {
               <Route path="/mis">
                 <Route path="oncall_mis_upload" element={<OnCallMISUpload />} />
                 <Route path="slab_mis_upload" element={<SlabBaseMisUpload />} />
-                <Route path="trip_mis_upload" element={<TripBaseMisUpload />} />
-                <Route path="day_mis_upload" element={<DayBaseMisUpload />} />
+                {/* <Route
+                  path="trip_mis_upload"
+                  element={<TripBaseMisUploadData />}
+                />
+                <Route
+                  path="day_mis_upload"
+                  element={<DayBaseMisUploadData />}
+                /> */}
                 <Route
                   path="download_onCall_mis"
                   element={<DownloadOnCallMisData />}
@@ -94,14 +102,14 @@ function App() {
                   path="download_slabBase_mis"
                   element={<DownloadSlabBaseMis />}
                 />
-                <Route
+                {/* <Route
                   path="download_tripBase_mis"
                   element={<DownloadTripBaseMis />}
                 />
                 <Route
                   path="download_dayBase_mis"
                   element={<DownloadDayBaseMis />}
-                />
+                /> */}
               </Route>
             </Routes>
           </div>

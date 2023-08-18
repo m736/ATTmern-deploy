@@ -108,7 +108,7 @@ const VehicleList = () => {
     try {
       dispatch(getVehicleListRequest());
       const { data } = await axios.get(
-        "https://creo-8w4j.onrender.com/api/v1/vehicle_list"
+        "http://localhost:4000/api/v1/vehicle_list"
       );
 
       dispatch(getVehicleListSuccess(data));

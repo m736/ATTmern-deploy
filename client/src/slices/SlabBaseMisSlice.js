@@ -4,6 +4,7 @@ const SlabBaseMisSlice = createSlice({
   initialState: {
     loading: false,
     slab_base_mis_uploadlist: [],
+    search_slabBase_detail: [],
   },
   reducers: {
     slabBaseMisUploadRequest(state, action) {
@@ -25,6 +26,25 @@ const SlabBaseMisSlice = createSlice({
         error: action.payload,
       };
     },
+    searchSlabBaseMisDataRequest(state, action) {
+      return {
+        ...state,
+        loading: true,
+      };
+    },
+    searchSlabBaseMisDataSuccess(state, action) {
+      return {
+        ...state,
+        loading: false,
+        search_slabBase_detail: action.payload,
+      };
+    },
+    searchSlabBaseMisDataFail(state, action) {
+      return {
+        loading: false,
+        error: action.payload,
+      };
+    },
   },
 });
 
@@ -34,6 +54,9 @@ export const {
   slabBaseMisUploadRequest,
   slabBaseMisUploadSuccess,
   slabBaseMisUploadFail,
+  searchSlabBaseMisDataRequest,
+  searchSlabBaseMisDataSuccess,
+  searchSlabBaseMisDataFail,
 } = actions;
 
 export default reducer;

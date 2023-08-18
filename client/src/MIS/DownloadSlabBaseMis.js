@@ -2,47 +2,43 @@ import React, { useEffect, useState } from "react";
 import { DatePicker, Button, Form, Select } from "antd";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
-import { getOnCallMisData } from "../action/onCallMisAction";
 import * as FileSaver from "file-saver";
 import * as XLSX from "xlsx";
+import { getSlabBaseMisData } from "../action/slabBasMisAction";
 import {
-  searchOnCallMisDataFail,
-  searchOnCallMisDataRequest,
-  searchOnCallMisDataSuccess,
-} from "../slices/OnCallMisSlice";
+  searchSlabBaseMisDataFail,
+  searchSlabBaseMisDataRequest,
+  searchSlabBaseMisDataSuccess,
+} from "../slices/SlabBaseMisSlice";
 
-const DownloadOnCallMisData = () => {
+const DownloadSlabBaseMis = () => {
   const [form] = Form.useForm();
   const [, forceUpdate] = useState({});
   const { Option } = Select;
   const dispatch = useDispatch();
   const [companyList, setCompanyList] = useState([]);
-  const fileName = "oncallMisDownloadData";
+  const fileName = "slabBaseMisDownloadData";
   // To disable submit button at the beginning.
   useEffect(() => {
     forceUpdate({});
   }, []);
-  const { oncall_mis_uploadlist } = useSelector(
-    (state) => state.OnCallMisState
+  const { slab_base_mis_uploadlist } = useSelector(
+    (state) => state.SlabBaseMisState
   );
   useEffect(() => {
-    if (oncall_mis_uploadlist && oncall_mis_uploadlist.length) {
-      let updatedCompany = oncall_mis_uploadlist.map(
-        (item) => item.Company_Name
-      );
+    if (slab_base_mis_uploadlist && slab_base_mis_uploadlist.length) {
+      let updatedCompany = slab_base_mis_uploadlist.map((item) => item.Company);
       setCompanyList([...new Set(updatedCompany)]);
     } else {
-      dispatch(getOnCallMisData);
+      dispatch(getSlabBaseMisData);
     }
-  }, [oncall_mis_uploadlist]);
+  }, [slab_base_mis_uploadlist]);
   const [searchData, setSearchData] = useState([]);
   const [onFinishValues, setOnFinishValues] = useState([]);
   const onFinish = async (fieldsValue) => {
-    // console.log("Finish:", values);
-    // moment(new Date(dateRange[0])).format("YYYY-MM-DD")
     const rangeTimejourney = fieldsValue["start_end_date"];
-    const startJourney = rangeTimejourney[0]?.format("YYYY/MM/DD");
-    const endJourney = rangeTimejourney[1]?.format("YYYY/MM/DD");
+    const startJourney = rangeTimejourney[0]?.format("DD/MM/YYYY");
+    const endJourney = rangeTimejourney[1]?.format("DD/MM/YYYY");
     const values = {
       ...fieldsValue,
       startJourney: startJourney,
@@ -50,56 +46,50 @@ const DownloadOnCallMisData = () => {
     };
     setOnFinishValues(values);
     try {
-      dispatch(searchOnCallMisDataRequest());
+      dispatch(searchSlabBaseMisDataRequest());
       const { data } = await axios.post(
-        "http://localhost:4000/oncall_bulk/download_oncall_misdata",
+        "http://localhost:4000/slabmis_bulk/download_slabBase_misdata",
         values
       );
+
       const filteredSearchData = data.map((item) => ({
         Id: item?._id,
-        "Duty Slip No": item?.Dutyslip_No,
-        Rental: item?.Rental,
-        Client: item?.Company_Name,
-        "Vehicle billed As": item?.Vehicle_Billed_As,
+        "Duty Slip No": item?.["Trip ID"],
+        Rental: item?.["Duty Type"],
+        Client: item?.Company,
+        "Vehicle billed As": item?.["Vehicle Billed as"],
         Segment: item?.Segment,
-        "Vehicle No": item?.Vehicle_No ?? "-",
-        "Vehicle Type": item?.Vehicle_Type ?? "-",
-        "Our Total Kms": item?.Total_Kms ?? 0,
-        "Our Total Hrs": item?.Total_Hrs ?? 0,
-        "Our Total Days": item?.Total_Days ?? 0,
-        "Slab Applied": `${item?.selectedSlabhrs ?? 0}Hrs/${
-          item?.selectedSlabkms ?? 0
-        }Kms`,
-        SalesRate: item?.salesRate ?? 0,
-        PurchaseRate: item?.purchaseRate ?? 0,
-
-        "SalesExKm Rate": item?.salesExKmsRate ?? 0,
-        "SalesExHrs Rate": item?.salesExHrsRate ?? 0,
-        "Sales Grace Time": item?.salesGraceTime ?? 0,
-        "Night Sales Bata": item?.Night_Sales_Bata ?? 0,
-        "PurchaseExKm Rate": item?.purchaseExKmsRate ?? 0,
-        "PurchaseExHrs Rate": item?.purchaseExHrsRate ?? 0,
-        "Purchase Grace Time": item?.purchaseGraceTime ?? 0,
-        "Night Purchase Bata": item?.Night_Purchase_Bata ?? 0,
-        ExKm: item?.exKms ?? 0,
-        ExHrs: item?.exHrs ?? 0,
-        Toll: item?.Toll ?? 0,
-        Parking: item?.Parking ?? 0,
-        Permit: item?.Permit ?? 0,
-        "Driver Bata": item?.Driver_Batta ?? 0,
-        "Day Bata": item?.Day_Bata ?? 0,
-        Others: item?.Others ?? 0,
-        "Fuel Difference": item?.Fuel_Difference ?? 0,
-        "Sales Gross": item?.salesGross ?? 0,
-        "Purchase Gross": item?.purchaseGross ?? 0,
-        "Sales Nett Amount": item?.salesNett ?? 0,
-        "Purchase Nett Amount": item?.purchaseNett ?? 0,
+        "Vehicle No": item?.["Vehicle No"] ?? "-",
+        "Vehicle Type": item?.["Vehicle TYPE"] ?? "-",
+        Slab1: item?.["Slab1"] ?? 0,
+        Slab2: item?.["Slab2"] ?? 0,
+        Slab3: item?.["Slab3"] ?? 0,
+        Slab4: item?.["Slab4"] ?? 0,
+        Slab5: item?.["Slab5"] ?? 0,
+        "Slab1 - E": item?.["Slab1 - E"] ?? 0,
+        "Slab2 - E": item?.["Slab2 - E"] ?? 0,
+        "Slab3 - E": item?.["Slab3 - E"] ?? 0,
+        "Slab4 - E": item?.["Slab4 - E"] ?? 0,
+        "Slab5 - E": item?.["Slab5 - E"] ?? 0,
+        "Slab1 - Single": item?.["Slab1 - Single"] ?? 0,
+        "Slab2 - Single": item?.["Slab2 - Single"] ?? 0,
+        "Slab3 - Single": item?.["Slab3 - Single"] ?? 0,
+        "Slab4 - Single": item?.["Slab4 - Single"] ?? 0,
+        "Slab5 - Single": item?.["Slab5 - Single"] ?? 0,
+        Bata: item?.["Bata"] ?? 0,
+        Fuel: item?.["Fuel Difference"] ?? 0,
+        Company: item?.["Company"] ?? "",
+        Area: item?.["AREA"] ?? 0,
+        salesBata: item?.["salesBata"] ?? 0,
+        salesEscortBata: item?.["salesEscortBata"] ?? 0,
+        salesSingleBata: item?.["salesSingleBata"] ?? 0,
+        salesTotal: item?.["SalesTotal"] ?? 0,
       }));
       setSearchData(filteredSearchData);
-      dispatch(searchOnCallMisDataSuccess(data));
+      dispatch(searchSlabBaseMisDataSuccess(data));
     } catch (error) {
       //handle error
-      dispatch(searchOnCallMisDataFail(error.response.data.message));
+      dispatch(searchSlabBaseMisDataFail(error.response.data.message));
     }
     const fileType =
       "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
@@ -121,12 +111,12 @@ const DownloadOnCallMisData = () => {
     <>
       <div className="container">
         <h4 className="text-uppercase text-decoration-underline my-3">
-          Download OnCallMIS Data
+          Download Slab Base Data
         </h4>
 
         <Form
           form={form}
-          name="download_oncall_data"
+          name="download_slabBase_mis_data"
           className="py-5"
           layout="inline"
           onFinish={onFinish}
@@ -190,4 +180,4 @@ const DownloadOnCallMisData = () => {
   );
 };
 
-export default DownloadOnCallMisData;
+export default DownloadSlabBaseMis;

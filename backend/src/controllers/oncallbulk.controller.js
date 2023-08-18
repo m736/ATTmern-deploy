@@ -58,7 +58,6 @@ router.post("/oncallmis_bulk_update", async (req, res, next) => {
 router.post("/download_oncall_misdata", async (req, res, next) => {
   try {
     const searchData = req.body;
-    console.log(searchData);
     let singlePerson = await OnCallMisUploadData.find({
       $and: [
         { Company_Name: searchData.company },
@@ -70,7 +69,7 @@ router.post("/download_oncall_misdata", async (req, res, next) => {
         },
       ],
     }).exec();
-    console.log(singlePerson.length);
+
     return res.json(singlePerson);
   } catch (err) {
     console.error("company-vice-list error: ", err);

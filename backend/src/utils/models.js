@@ -165,7 +165,7 @@ const slabBaseMisSchema = new Schema(
     "Trip Type": String,
     "Duty Type": String,
     Slab1: Number,
-    Slab2: String,
+    Slab2: Number,
     Slab3: Number,
     Slab4: Number,
     Slab5: Number,
@@ -184,8 +184,60 @@ const slabBaseMisSchema = new Schema(
     "Fuel Difference": Number,
     Company: String,
     AREA: String,
-    "sale Bhata": String,
-    "Purchase Bhata": String,
+    "sale Bhata": Number,
+    "Purchase Bhata": Number,
+    SalesTotal: Number,
+  },
+  { strict: false, timestamps: true }
+);
+const tripBaseMisSchema = new Schema(
+  {
+    Usage_Date: String,
+    Trip_Id: String,
+    Vehicle_No: String,
+    Vehicle_Type: String,
+    Vehicle_Billed_As: String,
+    Segment: String,
+    Total_Kms: Number,
+    Trip_Type: String,
+    Duty_Type: String,
+    Trip: Number,
+    Trip_Single: Number,
+    Trip_Back_to_Back: Number,
+    Trip_Escort: Number,
+    Trip_Single_Long: Number,
+    Toll: Number,
+    Fuel_Difference: Number,
+    Company: String,
+    Area: String,
+    Sales_Bata: Number,
+    Purchase_Bata: Number,
+  },
+  { strict: false, timestamps: true }
+);
+const dayBaseMisSchema = new Schema(
+  {
+    Usage_Month: String,
+    Trip_ID: String,
+    Vehicle_No: String,
+    Vehicle_Type: String,
+    Vehicle_Billed_As: String,
+    Segment: String,
+    Rental: String,
+    Total_Days: Number,
+    No_Of_Months: Number,
+    Total_Kms: Number,
+    Total_Hrs: Number,
+    Toll: Number,
+    Parking: Number,
+    Permit: Number,
+    Driver_Batta: Number,
+    Day_Bata: Number,
+    Night_Sales_Bata: Number,
+    Night_Purchase_Bata: Number,
+    Fuel_Difference: Number,
+    Company: String,
+    Area: String,
   },
   { strict: false, timestamps: true }
 );
@@ -198,6 +250,11 @@ module.exports = {
     "slab_base_mis_table",
     slabBaseMisSchema
   ),
+  TripBaseMisUploadData: mongoose.model(
+    "trip_base_mis_table",
+    tripBaseMisSchema
+  ),
+  DayBaseMisUploadData: mongoose.model("day_base_mis_table", dayBaseMisSchema),
   NewTripSheetEntry: mongoose.model(
     "new_tripsheet_entry",
     newTripSheetEntryShema
