@@ -44,7 +44,7 @@ const TripBaseMisUpload = () => {
       reader.readAsArrayBuffer(file);
     }
   };
-  console.log(excelRows);
+  // console.log(excelRows);
   const fetchTripBaseMisUploadData = async () => {
     dispatch(getTripBaseMisData);
   };
@@ -103,37 +103,37 @@ const TripBaseMisUpload = () => {
 
       const updateFinalTripBase = getFinalFilteredArray(updatedlistTripBase);
       const newFinalListTripBase = getFinalFilteredArray(newlistTripBase);
-      console.log(updateFinalTripBase);
-      console.log(newFinalListTripBase);
+      // console.log(updateFinalTripBase);
+      // console.log(newFinalListTripBase);
 
-      // if (updateFinalTripBase.length) {
-      //   const result = (
-      //     await axios.post(
-      //       "http://localhost:4000/tripmis_bulk/tripbase_mis_bulk_update",
-      //       updateFinalTripBase
-      //     )
-      //   ).data;
-      //   if (result) {
-      //     alert(
-      //       "Successfully updated " + updateFinalTripBase.length + " documents"
-      //     );
-      //   }
-      // }
-      // if (newFinalListTripBase.length) {
-      //   const result = (
-      //     await axios.post(
-      //       "http://localhost:4000/tripmis_bulk/tripbase_mis_bulk_insert",
-      //       newFinalListTripBase
-      //     )
-      //   ).data;
-      //   if (result) {
-      //     alert(
-      //       "Successfully added " + newFinalListTripBase.length + " documents"
-      //     );
-      //   }
-      // }
-      // fetchTripBaseMisUploadData();
-      // setLoading(false);
+      if (updateFinalTripBase.length) {
+        const result = (
+          await axios.post(
+            "http://localhost:4000/tripmis_bulk/tripbase_mis_bulk_update",
+            updateFinalTripBase
+          )
+        ).data;
+        if (result) {
+          alert(
+            "Successfully updated " + updateFinalTripBase.length + " documents"
+          );
+        }
+      }
+      if (newFinalListTripBase.length) {
+        const result = (
+          await axios.post(
+            "http://localhost:4000/tripmis_bulk/tripbase_mis_bulk_insert",
+            newFinalListTripBase
+          )
+        ).data;
+        if (result) {
+          alert(
+            "Successfully added " + newFinalListTripBase.length + " documents"
+          );
+        }
+      }
+      fetchTripBaseMisUploadData();
+      setLoading(false);
     } catch (error) {
       setLoading(false);
       console.log("uploadData error: ", error);
@@ -145,6 +145,8 @@ const TripBaseMisUpload = () => {
       // console.log(singleTripBaseData);
       if (tarrifData?.length) {
         let filterData = tarrifData.filter((item) => {
+          // console.log("item");
+          // console.log(item);
           return (
             singleTripBaseData?.Company?.toUpperCase() ==
               item?.company?.toUpperCase() &&
@@ -155,50 +157,139 @@ const TripBaseMisUpload = () => {
             singleTripBaseData?.Segment?.toUpperCase() ==
               item?.selectedSegment?.toUpperCase() &&
             singleTripBaseData?.Area?.toUpperCase() ==
-              item?.selectedArea?.toUpperCase()
+              item?.selectedArea?.toUpperCase() &&
+            ((singleTripBaseData?.Trip_Escort &&
+              item.selectedAddon == "escort") ||
+              (singleTripBaseData?.Trip_Single &&
+                item.selectedAddon == "single") ||
+              (singleTripBaseData?.Trip_Single_Long &&
+                item.selectedAddon == "single_long") ||
+              (singleTripBaseData?.Trip_Back_to_Back &&
+                item.selectedAddon == "back_to_back") ||
+              (singleTripBaseData?.Trip && item.selectedAddon == ""))
           );
         });
 
-        let ActiveSlabs = [];
-        for (let [key, value] of Object.entries(singleTripBaseData)) {
-          if (key.includes("Trip") && value !== 0) {
-            ActiveSlabs.push(key.replace("Trip", ""));
+        let salesBata = 0;
+        let salesEscortBata = 0;
+        let salesSingleBata = 0;
+        let salesSingleLongBata = 0;
+        let salesBackToBackBata = 0;
+        filterData.forEach((item) => {
+          if (item?.selectedAddon == "") {
+            salesBata = Number(item?.salesRate ?? 0);
+          } else if (item?.selectedAddon == "escort") {
+            salesEscortBata = Number(item?.salesRate ?? 0);
+          } else if (item?.selectedAddon == "single") {
+            salesSingleBata = Number(item?.salesRate ?? 0);
+          } else if (item?.selectedAddon == "single_long") {
+            salesSingleLongBata = Number(item?.salesRate ?? 0);
+          } else if (item?.selectedAddon == "back_to_back") {
+            salesBackToBackBata = Number(item?.salesRate ?? 0);
           }
-        }
-        // console.log(ActiveSlabs);
-        // let SlabFilterData = [];
-        // ActiveSlabs.forEach((slab) => {
-        //   if (slab.includes("E")) {
-        //     let emptyAddOn = filterData.filter(
-        //       (addon) => addon.selectedAddon == "escort"
-        //     );
-        //     if (emptyAddOn[Number(slab.replace("_Escort", "")) - 1]) {
-        //       SlabFilterData.push(
-        //         emptyAddOn[Number(slab.replace("_Escort", "")) - 1]
-        //       );
-        //     }
-        //   }
-        //   if (slab.includes("Single")) {
-        //     let emptyAddOn = filterData.filter(
-        //       (addon) => addon.selectedAddon == "single"
-        //     );
-        //     // console.log(emptyAddOn[Number(slab.replace("_Single", ""))]);
-        //     if (emptyAddOn[Number(slab.replace("_Single", ""))]) {
-        //       SlabFilterData.push(
-        //         emptyAddOn[Number(slab.replace("_Single", ""))]
-        //       );
-        //     }
-        //   }
-        //   if (!slab.includes("E") && !slab.includes("Single")) {
-        //     let emptyAddOn = filterData.filter(
-        //       (addon) => addon.selectedAddon == ""
-        //     );
-        //     if (emptyAddOn[Number(slab) - 1]) {
-        //       SlabFilterData.push(emptyAddOn[Number(slab) - 1]);
-        //     }
-        //   }
-        // });
-        // console.log(SlabFilterData);
+        });
+        let purchaseBata = 0;
+        let purchaseEscortBata = 0;
+        let purchaseSingleBata = 0;
+        let purchaseSingleLongBata = 0;
+        let purchaseBackToBackBata = 0;
+        filterData.forEach((item) => {
+          if (item?.selectedAddon == "") {
+            purchaseBata = Number(item?.purchaseRate ?? 0);
+          } else if (item?.selectedAddon == "escort") {
+            purchaseEscortBata = Number(item?.purchaseRate ?? 0);
+          } else if (item?.selectedAddon == "single") {
+            purchaseSingleBata = Number(item?.purchaseRate ?? 0);
+          } else if (item?.selectedAddon == "single_long") {
+            purchaseSingleLongBata = Number(item?.purchaseRate ?? 0);
+          } else if (item?.selectedAddon == "back_to_back") {
+            purchaseBackToBackBata = Number(item?.purchaseRate ?? 0);
+          }
+        });
+
+        // console.log(
+        //   `${salesBata}-${salesEscortBata}-${salesSingleBata}-${salesSingleLongBata}-${salesBackToBackBata}`
+        // );
+        // console.log(
+        //   Number(
+        //     `${
+        //       Number(singleTripBaseData?.Toll ?? 0) +
+        //       Number(singleTripBaseData?.Fuel_Difference ?? 0) +
+        //       Number(singleTripBaseData?.Sales_Bata ?? 0) +
+        //       salesBata * Number(singleTripBaseData?.Trip ?? 0) +
+        //       salesEscortBata * Number(singleTripBaseData?.Trip_Escort ?? 0) +
+        //       salesSingleBata * Number(singleTripBaseData?.Trip_Single ?? 0) +
+        //       salesSingleLongBata *
+        //         Number(singleTripBaseData?.Trip_Single_Long ?? 0) +
+        //       salesBackToBackBata *
+        //         Number(singleTripBaseData?.Trip_Back_to_Back ?? 0)
+        //     }`
+        //   )
+        // );
+        // console.log(`
+        // ${Number(singleTripBaseData?.Toll ?? 0)}-
+        // ${Number(singleTripBaseData?.Fuel_Difference ?? 0)}-
+        // ${Number(singleTripBaseData?.Sales_Bata ?? 0)}-
+        //   ${salesBata}*${Number(singleTripBaseData?.Trip ?? 0)}=${
+        //   salesBata * Number(singleTripBaseData?.Trip ?? 0)
+        // }-
+        //   ${salesEscortBata}*${Number(singleTripBaseData?.Trip_Escort ?? 0)}=${
+        //   salesEscortBata * Number(singleTripBaseData?.Trip_Escort ?? 0)
+        // }-
+        //   ${salesSingleBata}*${Number(singleTripBaseData?.Trip_Single ?? 0)}=${
+        //   salesSingleBata * Number(singleTripBaseData?.Trip_Single ?? 0)
+        // }-
+        //   ${salesSingleLongBata}*${Number(
+        //   singleTripBaseData?.Trip_Single_Long ?? 0
+        // )}=${
+        //   salesSingleLongBata *
+        //   Number(singleTripBaseData?.Trip_Single_Long ?? 0)
+        // }-
+        //   ${salesBackToBackBata}*${Number(
+        //   singleTripBaseData?.Trip_Back_to_Back ?? 0
+        // )}=${
+        //   salesBackToBackBata *
+        //   Number(singleTripBaseData?.Trip_Back_to_Back ?? 0)
+        // }-
+        //  `);
+
+        let salesTotal = Math.round(
+          Number(singleTripBaseData?.Toll ?? 0) +
+            Number(singleTripBaseData?.Fuel_Difference ?? 0) +
+            Number(singleTripBaseData?.Sales_Bata ?? 0) +
+            salesBata * Number(singleTripBaseData?.Trip ?? 0) +
+            salesEscortBata * Number(singleTripBaseData?.Trip_Escort ?? 0) +
+            salesSingleBata * Number(singleTripBaseData?.Trip_Single ?? 0) +
+            salesSingleLongBata *
+              Number(singleTripBaseData?.Trip_Single_Long ?? 0) +
+            salesBackToBackBata *
+              Number(singleTripBaseData?.Trip_Back_to_Back ?? 0)
+        );
+
+        let purchaseTotal = Math.round(
+          Number(singleTripBaseData?.Toll ?? 0) +
+            Number(singleTripBaseData?.Fuel_Difference ?? 0) +
+            Number(singleTripBaseData?.Sales_Bata ?? 0) +
+            purchaseBata * Number(singleTripBaseData?.Trip ?? 0) +
+            purchaseEscortBata * Number(singleTripBaseData?.Trip_Escort ?? 0) +
+            purchaseSingleBata * Number(singleTripBaseData?.Trip_Single ?? 0) +
+            purchaseSingleLongBata *
+              Number(singleTripBaseData?.Trip_Single_Long ?? 0) +
+            purchaseBackToBackBata *
+              Number(singleTripBaseData?.Trip_Back_to_Back ?? 0)
+        );
+
+        console.log({
+          salesTotal: salesTotal,
+          purchaseTotal: purchaseTotal,
+          ...singleTripBaseData,
+        });
+        // console.log(`${salesTotal}-${purchaseTotal}`);
+        return {
+          purchaseTotal: purchaseTotal,
+          salesTotal: salesTotal,
+          ...singleTripBaseData,
+        };
       } else {
         return singleTripBaseData;
       }
@@ -213,7 +304,7 @@ const TripBaseMisUpload = () => {
   return (
     <>
       <h1 className="text-black mt-5 mb-10 text-2xl">
-        Upload Slab Base MIS Data
+        Upload Trip Base MIS Data
       </h1>
       <form>
         <div className="grid grid-cols-2">

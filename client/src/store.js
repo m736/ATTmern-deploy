@@ -3,6 +3,7 @@ import thunk from "redux-thunk";
 import VechicleDetailSliceReducer from "./slices/VechicleDetailSlice";
 import VehicleInductionSliceReducer from "./slices/VehicleInductionSlice";
 import TarrifSliceReducer from "./slices/TarrifSlice";
+import ClientMasterReducer from "./slices/ClientMasterSlice";
 import TripSheetSliceReducer from "./slices/TripSheetSlice";
 import OnCallMisSliceReducer from "./slices/OnCallMisSlice";
 import SlabBaseMisSliceReducer from "./slices/SlabBaseMisSlice";
@@ -13,6 +14,7 @@ const reducer = combineReducers({
   VechicleDetailState: VechicleDetailSliceReducer,
   VechicleInductionState: VehicleInductionSliceReducer,
   TarrifState: TarrifSliceReducer,
+  ClientMasterState: ClientMasterReducer,
   TripSheetState: TripSheetSliceReducer,
   OnCallMisState: OnCallMisSliceReducer,
   SlabBaseMisState: SlabBaseMisSliceReducer,

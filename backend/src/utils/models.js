@@ -18,41 +18,6 @@ const vehicleSchema = new Schema(
   },
   { strict: false, timestamps: true }
 );
-const onCallMisSchema = new Schema(
-  {
-    Dutyslip_No: String,
-    Usage_Date: String,
-    Vehicle_No: String,
-    Vehicle_Type: String,
-    Vehicle_Billed_As: String,
-    Segment: String,
-    Used_By: String,
-    Place: String,
-    Rental: String,
-    Total_Kms: Number,
-    Total_Days: Number,
-    Total_Hrs: String,
-    Toll: Number,
-    Parking: Number,
-    Permit: Number,
-    Driver_Batta: Number,
-    Day_Bata: Number,
-    Night_Sales_Bata: Number,
-    Night_Purchase_Bata: Number,
-    Others: Number,
-    Fuel_Difference: Number,
-    Company_Name: String,
-    salesRate: Number,
-    selectedSlabhrs: String,
-    selectedSlabkms: String,
-    salesExHrsRate: Number,
-    salesGraceTime: String,
-    gross: Number,
-    Area: String,
-  },
-  { strict: false, timestamps: true }
-);
-
 const addVehicleSchema = new mongoose.Schema(
   {
     vehicle_regnumber: String,
@@ -153,6 +118,40 @@ const newTripSheetEntryShema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+const onCallMisSchema = new Schema(
+  {
+    Dutyslip_No: String,
+    Usage_Date: String,
+    Vehicle_No: String,
+    Vehicle_Type: String,
+    Vehicle_Billed_As: String,
+    Segment: String,
+    Used_By: String,
+    Place: String,
+    Rental: String,
+    Total_Kms: Number,
+    Total_Days: Number,
+    Total_Hrs: String,
+    Toll: Number,
+    Parking: Number,
+    Permit: Number,
+    Driver_Batta: Number,
+    Day_Bata: Number,
+    Night_Sales_Bata: Number,
+    Night_Purchase_Bata: Number,
+    Others: Number,
+    Fuel_Difference: Number,
+    Company_Name: String,
+    salesRate: Number,
+    selectedSlabhrs: String,
+    selectedSlabkms: String,
+    salesExHrsRate: Number,
+    salesGraceTime: String,
+    gross: Number,
+    Area: String,
+  },
+  { strict: false, timestamps: true }
+);
 const slabBaseMisSchema = new Schema(
   {
     date: String,
@@ -212,13 +211,15 @@ const tripBaseMisSchema = new Schema(
     Area: String,
     Sales_Bata: Number,
     Purchase_Bata: Number,
+    salesTotal: Number,
+    purchaseTotal: Number,
   },
   { strict: false, timestamps: true }
 );
 const dayBaseMisSchema = new Schema(
   {
-    Usage_Month: String,
-    Trip_ID: String,
+    Usage_Date: String,
+    Trip_Id: String,
     Vehicle_No: String,
     Vehicle_Type: String,
     Vehicle_Billed_As: String,
@@ -238,13 +239,53 @@ const dayBaseMisSchema = new Schema(
     Fuel_Difference: Number,
     Company: String,
     Area: String,
+    salesTotal: Number,
+    purchaseTotal: Number,
+  },
+  { strict: false, timestamps: true }
+);
+const locationSchema = new Schema({
+  _id: mongoose.Schema.Types.ObjectId,
+  Client_Location: String,
+  Client_GST: String,
+  Economic_Zone: [Object],
+  selectedEconomicZone: String,
+  SGST: [Object],
+  selectedSGST: String,
+  CGST: [Object],
+  selectedCGST: String,
+  IGST: [Object],
+  selectedIGST: String,
+  Position: Number,
+});
+const clientMasterSchema = new Schema(
+  {
+    Company_Name: String,
+    Location: [locationSchema],
+    Address: String,
+    City: String,
+    Pincode: Number,
+    Group: Array,
+    selectedGroup: String,
+    Mailto: String,
+    Telephone: String,
+    Phone_No: String,
+    Agreement_validity: String,
+    service_Tax: Array,
+    selectedserviceTax: String,
+    Cess: Array,
+    selectedCess: String,
+    Entity: Array,
+    selectedEntity: String,
   },
   { strict: false, timestamps: true }
 );
 module.exports = {
+  Location: mongoose.model("location_table", locationSchema),
   Vehicle: mongoose.model("vehicles", vehicleSchema),
   AddVehicle: mongoose.model("addvehicles", addVehicleSchema),
   Createtarrif: mongoose.model("createtarrif", CreatetarrifShema),
+  ClientMasterModel: mongoose.model("client_master_table", clientMasterSchema),
   OnCallMisUploadData: mongoose.model("on_call_mis_table", onCallMisSchema),
   SlabBaseMisUploadData: mongoose.model(
     "slab_base_mis_table",

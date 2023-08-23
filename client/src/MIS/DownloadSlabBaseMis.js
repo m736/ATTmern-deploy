@@ -80,10 +80,7 @@ const DownloadSlabBaseMis = () => {
         Fuel: item?.["Fuel Difference"] ?? 0,
         Company: item?.["Company"] ?? "",
         Area: item?.["AREA"] ?? 0,
-        salesBata: item?.["salesBata"] ?? 0,
-        salesEscortBata: item?.["salesEscortBata"] ?? 0,
-        salesSingleBata: item?.["salesSingleBata"] ?? 0,
-        salesTotal: item?.["SalesTotal"] ?? 0,
+        salesTotal: item?.["salesTotal"] ?? 0,
       }));
       setSearchData(filteredSearchData);
       dispatch(searchSlabBaseMisDataSuccess(data));

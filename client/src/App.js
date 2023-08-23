@@ -28,6 +28,7 @@ import DownloadTripBaseMis from "./MIS/DownloadTripBaseMis";
 import DownloadDayBaseMis from "./MIS/DownloadDayBaseMis";
 import TripBaseMisUpload from "./MIS/TripBaseMisUpload";
 import DayBaseMisUpload from "./MIS/DayBaseMisUpload";
+import NewClientMaster from "./CompanyDetail/NewClientMaster";
 
 function App() {
   const [rows, setRows] = useState([]);
@@ -63,6 +64,9 @@ function App() {
               <Route path="/tabledata" element={<FormSelect />} />
               <Route path="/add_vechicle" element={<AddVehicleList />} />
               <Route path="/vehicle_list" element={<VehicleList />} />
+              <Route path="/client_master">
+                <Route path="new_client_master" element={<NewClientMaster />} />
+              </Route>
               <Route path="/tarrif">
                 <Route path="new_tarrif" element={<CreateNewTarrif />} />
                 <Route path="upload_tarrif" element={<TarrifExcelUpload />} />

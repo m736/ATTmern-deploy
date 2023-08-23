@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Input, Tooltip } from "antd";
 const formatNumber = (value) => new Intl.NumberFormat().format(value);
 export const NumericInput = (props) => {
-  const { value, onChange, disabled } = props;
+  const { value, onChange } = props;
 
   const handleChange = (e) => {
     const inputValue = e.target.value;
@@ -27,7 +27,7 @@ export const NumericInput = (props) => {
       placement="topLeft"
       overlayClassName="numeric-input"
     >
-      <Input {...props} disabled={disabled} onChange={handleChange} />
+      <Input {...props} onChange={handleChange} />
     </Tooltip>
   );
 };

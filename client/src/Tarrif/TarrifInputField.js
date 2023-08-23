@@ -129,3 +129,9 @@ export const tripExcelUploadrequiredFields = [
   "Segment",
   "Trip_Type",
 ];
+export const dayExcelUploadrequiredFields = [
+  "Company",
+  "Vehicle_Billed_As",
+  "Segment",
+  "Rental",
+];

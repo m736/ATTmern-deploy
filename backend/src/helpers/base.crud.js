@@ -6,6 +6,7 @@ module.exports = (Collection) => {
   // ======
   const create = (req, res) => {
     const newEntry = req.body;
+    console.log(newEntry);
     Collection.create(newEntry, (e, newEntry) => {
       if (e) {
         console.log("baseCrud.create error: ", e.message || e);

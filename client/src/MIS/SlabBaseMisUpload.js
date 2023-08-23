@@ -205,19 +205,19 @@ const SlabBaseMisUpload = () => {
         let salesEscortBata = 0;
         let salesBata = 0;
         let salesSingleBata = 0;
-        SlabFilterData.map((item) => {
+        SlabFilterData.forEach((item) => {
           // console.log(item);
-          if (item.selectedAddon == "") {
-            return (salesBata = Number(item?.salesRate ?? 0));
+          if (item?.selectedAddon == "") {
+            salesBata = Number(item?.salesRate ?? 0);
           } else if (item?.selectedAddon == "escort") {
-            return (salesEscortBata = Number(item?.salesRate ?? 0));
+            salesEscortBata = Number(item?.salesRate ?? 0);
           } else if (item?.selectedAddon == "single") {
-            return (salesSingleBata = Number(item?.salesRate ?? 0));
+            salesSingleBata = Number(item?.salesRate ?? 0);
           }
         });
-        let total = 0;
-        SlabFilterData.map((item) => {
-          return (total = Number(
+        let salesTotal = 0;
+        SlabFilterData.forEach((item) => {
+          salesTotal = Number(
             `${
               Number(item?.Bata ?? 0) +
               Number(item?.["Fuel Difference"] ?? 0) +
@@ -225,14 +225,14 @@ const SlabBaseMisUpload = () => {
               salesBata +
               salesSingleBata
             }`
-          ));
+          );
         });
 
         return {
           salesBata: salesBata,
           salesEscortBata: salesEscortBata,
           salesSingleBata: salesSingleBata,
-          SalesTotal: total,
+          salesTotal: salesTotal,
           ...singleSlabBaseData,
         };
       } else {

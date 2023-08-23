@@ -19,71 +19,82 @@ const NavBar = () => {
   let Menus = [
     {
       title: "MIS Details",
-      icon: <FaTruckMoving />,
+
       submenu: true,
       name: "mis",
 
       submenuItems: [
-        { title: "MISUpload", icon: <BsUpload />, href: "/" },
-        { title: "MISTableData", icon: <BsTable />, href: "/tabledata" },
+        { title: "MISUpload", href: "/" },
+        { title: "MISTableData", href: "/tabledata" },
+      ],
+    },
+    {
+      title: "Client Master",
+      submenu: true,
+      name: "client",
+      spacing: "true",
+      submenuItems: [
+        {
+          title: "New Client Master",
+          href: "/client_master/new_client_master",
+        },
       ],
     },
     {
       title: "Vehicle",
-      icon: <BsChatRightDots />,
+
       submenu: true,
       name: "vehicle",
       spacing: "true",
       submenuItems: [
-        { title: "AddVehicle", icon: <BsBuildingAdd />, href: "/add_vechicle" },
+        { title: "AddVehicle", href: "/add_vechicle" },
         {
           title: "VehicleList",
           href: "/vehicle_list",
-          icon: <BsFillEyeFill />,
         },
       ],
     },
     {
       title: "Tarrif",
-      icon: <BsChatRightDots />,
+
       submenu: true,
       name: "tarrif",
       spacing: "true",
       submenuItems: [
         {
           title: "AddTarrif",
-          icon: <BsBuildingAdd />,
+
           href: "/tarrif/new_tarrif",
         },
         {
           title: "TarrifExcelUpload",
-          icon: <BsBuildingAdd />,
+
           href: "/tarrif/upload_tarrif",
         },
         {
           title: "TarrifList",
-          icon: <BsBuildingAdd />,
+
           href: "/tarrif/tarrif_list",
         },
       ],
     },
     {
       title: "Trip Sheet Entry",
-      icon: <BsChatRightDots />,
+
       submenu: true,
       name: "tripsheet",
       spacing: "true",
       submenuItems: [
         {
           title: "New Trip Sheet Entry",
-          icon: <BsBuildingAdd />,
+
           href: "/tripsheet/new_tripsheet_entry",
         },
       ],
     },
     {
       title: "MIS",
-      icon: <BsChatRightDots />,
+      // icon: <BsChatRightDots />,
       submenu: true,
       name: "mis",
       spacing: "true",
@@ -208,6 +219,7 @@ const NavBar = () => {
                     onClick={() => {
                       let menulist = [...menuOption];
                       menulist[index].submenu = !menulist[index].submenu;
+
                       setMenuOption(menulist);
                     }}
                   />
