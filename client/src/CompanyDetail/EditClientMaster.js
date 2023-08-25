@@ -1,49 +1,36 @@
 import React, { useEffect, useState } from "react";
 import { clientInputField, clientLocation } from "./ClientMasterInputField";
-import { Button, DatePicker, Input, Radio, Select, Space } from "antd";
+import { DatePicker, Input, Radio, Select, Space } from "antd";
 import { NumericInput } from "../Tarrif/NumericInput";
-import { useDispatch, useSelector } from "react-redux";
-import { createClientMasterAction } from "../action/clientMasterAction";
-import { toast } from "react-toastify";
+import { useDispatch } from "react-redux";
+
+import { useNavigate, useParams } from "react-router-dom";
 import moment from "moment";
 import {
-  clearClientMasterCreated,
-  clearClientMasterError,
+  getIndividualClientFail,
+  getIndividualClientRequest,
+  getIndividualClientSuccess,
 } from "../slices/ClientMasterSlice";
-import { useNavigate } from "react-router-dom";
-const NewClientMaster = () => {
-  const [allClientMasterList, setAllClientMasterList] =
-    useState(clientInputField);
+import axios from "axios";
+import { editClientMasterAction } from "../action/clientMasterAction";
+const EditClientMaster = (props) => {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  console.log(id);
+  const [clientList, setClientList] = useState(clientInputField);
   const { Option } = Select;
   const { TextArea } = Input;
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const {
-    client_master_detail,
-    clientMasterLoading,
-    isClientMasterCreated,
-    error,
-  } = useSelector((state) => state.ClientMasterState || []);
+
   // On change function for all Input
   const handleChange = (field, value) => {
-    if (Object.keys(allClientMasterList.Location).includes(field)) {
-      setAllClientMasterList({
-        ...allClientMasterList,
-        Location: {
-          ...allClientMasterList.Location,
-          [field]: value,
-        },
-      });
-    } else {
-      setAllClientMasterList({
-        ...allClientMasterList,
-        [field]: value,
-      });
-    }
+    setClientList({
+      ...clientList,
+      [field]: value,
+    });
   };
-  // On change function for Client Location
   const handleLocation = (field, value, index) => {
-    let updatedList = allClientMasterList.Location.map((location, ind) => {
+    let updatedList = clientList.Location.map((location, ind) => {
       if (ind == index && Object.keys(location).includes(field)) {
         return {
           ...location,
@@ -54,57 +41,52 @@ const NewClientMaster = () => {
       }
     });
 
-    setAllClientMasterList({
-      ...allClientMasterList,
+    setClientList({
+      ...clientList,
       Location: updatedList,
     });
   };
-  // Submit Function
-  const saveClientMasterDetail = () => {
-    setAllClientMasterList(allClientMasterList);
-    dispatch(createClientMasterAction(allClientMasterList));
+
+  // Load Client Master Function
+  const loadClienDetail = async () => {
+    try {
+      dispatch(getIndividualClientRequest());
+      const { data } = await axios.get(
+        `http://localhost:4000/api/v1/client/client_master_api/${id}`
+      );
+
+      setClientList(data.getIndividualClientMaster);
+      dispatch(getIndividualClientSuccess(data));
+    } catch (error) {
+      //handle error
+      dispatch(getIndividualClientFail(error.response.data.message));
+    }
   };
 
-  // Add Client Location Button
-  const addClientLocation = () => {
-    let locationList = [...allClientMasterList?.Location];
+  // Submit Function
+  const editClientMasterDetail = () => {
+    setClientList(clientList);
+    dispatch(editClientMasterAction(id, clientList));
+  };
 
+  console.log(clientList);
+  useEffect(() => {
+    loadClienDetail();
+  }, []);
+
+  const addClientLocation = () => {
+    let locationList = [...clientList?.Location];
     locationList.push({
       ...clientLocation,
       Position: locationList[locationList.length - 1].Position + 1,
     });
-    setAllClientMasterList({ ...allClientMasterList, Location: locationList });
+    setClientList({ ...clientList, Location: locationList });
   };
-  // Remove Client Location Button
   const removeClientLocation = (Position) => {
-    let locationList = [...allClientMasterList?.Location];
+    let locationList = [...clientList?.Location];
     let updated = locationList.filter((i, index) => i?.Position !== Position);
-    setAllClientMasterList({ ...locationList, Location: updated });
+    setClientList({ ...clientList, Location: updated });
   };
-
-  useEffect(() => {
-    if (isClientMasterCreated) {
-      toast("New Client master Created Succesfully!", {
-        type: "success",
-        position: toast.POSITION.BOTTOM_CENTER,
-        onOpen: () => dispatch(clearClientMasterCreated()),
-      });
-      navigate("/client_master/list_client_master");
-      return;
-    }
-
-    if (error) {
-      toast(error, {
-        position: toast.POSITION.BOTTOM_CENTER,
-        type: "error",
-        onOpen: () => {
-          dispatch(clearClientMasterError());
-        },
-      });
-      return;
-    }
-  }, [isClientMasterCreated, error, dispatch]);
-  // console.log(allClientMasterList);
   return (
     <div className="w-full max-w-4xl">
       {/* Company_Name */}
@@ -120,7 +102,7 @@ const NewClientMaster = () => {
         <div className="md:w-4/12">
           <Input
             id="company"
-            value={allClientMasterList.Company_Name}
+            value={clientList?.Company_Name}
             onChange={(e) => {
               handleChange("Company_Name", e.target.value);
             }}
@@ -129,7 +111,7 @@ const NewClientMaster = () => {
       </div>
       {/* Client_Location */}
 
-      {allClientMasterList?.Location?.map((Location, index) => {
+      {clientList?.Location?.map((Location, index) => {
         return (
           <div key={Location?.Position}>
             <div className="md:flex md:items-center mb-6">
@@ -225,7 +207,7 @@ const NewClientMaster = () => {
                         <Select
                           placeholder="SGST"
                           style={{ width: "100%" }}
-                          // value={allClientMasterList?.Location?.selectedSGST}
+                          value={Location?.selectedSGST}
                           onChange={(e) => {
                             handleLocation("selectedSGST", e);
                           }}
@@ -244,7 +226,7 @@ const NewClientMaster = () => {
                         <Select
                           placeholder="CGST"
                           style={{ width: "100%" }}
-                          // value={allClientMasterList?.Location?.selectedCGST}
+                          value={Location?.selectedCGST}
                           onChange={(e) => {
                             handleLocation("selectedCGST", e, index);
                           }}
@@ -263,7 +245,7 @@ const NewClientMaster = () => {
                         <Select
                           placeholder="IGST"
                           style={{ width: "100%" }}
-                          // value={allClientMasterList?.Location?.selectedIGST}
+                          value={Location?.selectedIGST}
                           onChange={(e) => {
                             handleLocation("selectedIGST", e, index);
                           }}
@@ -322,7 +304,7 @@ const NewClientMaster = () => {
         <div className="md:w-4/12">
           <TextArea
             id="address"
-            value={allClientMasterList?.Address}
+            value={clientList?.Address}
             onChange={(e) => {
               handleChange("Address", e.target.value);
             }}
@@ -342,7 +324,7 @@ const NewClientMaster = () => {
         <div className="md:w-4/12">
           <Input
             id="city"
-            value={allClientMasterList.City}
+            value={clientList.City}
             onChange={(e) => {
               handleChange("City", e.target.value);
             }}
@@ -362,7 +344,7 @@ const NewClientMaster = () => {
         <div className="md:w-4/12">
           <NumericInput
             id="pincode"
-            value={allClientMasterList?.Pincode}
+            value={clientList?.Pincode}
             onChange={(e) => {
               handleChange("Pincode", e);
             }}
@@ -383,12 +365,12 @@ const NewClientMaster = () => {
           <Select
             id="group"
             style={{ width: "100%" }}
-            value={allClientMasterList?.selectedGroup}
+            value={clientList?.selectedGroup}
             onChange={(e) => {
               handleChange("selectedGroup", e);
             }}
           >
-            {allClientMasterList?.Group?.map((item) => {
+            {clientList?.Group?.map((item) => {
               return (
                 <Option key={item.value} value={item.value}>
                   {item.text}
@@ -411,7 +393,7 @@ const NewClientMaster = () => {
         <div className="md:w-4/12">
           <Input
             id="mailto"
-            value={allClientMasterList?.Mailto}
+            value={clientList?.Mailto}
             onChange={(e) => {
               handleChange("Mailto", e.target.value);
             }}
@@ -431,7 +413,7 @@ const NewClientMaster = () => {
         <div className="md:w-4/12">
           <Input
             id="telephone"
-            value={allClientMasterList?.Telephone}
+            value={clientList?.Telephone}
             onChange={(e) => {
               handleChange("Telephone", e.target.value);
             }}
@@ -451,7 +433,7 @@ const NewClientMaster = () => {
         <div className="md:w-4/12">
           <Input
             id="phoneno"
-            value={allClientMasterList?.Phone_No}
+            value={clientList?.Phone_No}
             onChange={(e) => {
               handleChange("Phone_No", e.target.value);
             }}
@@ -472,12 +454,10 @@ const NewClientMaster = () => {
           <DatePicker
             id="agreement_validity"
             style={{ width: "100%" }}
+            value={moment(clientList?.Agreement_validity)}
             onChange={(value, Aggreement_validity_Date) => {
               // const Aggreement_validity_Date = e.format("YYYY-MM-DD");
-              handleChange(
-                "Agreement_validity",
-                moment(Aggreement_validity_Date).format("YYYY-MM-DD")
-              );
+              handleChange("Agreement_validity", Aggreement_validity_Date);
             }}
           />
         </div>
@@ -496,12 +476,12 @@ const NewClientMaster = () => {
           <Select
             id="service_tax"
             style={{ width: "100%" }}
-            value={allClientMasterList?.selectedserviceTax}
+            value={clientList?.selectedserviceTax}
             onChange={(e) => {
               handleChange("selectedserviceTax", e);
             }}
           >
-            {allClientMasterList?.service_Tax?.map((item) => {
+            {clientList?.service_Tax?.map((item) => {
               return (
                 <Option key={item.value} value={item.value}>
                   {item.text}
@@ -525,12 +505,12 @@ const NewClientMaster = () => {
           <Select
             id="cess"
             style={{ width: "100%" }}
-            value={allClientMasterList?.selectedCess}
+            value={clientList?.selectedCess}
             onChange={(e) => {
               handleChange("selectedCess", e);
             }}
           >
-            {allClientMasterList?.Cess?.map((item) => {
+            {clientList?.Cess?.map((item) => {
               return (
                 <Option key={item.value} value={item.value}>
                   {item.text}
@@ -554,12 +534,12 @@ const NewClientMaster = () => {
           <Select
             id="entity"
             style={{ width: "100%" }}
-            value={allClientMasterList?.selectedEntity}
+            value={clientList?.selectedEntity}
             onChange={(e) => {
               handleChange("selectedEntity", e);
             }}
           >
-            {allClientMasterList?.Entity?.map((item) => {
+            {clientList?.Entity?.map((item) => {
               return (
                 <Option key={item.value} value={item.value}>
                   {item.text}
@@ -573,18 +553,17 @@ const NewClientMaster = () => {
       <div className="md:flex md:items-center">
         <div className="md:w-1/3"></div>
         <div className="md:w-2/3">
-          <Button
-            className="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white font-bold  rounded"
+          <button
+            className="shadow bg-purple-500 hover:bg-purple-400 focus:shadow-outline focus:outline-none text-white font-bold py-2 px-4 rounded"
             type="button"
-            loading={clientMasterLoading}
-            onClick={saveClientMasterDetail}
+            onClick={editClientMasterDetail}
           >
             Save
-          </Button>
+          </button>
         </div>
       </div>
     </div>
   );
 };
 
-export default NewClientMaster;
+export default EditClientMaster;

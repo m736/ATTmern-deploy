@@ -29,6 +29,7 @@ module.exports = (Collection) => {
         console.log("baseCrud.find error: ", e.message || e);
         res.status(400).send(e);
       } else {
+        // console.log(result);
         res.status(200).send(result);
       }
     });

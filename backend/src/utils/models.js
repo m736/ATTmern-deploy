@@ -270,7 +270,7 @@ const clientMasterSchema = new Schema(
     Mailto: String,
     Telephone: String,
     Phone_No: String,
-    Agreement_validity: String,
+    Agreement_validity: "",
     service_Tax: Array,
     selectedserviceTax: String,
     Cess: Array,

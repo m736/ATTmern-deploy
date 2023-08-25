@@ -29,6 +29,8 @@ import DownloadDayBaseMis from "./MIS/DownloadDayBaseMis";
 import TripBaseMisUpload from "./MIS/TripBaseMisUpload";
 import DayBaseMisUpload from "./MIS/DayBaseMisUpload";
 import NewClientMaster from "./CompanyDetail/NewClientMaster";
+import ListClientMaster from "./CompanyDetail/ListClientMaster";
+import EditClientMaster from "./CompanyDetail/EditClientMaster";
 
 function App() {
   const [rows, setRows] = useState([]);
@@ -66,6 +68,14 @@ function App() {
               <Route path="/vehicle_list" element={<VehicleList />} />
               <Route path="/client_master">
                 <Route path="new_client_master" element={<NewClientMaster />} />
+                <Route
+                  path="list_client_master"
+                  element={<ListClientMaster />}
+                />
+                <Route
+                  path="edit_client_master/:id"
+                  element={<EditClientMaster />}
+                />
               </Route>
               <Route path="/tarrif">
                 <Route path="new_tarrif" element={<CreateNewTarrif />} />

@@ -4,10 +4,10 @@ const models = require("./../utils/models");
 
 // Api Routes
 router.use("/jokes", require("src/helpers/base.crud")(models.Vehicle));
-router.use(
-  "/client_master_api",
-  require("src/helpers/base.crud")(models.ClientMasterModel)
-);
+// router.use(
+//   "/client_master_api",
+//   require("src/helpers/base.crud")(models.ClientMasterModel)
+// );
 router.use(
   "/oncall_mis_data",
   require("src/helpers/base.crud")(models.OnCallMisUploadData)

@@ -38,6 +38,10 @@ const NavBar = () => {
           title: "New Client Master",
           href: "/client_master/new_client_master",
         },
+        {
+          title: "List Client Master",
+          href: "/client_master/list_client_master",
+        },
       ],
     },
     {

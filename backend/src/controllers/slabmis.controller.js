@@ -1,5 +1,5 @@
 const express = require("express");
-const { SlabBaseMisUploadData } = require("../utils/models");
+const { SlabBaseMisUploadData, Createtarrif } = require("../utils/models");
 const router = express.Router();
 const cors = require("cors");
 
@@ -13,7 +13,7 @@ router.post("/slabbase_mis_bulk_insert", async (req, res, next) => {
           .json({ success: true, message: "slabbase_mis_bulk_insert success" });
       }
       if (error) {
-        console.log("slabbase_mis_bulk_insert insertMany error: ", error);
+        // console.log("slabbase_mis_bulk_insert insertMany error: ", error);
         res.status(400).json({
           success: false,
           error: error,
@@ -67,12 +67,35 @@ router.post("/download_slabBase_misdata", async (req, res, next) => {
         },
       ],
     }).exec();
-    console.log(singleSlabData);
+    // console.log(singleSlabData);
     return res.json(singleSlabData);
   } catch (err) {
     console.error("download_slabBase_misdata error: ", err);
     res.status(500).json({ success: false, message: "internal_server_error" });
   }
 });
+router.get("/distinct_company_slab", async (req, res, next) => {
+  try {
+    let distinctCompany = await SlabBaseMisUploadData.distinct(
+      "Company"
+    ).exec();
+    // console.log(distinctCompany);
+    return res.json(distinctCompany);
+  } catch (err) {
+    console.error("distinct_company_slab error: ", err);
+    res.status(500).json({ success: false, message: "internal_server_error" });
+  }
+});
+// router.get("/distinct_company_slab", async (req, res, next) => {
+//   try {
+//     let distinctCompany = await Createtarrif.distinct("company").exec();
+//     console.log(distinctCompany.length);
+//     console.log(distinctCompany);
+//     return res.json(distinctCompany);
+//   } catch (err) {
+//     console.error("distinct_company_slab error: ", err);
+//     res.status(500).json({ success: false, message: "internal_server_error" });
+//   }
+// });
 
 module.exports = router;

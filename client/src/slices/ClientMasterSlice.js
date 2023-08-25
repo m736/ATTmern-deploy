@@ -19,10 +19,31 @@ const ClientMasterSlice = createSlice({
     getClientMasterSuccess(state, action) {
       return {
         clientMasterLoading: false,
-        client_master_detail: action.payload,
+        client_master_detail: action.payload.getClientMaster,
+        page_count: action.payload.count,
+        resPerPage: action.payload.resPerPage,
       };
     },
     getClientMasterFail(state, action) {
+      return {
+        ...state,
+        clientMasterLoading: false,
+        error: action.payload,
+      };
+    },
+    getIndividualClientRequest(state, action) {
+      return {
+        ...state,
+        clientMasterLoading: true,
+      };
+    },
+    getIndividualClientSuccess(state, action) {
+      return {
+        clientMasterLoading: false,
+        client_master_detail: action.payload.getIndividualClientMaster,
+      };
+    },
+    getIndividualClientFail(state, action) {
       return {
         ...state,
         clientMasterLoading: false,
@@ -39,7 +60,7 @@ const ClientMasterSlice = createSlice({
       return {
         ...state,
         clientMasterLoading: false,
-        client_master_detail: action.payload.createTarrif,
+        client_master_detail: action.payload.createClientMaster,
         isClientMasterCreated: true,
       };
     },
@@ -70,7 +91,7 @@ const ClientMasterSlice = createSlice({
     updateClientMasterSuccess(state, action) {
       return {
         clientMasterLoading: false,
-        client_master_detail: action.payload.createTarrif,
+        client_master_detail: action.payload.updateClientMaster,
         isClientMasterUpdated: true,
       };
     },
@@ -122,6 +143,9 @@ export const {
   getClientMasterRequest,
   getClientMasterSuccess,
   getClientMasterFail,
+  getIndividualClientRequest,
+  getIndividualClientSuccess,
+  getIndividualClientFail,
   createClientMasterRequest,
   createClientMasterSuccess,
   createClientMasterFail,

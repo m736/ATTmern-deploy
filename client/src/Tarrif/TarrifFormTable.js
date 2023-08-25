@@ -226,9 +226,11 @@ const TarrifFormTable = (props) => {
     setTarrifInput([...tarrifInput, newItem]);
   };
   const RemoveTarrifInput = () => {
+    console.log(tarrifInput);
     let activeIndex = tarrifInput.findIndex(
       (item) => item.position == tarrif.position
     );
+    console.log(activeIndex);
     if (activeIndex > -1) {
       let updated = tarrifInput.filter((i, index) => index !== activeIndex);
       setTarrifInput(updated);
