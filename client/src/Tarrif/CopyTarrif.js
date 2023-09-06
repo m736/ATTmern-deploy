@@ -32,9 +32,13 @@ const TarrifFormTable = (props) => {
     setEditableRow,
     editableRow,
     allarea,
-    companies,
+    allVehicleType,
+    companyArr,
   } = props;
   const [form] = Form.useForm();
+  console.log(allVehicleType);
+  // console.log(allarea);
+  // console.log(companyArr);
 
   const EnableTarrifRentalInput = {
     Local: [
@@ -188,35 +192,34 @@ const TarrifFormTable = (props) => {
           if (index == activeIndex) {
             return screenEdit == "edit"
               ? {
-                  ...item,
                   ...tarrifInputField,
                   _id: item._id,
                   position: item.position,
                   company: company,
                   vehicleType: vehicleType,
                   [field]: value,
-
                   editable: item.editable,
+                  area: allarea,
+                  vehicleTypes: [{ ...allVehicleType }],
+                  companies: companyArr,
                 }
               : {
-                  ...item,
                   ...tarrifInputField,
                   _id: item._id,
                   position: item.position,
                   company: company,
-
                   vehicleType: vehicleType,
+                  area: allarea,
+                  vehicleTypes: allVehicleType,
+                  companies: companyArr,
                   [field]: value,
                 };
           } else {
-            console.log(item);
             return item;
           }
         });
       } else {
-        console.log(tarrifInput);
         updated = tarrifInput?.map((item, index) => {
-          console.log(item);
           if (index == activeIndex) {
             return {
               ...item,
@@ -227,6 +230,7 @@ const TarrifFormTable = (props) => {
           }
         });
       }
+
       setTarrifInput(updated);
     }
   };
@@ -289,17 +293,17 @@ const TarrifFormTable = (props) => {
 
     dispatch(updateSingleTarrif(updated?._id, updated));
     setTimeout(() => {
-      dispatch(getTarrif());
+      dispatch(getTarrif);
     }, 1000);
     setEditableIndex(null);
   };
   const deleteTarrifData = (id) => {
     dispatch(deleteTarrif(id));
     setTimeout(() => {
-      dispatch(getTarrif());
+      dispatch(getTarrif);
     }, 1000);
   };
-
+  console.log(tarrif);
   return (
     <>
       {screenEdit == "edit" && (
@@ -847,13 +851,9 @@ const TarrifFormTable = (props) => {
                         editableIndex !== null && editableIndex !== index
                       }
                       className="bg-red-700 hover:bg-red-400  border-red-700 hover:border-red-500 text-white mt-3"
+                      onClick={() => deleteTarrifData(tarrif?._id)}
                     >
-                      <Popconfirm
-                        title="Sure to delete?"
-                        onConfirm={() => deleteTarrifData(tarrif?._id)}
-                      >
-                        <a>Delete</a>
-                      </Popconfirm>
+                      Delete
                     </Button>
                   </>
                 )}

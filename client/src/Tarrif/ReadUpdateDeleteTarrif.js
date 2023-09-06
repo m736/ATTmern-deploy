@@ -1,33 +1,71 @@
 import React, { useEffect, useMemo, useState } from "react";
-
+import { Button, Space, Spin, Row, Col, Select, Form } from "antd";
 import { useDispatch, useSelector } from "react-redux";
-import { Button, Form } from "antd";
-import { getTarrif } from "../action/tarrifAction";
+import { Pagination } from "antd";
+import {
+  getTarrif,
+  searchTarrifAction,
+  uniqueTarrifDataAction,
+} from "../action/tarrifAction";
 import TarrifFormTable from "./TarrifFormTable";
 import { tarrifInputField } from "./TarrifInputField";
 import { useNavigate } from "react-router-dom";
-import Pagination from "../Pagination/CommonPagination";
+import {
+  searchTarrifDataFail,
+  searchTarrifDataRequest,
+  searchTarrifDataSuccess,
+} from "../slices/TarrifSlice";
+import axios from "axios";
+import { getClientMasterAction } from "../action/clientMasterAction";
+import { toast } from "react-toastify";
+import {
+  clearTarrifDeleted,
+  clearTarrifError,
+  clearUpdateTarrifListCreated,
+} from "../slices/TarrifSlice";
 
-let PageSize = 10;
 const ReadUpdateDeleteTarrif = () => {
   const dispatch = useDispatch();
-  const { tarrifData, loading } = useSelector((state) => state.TarrifState);
   const [tarrifInput, setTarrifInput] = useState([]);
   const [editableIndex, setEditableIndex] = useState(null);
   const [editableRow, setEditableRow] = useState(null);
-  const fetchVehicleListData = async () => {
-    dispatch(getTarrif);
-  };
+  // const [tarrifDataCompany, setTarrifDataSelectedcompany] = useState([]);
+  const [clientList, setClientList] = useState([]);
+  const [vehicleList, setvehicleList] = useState([]);
+  const [rentalList, setRentalList] = useState([]);
+  const [acType, setAcType] = useState([]);
+  const [selectedCompany, setSelectedCompany] = useState("");
+  const [selectedVehicle, setSelectedVehicle] = useState("");
+  const [selectedRental, setSelectedRental] = useState("");
+  const [selectedSegment, setSelectedSegment] = useState("");
+  const { Option } = Select;
+  const {
+    tarrifData,
+    page_count,
+    resPerPage,
+    alltarrifData,
+    isTarrifDeleted,
+    isTarrifUpdated,
+    error,
+  } = useSelector((state) => state.TarrifState);
+  const [pageCount, setPageCount] = useState(10);
+  const [perPage, setResPerPage] = useState(3);
   const [currentPage, setCurrentPage] = useState(1);
+  const setCurrentPageNo = (pageNo) => {
+    setCurrentPage(pageNo);
+  };
 
-  const currentTableData = useMemo(() => {
-    const firstPageIndex = (currentPage - 1) * PageSize;
-    const lastPageIndex = firstPageIndex + PageSize;
-    return tarrifData?.slice(firstPageIndex, lastPageIndex);
-  }, [currentPage]);
   useEffect(() => {
-    fetchVehicleListData();
-  }, []);
+    dispatch(getTarrif(currentPage));
+  }, [currentPage]);
+
+  useEffect(() => {
+    setPageCount(page_count);
+  }, [page_count]);
+  useEffect(() => {
+    setResPerPage(resPerPage);
+  }, [resPerPage]);
+
   useEffect(() => {
     if (tarrifData && tarrifData.length) {
       setTarrifInput(
@@ -44,14 +82,205 @@ const ReadUpdateDeleteTarrif = () => {
       setTarrifInput([]);
     }
   }, [tarrifData]);
+
   const navigate = useNavigate();
 
   const addTarrifPage = () => {
     navigate("/tarrif/new_tarrif");
   };
+  // useEffect(() => {
+  //   if (alltarrifData && alltarrifData.length) {
+  //     let updatedClient = alltarrifData.map((item) => item.company);
+  //     setClientList([...new Set(updatedClient)]);
+  //   }
+  // }, [alltarrifData]);
+  // const searchTarrifData = async (item) => {
+  //   // setTarrifInput(updated);
+  //   const formData = new FormData();
+  //   formData.append("company", selectedCompany);
+  //   formData.append("vehicleType", selectedVehicle);
+  //   formData.append("selectedRental", selectedRental);
+  //   formData.append("selectedSegment", selectedSegment);
+  //   try {
+  //     dispatch(searchTarrifDataRequest());
+  //     const { data } = await axios.post(
+  //       `http://localhost:4000/tarrif/tarrif_search_company_name`,
+  //       formData
+  //     );
+
+  //     // dispatch(searchTarrifDataSuccess(data));
+  //     setTarrifInput(
+  //       data?.getTarrrifDetails?.length ? data?.getTarrrifDetails : []
+  //     );
+  //     setPageCount(data?.count);
+  //     setResPerPage(data?.resPerPage);
+  //     setCurrentPage(1);
+  //     setSelectedCompany(null);
+  //     setSelectedVehicle(null);
+  //     setSelectedRental(null);
+  //     setSelectedSegment(null);
+  //   } catch (error) {
+  //     //handle error
+  //     dispatch(searchTarrifDataFail(error.response.data.message));
+  //   }
+  // };
+  useEffect(() => {
+    if (isTarrifDeleted) {
+      toast("Tarrif Deleted Succesfully!", {
+        type: "success",
+        position: toast.POSITION.BOTTOM_CENTER,
+        onOpen: () => dispatch(clearTarrifDeleted()),
+      });
+
+      return;
+    }
+
+    if (error) {
+      toast(error, {
+        position: toast.POSITION.BOTTOM_CENTER,
+        type: "error",
+        onOpen: () => {
+          dispatch(clearTarrifError());
+        },
+      });
+      return;
+    }
+  }, [isTarrifDeleted, error, dispatch]);
+  useEffect(() => {
+    if (isTarrifUpdated) {
+      toast("Tarrif updated Succesfully!", {
+        type: "success",
+        position: toast.POSITION.BOTTOM_CENTER,
+        onOpen: () => dispatch(clearUpdateTarrifListCreated()),
+      });
+
+      return;
+    }
+
+    if (error) {
+      toast(error, {
+        position: toast.POSITION.BOTTOM_CENTER,
+        type: "error",
+        onOpen: () => {
+          dispatch(clearTarrifError());
+        },
+      });
+      return;
+    }
+  }, [isTarrifUpdated, error, dispatch]);
 
   return (
     <>
+      {/* <Row className="mb-5" gutter={[16, 24]}>
+        <Col className="gutter-row" span={4}>
+          <Select
+            placeholder="Select Company"
+            style={{
+              width: 120,
+            }}
+            onChange={(e) => {
+              let updated = alltarrifData.filter((item) => e == item.company);
+              let updatedVehicle = updated.map((item) => item.vehicleType);
+              setvehicleList([...new Set(updatedVehicle)]);
+              setSelectedCompany(e);
+              setSelectedVehicle(null);
+              setSelectedRental(null);
+              setSelectedSegment(null);
+            }}
+            value={selectedCompany}
+          >
+            {clientList.map((item) => {
+              return (
+                <Option key={item} value={item}>
+                  {item}
+                </Option>
+              );
+            })}
+          </Select>
+        </Col>
+        <Col className="gutter-row" span={4}>
+          <Select
+            className="uppercase"
+            style={{
+              width: 120,
+            }}
+            onChange={(e) => {
+              let updated = alltarrifData.filter(
+                (item) =>
+                  e == item?.vehicleType && selectedCompany == item?.company
+              );
+              let updatedRental = updated.map((item) => item?.selectedRental);
+              setRentalList([...new Set(updatedRental)]);
+              setSelectedVehicle(e);
+              setSelectedRental(null);
+              setSelectedSegment(null);
+            }}
+            value={selectedVehicle}
+          >
+            {vehicleList.map((item) => {
+              return (
+                <Option key={item} value={item}>
+                  {item}
+                </Option>
+              );
+            })}
+          </Select>
+        </Col>
+        <Col className="gutter-row" span={4}>
+          <Select
+            className="uppercase"
+            style={{
+              width: 120,
+            }}
+            onChange={(e) => {
+              let updated = alltarrifData.filter(
+                (item) =>
+                  e == item.selectedRental &&
+                  selectedVehicle == item.vehicleType
+              );
+              let updatedAcType = updated.map((item) => item.selectedSegment);
+              setAcType([...new Set(updatedAcType)]);
+              setSelectedRental(e);
+              setSelectedSegment(null);
+            }}
+            value={selectedRental}
+          >
+            {rentalList.map((item) => {
+              return (
+                <Option key={item} value={item} className="uppercase">
+                  {item}
+                </Option>
+              );
+            })}
+          </Select>
+        </Col>
+        <Col className="gutter-row" span={4}>
+          <Select
+            className="uppercase"
+            style={{
+              width: 120,
+            }}
+            onChange={(e) => {
+              setSelectedSegment(e);
+            }}
+            value={selectedSegment}
+          >
+            {acType.map((item) => {
+              return (
+                <Option key={item} value={item} className="uppercase">
+                  {item}
+                </Option>
+              );
+            })}
+          </Select>
+        </Col>
+        <Col className="gutter-row" span={4}>
+          <Button type="primary" onClick={searchTarrifData}>
+            Search
+          </Button>
+        </Col>
+      </Row> */}
+
       {tarrifInput?.length > 0 ? (
         <>
           <div className="flex flex-col mb-14">
@@ -185,7 +414,7 @@ const ReadUpdateDeleteTarrif = () => {
                       </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
-                      {currentTableData?.map((item, index) => {
+                      {tarrifInput?.map((item, index) => {
                         return (
                           <TarrifFormTable
                             screenEdit={"edit"}
@@ -209,13 +438,16 @@ const ReadUpdateDeleteTarrif = () => {
               </div>
             </div>
           </div>
-          <Pagination
-            className="pagination-bar"
-            currentPage={currentPage}
-            totalCount={tarrifInput?.length}
-            pageSize={PageSize}
-            onPageChange={(page) => setCurrentPage(page)}
-          />
+          {pageCount > 0 && pageCount > perPage ? (
+            <div className="flex justify-center">
+              <Pagination
+                // current={currentPage}
+                onChange={setCurrentPageNo}
+                total={pageCount}
+                pageSize={perPage}
+              />
+            </div>
+          ) : null}
         </>
       ) : (
         <>

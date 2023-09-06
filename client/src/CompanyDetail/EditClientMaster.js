@@ -2,11 +2,13 @@ import React, { useEffect, useState } from "react";
 import { clientInputField, clientLocation } from "./ClientMasterInputField";
 import { DatePicker, Input, Radio, Select, Space } from "antd";
 import { NumericInput } from "../Tarrif/NumericInput";
-import { useDispatch } from "react-redux";
-
+import { useDispatch, useSelector } from "react-redux";
+import { toast } from "react-toastify";
 import { useNavigate, useParams } from "react-router-dom";
 import moment from "moment";
 import {
+  clearClientMasterError,
+  clearClientMasterUpdated,
   getIndividualClientFail,
   getIndividualClientRequest,
   getIndividualClientSuccess,
@@ -17,7 +19,7 @@ const EditClientMaster = (props) => {
   const { id } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  console.log(id);
+
   const [clientList, setClientList] = useState(clientInputField);
   const { Option } = Select;
   const { TextArea } = Input;
@@ -68,8 +70,6 @@ const EditClientMaster = (props) => {
     setClientList(clientList);
     dispatch(editClientMasterAction(id, clientList));
   };
-
-  console.log(clientList);
   useEffect(() => {
     loadClienDetail();
   }, []);
@@ -87,6 +87,34 @@ const EditClientMaster = (props) => {
     let updated = locationList.filter((i, index) => i?.Position !== Position);
     setClientList({ ...clientList, Location: updated });
   };
+  const {
+    clientMasterLoading,
+    isClientMasterDeleted,
+    isClientMasterUpdated,
+    error,
+  } = useSelector((state) => state.ClientMasterState || []);
+  useEffect(() => {
+    if (isClientMasterUpdated) {
+      toast("Client master Updated Succesfully!", {
+        type: "success",
+        position: toast.POSITION.BOTTOM_CENTER,
+        onOpen: () => dispatch(clearClientMasterUpdated()),
+      });
+      navigate("/client_master/list_client_master");
+      return;
+    }
+
+    if (error) {
+      toast(error, {
+        position: toast.POSITION.BOTTOM_CENTER,
+        type: "error",
+        onOpen: () => {
+          dispatch(clearClientMasterError());
+        },
+      });
+      return;
+    }
+  }, [isClientMasterUpdated, error, dispatch]);
   return (
     <div className="w-full max-w-4xl">
       {/* Company_Name */}

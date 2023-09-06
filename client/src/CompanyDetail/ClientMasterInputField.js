@@ -66,4 +66,17 @@ export const clientInputField = {
     },
   ],
   selectedEntity: "",
+  FormErrors: [
+    {
+      Company_Name: "",
+      Address: "",
+      Agreement_validity: "",
+      selectedGroup: "",
+    },
+  ],
+  companyValid: false,
+  addressValid: false,
+  aggreementValid: false,
+  selectedGroupValid: false,
+  formValid: false,
 };

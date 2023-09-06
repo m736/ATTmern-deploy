@@ -44,12 +44,12 @@ const TripBaseMisUpload = () => {
       reader.readAsArrayBuffer(file);
     }
   };
-  // console.log(excelRows);
+
   const fetchTripBaseMisUploadData = async () => {
     dispatch(getTripBaseMisData);
   };
   useEffect(() => {
-    dispatch(getTarrif);
+    dispatch(getTarrif());
     fetchTripBaseMisUploadData();
   }, []);
   const uploadData = async (e) => {
@@ -142,11 +142,8 @@ const TripBaseMisUpload = () => {
 
   const getFinalFilteredArray = (parentList) => {
     let finalList = parentList.map((singleTripBaseData) => {
-      // console.log(singleTripBaseData);
       if (tarrifData?.length) {
         let filterData = tarrifData.filter((item) => {
-          // console.log("item");
-          // console.log(item);
           return (
             singleTripBaseData?.Company?.toUpperCase() ==
               item?.company?.toUpperCase() &&
@@ -330,7 +327,7 @@ const TripBaseMisUpload = () => {
             <div className="inline-flex ml-24">
               {selectedFile?.name && excelRows.length ? (
                 <button
-                  class="bg-blue-500 hover:bg-blue-900 text-white py-3 px-4 rounded"
+                  className="bg-blue-500 hover:bg-blue-900 text-white py-3 px-4 rounded"
                   disabled={loading}
                   onClick={uploadData}
                 >
@@ -339,7 +336,7 @@ const TripBaseMisUpload = () => {
               ) : null}{" "}
               {selectedFile?.name && excelRows.length ? (
                 <button
-                  class="bg-red-500 hover:bg-red-900 text-white py-3 px-4 ml-3 rounded"
+                  className="bg-red-500 hover:bg-red-900 text-white py-3 px-4 ml-3 rounded"
                   disabled={loading}
                   onClick={removeFile}
                 >

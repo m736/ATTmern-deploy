@@ -55,7 +55,7 @@ router.post("/slabbase_mis_bulk_update", async (req, res, next) => {
 router.post("/download_slabBase_misdata", async (req, res, next) => {
   try {
     const searchData = req.body;
-    console.log(searchData);
+    // console.log(searchData);
     let singleSlabData = await SlabBaseMisUploadData.find({
       $and: [
         { Company: searchData.company },

@@ -31,6 +31,10 @@ import DayBaseMisUpload from "./MIS/DayBaseMisUpload";
 import NewClientMaster from "./CompanyDetail/NewClientMaster";
 import ListClientMaster from "./CompanyDetail/ListClientMaster";
 import EditClientMaster from "./CompanyDetail/EditClientMaster";
+import CreateAreaList from "./CompanyDetail/CreateAreaList";
+import ListArea from "./CompanyDetail/ListArea";
+import CreateVehicleType from "./CompanyDetail/CreateVehicleList";
+import ListVehicleType from "./CompanyDetail/ListVehicleType";
 
 function App() {
   const [rows, setRows] = useState([]);
@@ -76,6 +80,13 @@ function App() {
                   path="edit_client_master/:id"
                   element={<EditClientMaster />}
                 />
+                <Route path="create_area" element={<CreateAreaList />} />
+                <Route path="list_area" element={<ListArea />} />
+                <Route
+                  path="create_vehicle_type"
+                  element={<CreateVehicleType />}
+                />
+                <Route path="vehicle_type_list" element={<ListVehicleType />} />
               </Route>
               <Route path="/tarrif">
                 <Route path="new_tarrif" element={<CreateNewTarrif />} />

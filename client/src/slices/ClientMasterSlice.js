@@ -8,6 +8,7 @@ const ClientMasterSlice = createSlice({
     isClientMasterUpdated: false,
     isClientMasterDeleted: false,
     client_master_detail: [],
+    unique_comapny_name: [],
   },
   reducers: {
     getClientMasterRequest(state, action) {
@@ -20,8 +21,8 @@ const ClientMasterSlice = createSlice({
       return {
         clientMasterLoading: false,
         client_master_detail: action.payload.getClientMaster,
-        page_count: action.payload.count,
-        resPerPage: action.payload.resPerPage,
+        // page_count: action.payload.count,
+        // resPerPage: action.payload.resPerPage,
       };
     },
     getClientMasterFail(state, action) {
@@ -31,6 +32,7 @@ const ClientMasterSlice = createSlice({
         error: action.payload,
       };
     },
+
     getIndividualClientRequest(state, action) {
       return {
         ...state,
@@ -134,6 +136,26 @@ const ClientMasterSlice = createSlice({
         isClientMasterDeleted: false,
       };
     },
+    getUniqueClientNameRequest(state, action) {
+      return {
+        ...state,
+        clientMasterLoading: true,
+      };
+    },
+    getUniqueClientNameSuccess(state, action) {
+      console.log(action.payload.getUniqueCompanyDetails);
+      return {
+        clientMasterLoading: false,
+        unique_comapny_name: action.payload.getUniqueCompanyDetails,
+      };
+    },
+    getUniqueClientNameFail(state, action) {
+      return {
+        ...state,
+        clientMasterLoading: false,
+        error: action.payload,
+      };
+    },
   },
 });
 
@@ -159,6 +181,9 @@ export const {
   clearClientMasterUpdated,
   clearClientMasterDeleted,
   clearClientMasterError,
+  getUniqueClientNameRequest,
+  getUniqueClientNameSuccess,
+  getUniqueClientNameFail,
 } = actions;
 
 export default reducer;

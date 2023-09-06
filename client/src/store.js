@@ -9,12 +9,15 @@ import OnCallMisSliceReducer from "./slices/OnCallMisSlice";
 import SlabBaseMisSliceReducer from "./slices/SlabBaseMisSlice";
 import TripBaseMisSliceReducer from "./slices/TripBaseMisSlice";
 import DayBaseMisSliceReducer from "./slices/DayBaseMisSlice";
-
+import AreaListReducer from "./slices/AreaListSlice";
+import VehicleTypeReducer from "./slices/VehicleTypeSlice";
 const reducer = combineReducers({
   VechicleDetailState: VechicleDetailSliceReducer,
   VechicleInductionState: VehicleInductionSliceReducer,
   TarrifState: TarrifSliceReducer,
   ClientMasterState: ClientMasterReducer,
+  AreaListState: AreaListReducer,
+  VehicleTypeState: VehicleTypeReducer,
   TripSheetState: TripSheetSliceReducer,
   OnCallMisState: OnCallMisSliceReducer,
   SlabBaseMisState: SlabBaseMisSliceReducer,

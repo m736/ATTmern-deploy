@@ -9,6 +9,9 @@ import {
   getTarrifListFail,
   getTarrifListRequest,
   getTarrifListSuccess,
+  uniqueTarrifDataFail,
+  uniqueTarrifDataRequest,
+  uniqueTarrifDataSuccess,
   updateTarrifListFail,
   updateTarrifListRequest,
   updateTarrifListSuccess,
@@ -27,17 +30,37 @@ export const createTarrif = (formData) => async (dispatch) => {
     dispatch(createTarrifFail(error));
   }
 };
-export const getTarrif = async (dispatch) => {
+export const getTarrif = (currentPage) => async (dispatch) => {
   try {
     dispatch(getTarrifListRequest());
-    const { data } = await axios.get(
-      "http://localhost:4000/api/v1/list_tarrif"
-    );
+    let link = `http://localhost:4000/tarrif/list_tarrif`;
+
+    if (currentPage) {
+      link += `?page=${currentPage}`;
+    }
+    const { data } = await axios.get(link);
+    // const { data } = await axios.get(
+    //   "http://localhost:4000/tarrif/list_tarrif"
+    // );
 
     dispatch(getTarrifListSuccess(data));
   } catch (error) {
     //handle error
     dispatch(getTarrifListFail(error.response.data.message));
+  }
+};
+export const uniqueTarrifDataAction = async (dispatch) => {
+  try {
+    dispatch(uniqueTarrifDataRequest());
+
+    const { data } = await axios.get(
+      "http://localhost:4000/tarrif/tarrif_unique_field"
+    );
+    console.log(data);
+    dispatch(uniqueTarrifDataSuccess(data));
+  } catch (error) {
+    //handle error
+    dispatch(uniqueTarrifDataFail(error.response.data.message));
   }
 };
 export const updateSingleTarrif =

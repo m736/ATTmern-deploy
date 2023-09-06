@@ -9,34 +9,28 @@ const router = express.Router();
 router.get(
   "/client_master_api",
   catchAsyncError(async (req, res, next) => {
-    // let buildQuery = new APIFeatures(ClientMasterModel.find(), req.query)
-    //   .search()
-    //   .filter();
+    // const resPerPage = 3;
+    // let buildQuery = () => {
+    //   return new APIFeatures(ClientMasterModel.find(), req.query)
+    //     .search()
+    //     .filter();
+    // };
 
-    // const getClientMaster = await buildQuery.query;
-    // console.log(getClientMaster.length);
-    const resPerPage = 3;
-    let buildQuery = () => {
-      return new APIFeatures(ClientMasterModel.find(), req.query)
-        .search()
-        .filter();
-    };
+    // const filteredClientMasterCount = await buildQuery().query.countDocuments(
+    //   {}
+    // );
+    // const totalClientMasterCount = await ClientMasterModel.countDocuments({});
+    // let clientMasterCount = totalClientMasterCount;
 
-    const filteredClientMasterCount = await buildQuery().query.countDocuments(
-      {}
-    );
-    const totalClientMasterCount = await ClientMasterModel.countDocuments({});
-    let clientMasterCount = totalClientMasterCount;
+    // if (filteredClientMasterCount !== totalClientMasterCount) {
+    //   clientMasterCount = filteredClientMasterCount;
+    // }
 
-    if (filteredClientMasterCount !== totalClientMasterCount) {
-      clientMasterCount = filteredClientMasterCount;
-    }
-
-    const getClientMaster = await buildQuery().paginate(resPerPage).query;
+    const getClientMaster = await ClientMasterModel.find();
     res.status(201).json({
       success: true,
-      count: clientMasterCount,
-      resPerPage,
+      // count: clientMasterCount,
+      // resPerPage,
       getClientMaster,
     });
   })
@@ -84,7 +78,7 @@ router.put(
         runValidators: true,
       }
     );
-    // console.log(updateClientMaster);
+
     if (!updateClientMaster) {
       return next(
         new ErrorHandler(
@@ -116,6 +110,18 @@ router.delete(
     res.status(201).json({
       success: true,
       deleteClientMaster,
+    });
+  })
+);
+router.get(
+  "/unique_company_name_api",
+  catchAsyncError(async (req, res, next) => {
+    const getUniqueCompanyDetails = await ClientMasterModel.distinct(
+      "Company_Name"
+    );
+    res.status(201).json({
+      success: true,
+      getUniqueCompanyDetails,
     });
   })
 );

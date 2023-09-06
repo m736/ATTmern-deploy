@@ -280,6 +280,18 @@ const clientMasterSchema = new Schema(
   },
   { strict: false, timestamps: true }
 );
+const areaListSchema = new Schema(
+  {
+    Area: String,
+  },
+  { strict: false, timestamps: true }
+);
+const vehicleTypeSchema = new Schema(
+  {
+    VehicleType: String,
+  },
+  { strict: false, timestamps: true }
+);
 module.exports = {
   Location: mongoose.model("location_table", locationSchema),
   Vehicle: mongoose.model("vehicles", vehicleSchema),
@@ -300,4 +312,6 @@ module.exports = {
     "new_tripsheet_entry",
     newTripSheetEntryShema
   ),
+  AreaListModel: mongoose.model("area_table", areaListSchema),
+  VehicleTypeModel: mongoose.model("vehicle_type_table", vehicleTypeSchema),
 };

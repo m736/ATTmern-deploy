@@ -40,9 +40,9 @@ const TarrifExcelUpload = () => {
       reader.readAsArrayBuffer(file);
     }
   };
-  console.log(excelRows);
+  // console.log(excelRows);
   const fetchOnCallMisUploadData = async () => {
-    dispatch(getTarrif);
+    dispatch(getTarrif());
   };
   useEffect(() => {
     fetchOnCallMisUploadData();

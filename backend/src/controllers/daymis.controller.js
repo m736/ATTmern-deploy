@@ -55,7 +55,7 @@ router.post("/daybase_mis_bulk_update", async (req, res, next) => {
 router.post("/download_dayBase_misdata", async (req, res, next) => {
   try {
     const searchData = req.body;
-    console.log(searchData);
+
     let findDayData = await DayBaseMisUploadData.find({
       $and: [
         { Company: searchData.company },
@@ -67,7 +67,7 @@ router.post("/download_dayBase_misdata", async (req, res, next) => {
         },
       ],
     }).exec();
-    console.log(findDayData);
+
     return res.json(findDayData);
   } catch (err) {
     console.error("download_dayBase_misdata error: ", err);

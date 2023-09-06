@@ -4,10 +4,14 @@ const models = require("./../utils/models");
 
 // Api Routes
 router.use("/jokes", require("src/helpers/base.crud")(models.Vehicle));
-// router.use(
-//   "/client_master_api",
-//   require("src/helpers/base.crud")(models.ClientMasterModel)
-// );
+router.use(
+  "/area_list_api",
+  require("src/helpers/base.crud")(models.AreaListModel)
+);
+router.use(
+  "/vehicle_type_api",
+  require("src/helpers/base.crud")(models.VehicleTypeModel)
+);
 router.use(
   "/oncall_mis_data",
   require("src/helpers/base.crud")(models.OnCallMisUploadData)
@@ -28,10 +32,10 @@ router.use(
   "/vehicle_list",
   require("src/helpers/base.crud")(models.AddVehicle)
 );
-router.use(
-  "/list_tarrif",
-  require("src/helpers/base.crud")(models.Createtarrif)
-);
+// router.use(
+//   "/list_tarrif",
+//   require("src/helpers/base.crud")(models.Createtarrif)
+// );
 router.use(
   "/delete_tarrif",
   require("src/helpers/base.crud")(models.Createtarrif)

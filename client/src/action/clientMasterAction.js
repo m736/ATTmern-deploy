@@ -9,6 +9,9 @@ import {
   getClientMasterFail,
   getClientMasterRequest,
   getClientMasterSuccess,
+  getUniqueClientNameFail,
+  getUniqueClientNameRequest,
+  getUniqueClientNameSuccess,
   updateClientMasterFail,
   updateClientMasterRequest,
   updateClientMasterSuccess,
@@ -16,7 +19,6 @@ import {
 
 export const createClientMasterAction = (formData) => async (dispatch) => {
   try {
-    console.log(formData);
     dispatch(createClientMasterRequest());
     const { data } = await axios.post(
       `http://localhost:4000/api/v1/client/client_master_api`,
@@ -28,35 +30,26 @@ export const createClientMasterAction = (formData) => async (dispatch) => {
     dispatch(createClientMasterFail(error));
   }
 };
-export const getClientMasterAction =
-  (keyword, price, category, rating, currentPage) => async (dispatch) => {
-    try {
-      dispatch(getClientMasterRequest());
-      let link = `http://localhost:4000/api/v1/client/client_master_api?page=${currentPage}`;
+export const getClientMasterAction = async (dispatch) => {
+  try {
+    dispatch(getClientMasterRequest());
+    // let link = `http://localhost:4000/api/v1/client/client_master_api`;
 
-      if (keyword) {
-        link += `&keyword=${keyword}`;
-      }
-      if (price) {
-        link += `&price[gte]=${price[0]}&price[lte]=${price[1]}`;
-      }
-      if (category) {
-        link += `&category=${category}`;
-      }
-      if (rating) {
-        link += `&ratings=${rating}`;
-      }
-      // const { data } = await axios.get(
-      //   "http://localhost:4000/api/v1/client/client_master_api"
-      // );
-      const { data } = await axios.get(link);
+    // if (currentPage) {
+    //   link += `?page=${currentPage}`;
+    // }
 
-      dispatch(getClientMasterSuccess(data));
-    } catch (error) {
-      //handle error
-      dispatch(getClientMasterFail(error.response.data.message));
-    }
-  };
+    const { data } = await axios.get(
+      "http://localhost:4000/api/v1/client/client_master_api"
+    );
+    // const { data } = await axios.get(link);
+
+    dispatch(getClientMasterSuccess(data));
+  } catch (error) {
+    //handle error
+    dispatch(getClientMasterFail(error.response.data.message));
+  }
+};
 // export const getIndividualClientAction = (id) => async (dispatch) => {
 //   try {
 //     dispatch(getIndividualClientRequest());
@@ -74,13 +67,12 @@ export const getClientMasterAction =
 export const editClientMasterAction =
   (id, updatedClientMasterData) => async (dispatch) => {
     try {
-      console.log(updatedClientMasterData);
       dispatch(updateClientMasterRequest());
       const { data } = await axios.put(
         `http://localhost:4000/api/v1/client/client_master_api/${id}`,
         updatedClientMasterData
       );
-      console.log(data);
+
       dispatch(updateClientMasterSuccess(data));
     } catch (error) {
       //handle error
@@ -97,5 +89,18 @@ export const deleteClientMasterAction = (id) => async (dispatch) => {
   } catch (error) {
     //handle error
     dispatch(deleteClientMasterFail(error.response.data.message));
+  }
+};
+export const DistinctClientMasterAction = async (dispatch) => {
+  try {
+    dispatch(getUniqueClientNameRequest());
+    const { data } = await axios.get(
+      `http://localhost:4000/api/v1/client/unique_company_name_api`
+    );
+
+    dispatch(getUniqueClientNameSuccess(data));
+  } catch (error) {
+    //handle error
+    dispatch(getUniqueClientNameFail(error.response.data.message));
   }
 };

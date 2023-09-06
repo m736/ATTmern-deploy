@@ -1,24 +1,83 @@
 import React, { useEffect, useState } from "react";
 import { tarrifInputField } from "./TarrifInputField";
-import { Button, Card, Space, Spin, Row, Col, Select, Form } from "antd";
+import { Button, Space, Spin, Row, Col, Select, Form } from "antd";
 import { useSelector, useDispatch } from "react-redux";
 import { createTarrif } from "../action/tarrifAction";
 import { useNavigate } from "react-router-dom";
 import { clearCreateTarrif, clearTarrifError } from "../slices/TarrifSlice";
 import { toast } from "react-toastify";
 import TarrifFormTable from "./TarrifFormTable";
+import { getAreaListAction } from "../action/AreaListAction";
+import { getVehicleTypeAction } from "../action/vehicleTypeAction";
+import { getClientMasterAction } from "../action/clientMasterAction";
 
 export const CreateNewTarrif = () => {
-  const [tarrifInput, setTarrifInput] = useState([tarrifInputField]);
-
+  const [tarrifInfield, setTarrifInputField] = useState(tarrifInputField);
+  const [tarrifInput, setTarrifInput] = useState([]);
+  const [allarea, setAllArea] = useState([]);
   const [company, setCompany] = useState(null);
+  const [companyArr, setCompanyArr] = useState([]);
   const [vehicleType, setVehicleType] = useState(null);
   const { Option } = Select;
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { area_list } = useSelector((state) => state.AreaListState || []);
+  const { vehicle_types } = useSelector(
+    (state) => state.VehicleTypeState || []
+  );
+  const { client_master_detail } = useSelector(
+    (state) => state.ClientMasterState || []
+  );
   const { loading, isTarrifCreated, error } = useSelector(
     (state) => state.TarrifState
   );
+  useEffect(() => {
+    if (client_master_detail && client_master_detail.length) {
+      let companyList = client_master_detail.map((item) => {
+        return {
+          text: item.Company_Name,
+          value: item.Company_Name,
+        };
+      });
+      setCompanyArr(removeDuplicateObjects(companyList, "value"));
+    } else {
+      dispatch(getClientMasterAction);
+    }
+  }, [client_master_detail]);
+
+  function removeDuplicateObjects(array, property) {
+    const uniqueIds = [];
+    const unique = array.filter((element) => {
+      const isDuplicate = uniqueIds.includes(element[property]);
+      if (!isDuplicate) {
+        uniqueIds.push(element[property]);
+        return true;
+      }
+      return false;
+    });
+    return unique;
+  }
+
+  useEffect(() => {
+    if (vehicle_types && vehicle_types.length > 0) {
+      setTarrifInputField({
+        ...tarrifInputField,
+        vehicleTypes: vehicle_types,
+        companies: companyArr,
+      });
+    } else {
+      dispatch(getVehicleTypeAction);
+    }
+  }, [vehicle_types, companyArr]);
+
+  useEffect(() => {
+    if (area_list && area_list.length > 0) {
+      setAllArea(area_list);
+      setTarrifInput([{ ...tarrifInfield, area: area_list }]);
+    } else {
+      dispatch(getAreaListAction);
+    }
+  }, [area_list, vehicle_types, companyArr]);
 
   const companyChange = (e) => {
     setCompany(e);
@@ -61,6 +120,18 @@ export const CreateNewTarrif = () => {
       return;
     }
   }, [isTarrifCreated, error, dispatch]);
+
+  // let output = [];
+  // tarrifInput.map((item) => {
+  //   return output.push(`${item.formValid}`);
+  // });
+  let output = tarrifInput.every(
+    (item) =>
+      item.selectedSegment !== "" &&
+      // company !== (null || undefined) &&
+      vehicleType !== (null || undefined)
+  );
+  // console.log(allVehicleType);
   return (
     <>
       <Form>
@@ -68,7 +139,7 @@ export const CreateNewTarrif = () => {
           <Col className="gutter-row" span={4}>
             <Form.Item name="company">
               <Select placeholder="Select Company" onChange={companyChange}>
-                {tarrifInputField?.companies?.map((item) => {
+                {tarrifInfield?.companies?.map((item) => {
                   return (
                     <Option key={item.value} value={item.value}>
                       {item.text}
@@ -85,7 +156,7 @@ export const CreateNewTarrif = () => {
                 onChange={vehicleChange}
                 allowClear
               >
-                {tarrifInputField?.vehicleTypes?.map((item) => {
+                {tarrifInfield?.vehicleTypes?.map((item) => {
                   return (
                     <Option key={item.value} value={item.value}>
                       {item.text}
@@ -229,7 +300,8 @@ export const CreateNewTarrif = () => {
                         tarrif={item}
                         setTarrifInput={setTarrifInput}
                         index={index}
-                        tarrifInputField={tarrifInputField}
+                        allarea={allarea}
+                        tarrifInputField={tarrifInfield}
                       />
                     );
                   })}
@@ -244,7 +316,7 @@ export const CreateNewTarrif = () => {
           type="primary"
           className="mt-3"
           onClick={formDetails}
-          disabled={loading ? <Spin /> : null}
+          disabled={!output}
         >
           Submit
         </Button>

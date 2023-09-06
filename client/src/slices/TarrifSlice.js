@@ -19,7 +19,10 @@ const TarrifSlice = createSlice({
     getTarrifListSuccess(state, action) {
       return {
         loading: false,
-        tarrifData: action.payload,
+        tarrifData: action.payload.getTarrifData,
+        alltarrifData: action.payload.getAllTarrifData,
+        page_count: action.payload.count,
+        resPerPage: action.payload.resPerPage,
       };
     },
     getTarrifListFail(state, action) {
@@ -113,6 +116,51 @@ const TarrifSlice = createSlice({
         isTarrifDeleted: false,
       };
     },
+    uniqueTarrifDataRequest(state, action) {
+      return {
+        ...state,
+        loading: true,
+      };
+    },
+    uniqueTarrifDataSuccess(state, action) {
+      return {
+        ...state,
+        loading: false,
+        tarrifUniqueData: {
+          company: action.payload.getTarrrifCompanyDetails,
+          vehicle: action.payload.getTarrrifVehicleDetails,
+          rental: action.payload.getTarrrifSelectedRental,
+          segment: action.payload.getTarrrifSelectedSegment,
+        },
+      };
+    },
+    uniqueTarrifDataFail(state, action) {
+      return {
+        loading: false,
+        error: action.payload,
+      };
+    },
+    searchTarrifDataRequest(state, action) {
+      return {
+        ...state,
+        loading: true,
+      };
+    },
+    searchTarrifDataSuccess(state, action) {
+      return {
+        ...state,
+        loading: false,
+        tarrifData: action.payload.getTarrrifDetails,
+        page_count: action.payload.count,
+        resPerPage: action.payload.resPerPage,
+      };
+    },
+    searchTarrifDataFail(state, action) {
+      return {
+        loading: false,
+        error: action.payload,
+      };
+    },
   },
 });
 
@@ -135,6 +183,12 @@ export const {
   clearCreateTarrif,
   clearUpdateTarrifListCreated,
   clearTarrifError,
+  searchTarrifDataRequest,
+  searchTarrifDataSuccess,
+  searchTarrifDataFail,
+  uniqueTarrifDataRequest,
+  uniqueTarrifDataSuccess,
+  uniqueTarrifDataFail,
 } = actions;
 
 export default reducer;

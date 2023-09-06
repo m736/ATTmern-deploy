@@ -17,17 +17,17 @@ const NavBar = () => {
   const [open, setOpen] = useState(true);
   const [submenuOpen, setSubmenuOpen] = useState(false);
   let Menus = [
-    {
-      title: "MIS Details",
+    // {
+    //   title: "MIS Details",
 
-      submenu: true,
-      name: "mis",
+    //   submenu: true,
+    //   name: "mis",
 
-      submenuItems: [
-        { title: "MISUpload", href: "/" },
-        { title: "MISTableData", href: "/tabledata" },
-      ],
-    },
+    //   submenuItems: [
+    //     { title: "MISUpload", href: "/" },
+    //     { title: "MISTableData", href: "/tabledata" },
+    //   ],
+    // },
     {
       title: "Client Master",
       submenu: true,
@@ -42,22 +42,38 @@ const NavBar = () => {
           title: "List Client Master",
           href: "/client_master/list_client_master",
         },
-      ],
-    },
-    {
-      title: "Vehicle",
-
-      submenu: true,
-      name: "vehicle",
-      spacing: "true",
-      submenuItems: [
-        { title: "AddVehicle", href: "/add_vechicle" },
         {
-          title: "VehicleList",
-          href: "/vehicle_list",
+          title: "Create Area",
+          href: "/client_master/create_area",
+        },
+        {
+          title: "List Area",
+          href: "/client_master/list_area",
+        },
+        {
+          title: "Create Vehicle Type",
+          href: "/client_master/create_vehicle_type",
+        },
+        {
+          title: "List Vehicle Type",
+          href: "/client_master/vehicle_type_list",
         },
       ],
     },
+    // {
+    //   title: "Vehicle",
+
+    //   submenu: true,
+    //   name: "vehicle",
+    //   spacing: "true",
+    //   submenuItems: [
+    //     { title: "AddVehicle", href: "/add_vechicle" },
+    //     {
+    //       title: "VehicleList",
+    //       href: "/vehicle_list",
+    //     },
+    //   ],
+    // },
     {
       title: "Tarrif",
 
@@ -82,20 +98,20 @@ const NavBar = () => {
         },
       ],
     },
-    {
-      title: "Trip Sheet Entry",
+    // {
+    //   title: "Trip Sheet Entry",
 
-      submenu: true,
-      name: "tripsheet",
-      spacing: "true",
-      submenuItems: [
-        {
-          title: "New Trip Sheet Entry",
+    //   submenu: true,
+    //   name: "tripsheet",
+    //   spacing: "true",
+    //   submenuItems: [
+    //     {
+    //       title: "New Trip Sheet Entry",
 
-          href: "/tripsheet/new_tripsheet_entry",
-        },
-      ],
-    },
+    //       href: "/tripsheet/new_tripsheet_entry",
+    //     },
+    //   ],
+    // },
     {
       title: "MIS",
       // icon: <BsChatRightDots />,
