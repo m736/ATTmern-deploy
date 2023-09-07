@@ -132,6 +132,7 @@ export const CreateNewTarrif = () => {
       vehicleType !== (null || undefined)
   );
   // console.log(allVehicleType);
+  // console.log(tarrifInput);
   return (
     <>
       <Form>

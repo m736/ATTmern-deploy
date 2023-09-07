@@ -32,7 +32,7 @@ router.put(
 router.get(
   "/list_tarrif",
   catchAsyncError(async (req, res, next) => {
-    const resPerPage = 3;
+    const resPerPage = 10;
     let buildQuery = () => {
       return new APIFeatures(Createtarrif.find(), req.query).search().filter();
     };

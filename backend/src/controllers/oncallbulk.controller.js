@@ -9,6 +9,7 @@ const cors = require("cors");
 router.post("/oncallmis_bulk_insert", async (req, res, next) => {
   try {
     const onCallMisData = req.body;
+    console.log(onCallMisData);
     await OnCallMisUploadData.insertMany(onCallMisData, (error, docs) => {
       if (docs) {
         res

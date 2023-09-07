@@ -13,7 +13,8 @@ const OnCallMISUpload = () => {
   const { oncall_mis_uploadlist } = useSelector(
     (state) => state.OnCallMisState
   );
-  const { tarrifData } = useSelector((state) => state.TarrifState);
+  const { alltarrifData } = useSelector((state) => state.TarrifState);
+  console.log(alltarrifData);
   const readUploadFile = (e) => {
     e.preventDefault();
     if (e.target.files) {
@@ -43,6 +44,7 @@ const OnCallMISUpload = () => {
       reader.readAsArrayBuffer(file);
     }
   };
+  // console.log(excelRows);
 
   const fetchOnCallMisUploadData = async () => {
     dispatch(getOnCallMisData);
@@ -102,6 +104,7 @@ const OnCallMISUpload = () => {
       const updatedlistOnCall = listOnCall.filter((x) => x._id);
       const newlistOnCall = listOnCall.filter((x) => !x._id);
       // console.log(updatedlistOnCall, getFinalFilteredArray(updatedlistOnCall));
+      // console.log(newlistOnCall, getFinalFilteredArray(newlistOnCall));
       const updateFinalListOnCall = getFinalFilteredArray(updatedlistOnCall);
       const newFinalListOnCall = getFinalFilteredArray(newlistOnCall);
 
@@ -144,25 +147,33 @@ const OnCallMISUpload = () => {
 
   const getFinalFilteredArray = (parentList) => {
     let finalList = parentList.map((singleOnCallData) => {
-      if (tarrifData?.length) {
-        let filterData = tarrifData.filter(
+      const OurTotalHrs = Number(singleOnCallData?.Total_Hrs ?? 0);
+      if (alltarrifData?.length) {
+        let filterData = alltarrifData.filter(
           (item) =>
-            singleOnCallData?.Company_Name == item?.company &&
-            singleOnCallData?.Vehicle_Billed_As == item?.vehicleType &&
-            singleOnCallData?.Rental == item?.selectedRental &&
-            singleOnCallData?.Segment == item?.selectedSegment
+            singleOnCallData?.Company_Name.toUpperCase() ==
+              item?.company.toUpperCase() &&
+            singleOnCallData?.Vehicle_Billed_As.toUpperCase() ==
+              item?.vehicleType.toUpperCase() &&
+            singleOnCallData?.Rental.toUpperCase() ==
+              item?.selectedRental.toUpperCase() &&
+            singleOnCallData?.Segment.toUpperCase() ==
+              item?.selectedSegment.toUpperCase() &&
+            singleOnCallData?.Area.toUpperCase() ==
+              item?.selectedArea.toUpperCase()
         );
 
         if (singleOnCallData?.Rental != "Out Station") {
-          if (singleOnCallData?.Total_Hrs) {
+          if (OurTotalHrs) {
             let graceTimeFilter = filterData.filter((item) => {
               let totalHrs = Number(item?.selectedSlabhrs);
               if (item?.salesGraceTime) {
                 totalHrs += Number(item?.salesGraceTime);
               }
 
-              return Number(singleOnCallData?.Total_Hrs) <= totalHrs;
+              return OurTotalHrs <= totalHrs;
             });
+            // console.log(graceTimeFilter);
             if (graceTimeFilter.length) {
               filterData = [...graceTimeFilter];
             } else {
@@ -175,13 +186,11 @@ const OnCallMISUpload = () => {
         );
 
         let calculationItem = filterData[0];
+        // console.log(calculationItem);
         const tarrrifSlabKms = Number(calculationItem?.selectedSlabkms ?? 0);
         const OurTotalKms = Number(singleOnCallData?.Total_Kms ?? 0);
-
         const tarrifSlabHrs = Number(calculationItem?.selectedSlabhrs ?? 0);
-        const OurTotalHrs = Number(singleOnCallData?.Total_Hrs ?? 0);
         const OurTotalDays = Number(singleOnCallData?.Total_Days ?? 0);
-
         const Toll = Number(singleOnCallData?.Toll ?? 0);
         const Parking = Number(singleOnCallData?.Parking ?? 0);
         const Permit = Number(singleOnCallData?.Permit ?? 0);
@@ -252,6 +261,16 @@ const OnCallMISUpload = () => {
           Night_Sales_Bata +
           Others +
           Fuel_Difference;
+        // console.log(
+        //   `${exHrs}*${tarrifPurchaseExHrsRate} + ${exKms}*${tarrifPurchaseExKmsRate} + ${tarrifPurchaseRate}=${
+        //     totalPurchaseHrsPrice + totalPurchaseKmsPrice + tarrifPurchaseRate
+        //   }`
+        // );
+        // console.log(
+        //   `${exHrs}*${tarrifPurchaseExHrsRate} + ${exKms}*${tarrifPurchaseExKmsRate} + ${tarrifPurchaseRate}=${
+        //     totalPurchaseHrsPrice + totalPurchaseKmsPrice + tarrifPurchaseRate
+        //   }`
+        // );
         const purchaseGross =
           singleOnCallData?.Rental !== "Out Station"
             ? totalPurchaseHrsPrice + totalPurchaseKmsPrice + tarrifPurchaseRate
@@ -263,7 +282,7 @@ const OnCallMISUpload = () => {
           Permit +
           Driver_Batta +
           Day_Bata +
-          Night_Sales_Bata +
+          Night_Purchase_Bata +
           Others +
           Fuel_Difference;
 
@@ -273,9 +292,9 @@ const OnCallMISUpload = () => {
           exHrs: exHrs,
           exKms: exKms,
           salesGross: salesGross,
-          salesNett: salesNett,
+          salesNett: Math.round(salesNett),
           purchaseGross: purchaseGross,
-          purchaseNett: purchaseNett,
+          purchaseNett: Math.round(purchaseNett),
         };
       } else {
         return singleOnCallData;
@@ -293,50 +312,49 @@ const OnCallMISUpload = () => {
       <h1 className="text-black mt-5 mb-10 text-2xl">
         Upload On Call MIS Data
       </h1>
-      <form>
-        <div className="grid grid-cols-2">
-          <div>
-            <input
-              type="file"
-              name="oncall_mis"
-              onChange={readUploadFile}
-              accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
-              className={`file:bg-gradient-to-b file:from-blue-500 file:to-blue-600
+
+      <div className="grid grid-cols-2">
+        <div>
+          <input
+            type="file"
+            name="oncall_mis"
+            onChange={readUploadFile}
+            accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
+            className={`file:bg-gradient-to-b file:from-blue-500 file:to-blue-600
  file:px-6 file:py-3 file:m-2 file:border-none file:rounded-full file:text-white
  file:cursor-pointer file:shadow-sm file:shadow-blue-600/50
  bg-gradient-to-br from-gray-600 to-gray-700 text-white rounded-full
  cursor-pointer w-full`}
-            />
-            <div className="text-sm pt-5">
-              {" "}
-              {"NOTE: The headers in the Excel file should be as follows!. => "}
-              {onCallMisrequiredFields.join(", ")}
-            </div>
-          </div>
-          <div>
-            <div className="inline-flex ml-24">
-              {selectedFile?.name && excelRows.length ? (
-                <button
-                  class="bg-blue-500 hover:bg-blue-900 text-white py-3 px-4 rounded"
-                  disabled={loading}
-                  onClick={uploadData}
-                >
-                  UploadMISData
-                </button>
-              ) : null}{" "}
-              {selectedFile?.name && excelRows.length ? (
-                <button
-                  class="bg-red-500 hover:bg-red-900 text-white py-3 px-4 ml-3 rounded"
-                  disabled={loading}
-                  onClick={removeFile}
-                >
-                  Remove
-                </button>
-              ) : null}
-            </div>
+          />
+          <div className="text-sm pt-5">
+            {" "}
+            {"NOTE: The headers in the Excel file should be as follows!. => "}
+            {onCallMisrequiredFields.join(", ")}
           </div>
         </div>
-      </form>
+        <div>
+          <div className="inline-flex ml-24">
+            {selectedFile?.name && excelRows.length ? (
+              <button
+                class="bg-blue-500 hover:bg-blue-900 text-white py-3 px-4 rounded"
+                disabled={loading}
+                onClick={uploadData}
+              >
+                UploadMISData
+              </button>
+            ) : null}{" "}
+            {selectedFile?.name && excelRows.length ? (
+              <button
+                class="bg-red-500 hover:bg-red-900 text-white py-3 px-4 ml-3 rounded"
+                disabled={loading}
+                onClick={removeFile}
+              >
+                Remove
+              </button>
+            ) : null}
+          </div>
+        </div>
+      </div>
     </>
   );
 };

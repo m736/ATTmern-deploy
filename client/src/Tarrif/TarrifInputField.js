@@ -32,6 +32,7 @@ export const tarrifInputField = {
     { value: 5, text: "5 Hours" },
     { value: 6, text: "6 Hours" },
     { value: 8, text: "8 Hours" },
+    { value: 16, text: "16 Hours" },
   ],
   selectedSlabhrs: "",
   slabkms: [
@@ -39,8 +40,11 @@ export const tarrifInputField = {
     { value: 20, text: "20 Kms" },
     { value: 30, text: "30 Kms" },
     { value: 40, text: "40 Kms" },
+    { value: 60, text: "60 Kms" },
     { value: 50, text: "50 Kms" },
     { value: 80, text: "80 Kms" },
+    { value: 100, text: "100 Kms" },
+    { value: 160, text: "160 Kms" },
     { value: 300, text: "300 Kms" },
   ],
   selectedSlabkms: "",
@@ -127,6 +131,7 @@ export const tarrifExcelUploadrequiredFields = [
   "Segment",
 ];
 export const slabExcelUploadrequiredFields = [
+  "date",
   "Duty Type",
   "Company",
   "Trip ID",

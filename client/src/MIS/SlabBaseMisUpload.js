@@ -13,7 +13,7 @@ const SlabBaseMisUpload = () => {
   const { slab_base_mis_uploadlist } = useSelector(
     (state) => state.SlabBaseMisState || []
   );
-  const { tarrifData } = useSelector((state) => state.TarrifState || []);
+  const { alltarrifData } = useSelector((state) => state.TarrifState || []);
   const readUploadFile = (e) => {
     e.preventDefault();
     if (e.target.files) {
@@ -43,7 +43,8 @@ const SlabBaseMisUpload = () => {
       reader.readAsArrayBuffer(file);
     }
   };
-
+  // console.log(excelRows);
+  // console.log(alltarrifData);
   const fetchSlabBaseMisUploadData = async () => {
     dispatch(getSlabBaseMisData);
   };
@@ -103,7 +104,7 @@ const SlabBaseMisUpload = () => {
         Bata: obj["Bata"] || 0,
         "Fuel Difference": obj["Fuel Difference"] || 0,
         Company: obj["Company"] || "",
-        AREA: obj["AREA"] || "",
+        Area: obj["Area"] || "",
         "sale Bhata": obj["sale Bhata"] || 0,
         "Purchase Bhata": obj["Purchase Bhata"] || 0,
       }));
@@ -113,34 +114,34 @@ const SlabBaseMisUpload = () => {
 
       const updateFinalSlabBase = getFinalFilteredArray(updatedlistSlabBase);
       const newFinalListSlabBase = getFinalFilteredArray(newlistSlabBase);
-      if (updateFinalSlabBase.length) {
-        const result = (
-          await axios.post(
-            "http://localhost:4000/slabmis_bulk/slabbase_mis_bulk_update",
-            updateFinalSlabBase
-          )
-        ).data;
-        if (result) {
-          alert(
-            "Successfully updated " + updateFinalSlabBase.length + " documents"
-          );
-        }
-      }
-      if (newFinalListSlabBase.length) {
-        const result = (
-          await axios.post(
-            "http://localhost:4000/slabmis_bulk/slabbase_mis_bulk_insert",
-            newFinalListSlabBase
-          )
-        ).data;
-        if (result) {
-          alert(
-            "Successfully added " + newFinalListSlabBase.length + " documents"
-          );
-        }
-      }
-      fetchSlabBaseMisUploadData();
-      setLoading(false);
+      // if (updateFinalSlabBase.length) {
+      //   const result = (
+      //     await axios.post(
+      //       "http://localhost:4000/slabmis_bulk/slabbase_mis_bulk_update",
+      //       updateFinalSlabBase
+      //     )
+      //   ).data;
+      //   if (result) {
+      //     alert(
+      //       "Successfully updated " + updateFinalSlabBase.length + " documents"
+      //     );
+      //   }
+      // }
+      // if (newFinalListSlabBase.length) {
+      //   const result = (
+      //     await axios.post(
+      //       "http://localhost:4000/slabmis_bulk/slabbase_mis_bulk_insert",
+      //       newFinalListSlabBase
+      //     )
+      //   ).data;
+      //   if (result) {
+      //     alert(
+      //       "Successfully added " + newFinalListSlabBase.length + " documents"
+      //     );
+      //   }
+      // }
+      // fetchSlabBaseMisUploadData();
+      // setLoading(false);
     } catch (error) {
       setLoading(false);
       console.log("uploadData error: ", error);
@@ -149,8 +150,8 @@ const SlabBaseMisUpload = () => {
 
   const getFinalFilteredArray = (parentList) => {
     let finalList = parentList.map((singleSlabBaseData) => {
-      if (tarrifData?.length) {
-        let filterData = tarrifData.filter((item) => {
+      if (alltarrifData?.length) {
+        let filterData = alltarrifData.filter((item) => {
           return (
             singleSlabBaseData?.Company?.toUpperCase() ==
               item?.company?.toUpperCase() &&
@@ -159,7 +160,9 @@ const SlabBaseMisUpload = () => {
             singleSlabBaseData?.["Duty Type"]?.toUpperCase() ==
               item?.selectedRental?.toUpperCase() &&
             singleSlabBaseData?.Segment?.toUpperCase() ==
-              item?.selectedSegment?.toUpperCase()
+              item?.selectedSegment?.toUpperCase() &&
+            singleSlabBaseData?.Area.toUpperCase() ==
+              item?.selectedArea.toUpperCase()
           );
         });
         // console.log(filterData);
@@ -169,6 +172,7 @@ const SlabBaseMisUpload = () => {
             ActiveSlabs.push(key.replace("Slab", ""));
           }
         }
+        console.log(ActiveSlabs);
         let SlabFilterData = [];
         ActiveSlabs.forEach((slab) => {
           if (slab.includes("E")) {
@@ -275,7 +279,7 @@ const SlabBaseMisUpload = () => {
             <div className="inline-flex ml-24">
               {selectedFile?.name && excelRows.length ? (
                 <button
-                  class="bg-blue-500 hover:bg-blue-900 text-white py-3 px-4 rounded"
+                  className="bg-blue-500 hover:bg-blue-900 text-white py-3 px-4 rounded"
                   disabled={loading}
                   onClick={uploadData}
                 >
@@ -284,7 +288,7 @@ const SlabBaseMisUpload = () => {
               ) : null}{" "}
               {selectedFile?.name && excelRows.length ? (
                 <button
-                  class="bg-red-500 hover:bg-red-900 text-white py-3 px-4 ml-3 rounded"
+                  className="bg-red-500 hover:bg-red-900 text-white py-3 px-4 ml-3 rounded"
                   disabled={loading}
                   onClick={removeFile}
                 >

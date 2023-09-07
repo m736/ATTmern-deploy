@@ -182,7 +182,7 @@ const slabBaseMisSchema = new Schema(
     Bata: Number,
     "Fuel Difference": Number,
     Company: String,
-    AREA: String,
+    Area: String,
     "sale Bhata": Number,
     "Purchase Bhata": Number,
     SalesTotal: Number,

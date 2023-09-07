@@ -674,6 +674,29 @@ const TarrifFormTable = (props) => {
             )}
             {!tarrif.editable ? (
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
+                {tarrif?.purchaseExKmsRate == null ? (
+                  <span className="text-red-600">{tarrif.empty}</span>
+                ) : (
+                  tarrif?.purchaseExKmsRate
+                )}
+              </td>
+            ) : (
+              <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
+                {enableinput?.includes("purchaseExKmsRate") ? (
+                  <NumericInput
+                    style={{ width: "140px" }}
+                    defaultValue={tarrif.purchaseExKmsRate}
+                    value={tarrif.purchaseExKmsRate}
+                    disabled={!enableinput?.includes("purchaseExKmsRate")}
+                    onChange={(value) => {
+                      valueHandle("purchaseExKmsRate", value);
+                    }}
+                  />
+                ) : null}
+              </td>
+            )}
+            {!tarrif.editable ? (
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
                 {tarrif?.salesExHrsRate == null ? (
                   <span className="text-red-600">{tarrif.empty}</span>
                 ) : (
@@ -718,29 +741,7 @@ const TarrifFormTable = (props) => {
                 ) : null}
               </td>
             )}
-            {!tarrif.editable ? (
-              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
-                {tarrif?.purchaseExKmsRate == null ? (
-                  <span className="text-red-600">{tarrif.empty}</span>
-                ) : (
-                  tarrif?.purchaseExKmsRate
-                )}
-              </td>
-            ) : (
-              <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
-                {enableinput?.includes("purchaseExKmsRate") ? (
-                  <NumericInput
-                    style={{ width: "140px" }}
-                    defaultValue={tarrif.purchaseExKmsRate}
-                    value={tarrif.purchaseExKmsRate}
-                    disabled={!enableinput?.includes("purchaseExKmsRate")}
-                    onChange={(value) => {
-                      valueHandle("purchaseExKmsRate", value);
-                    }}
-                  />
-                ) : null}
-              </td>
-            )}
+
             {!tarrif.editable ? (
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
                 {tarrif?.salesGraceTime == null ? (
@@ -1069,6 +1070,20 @@ const TarrifFormTable = (props) => {
               />
             ) : null}
           </td>
+
+          <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200">
+            {enableinput?.includes("purchaseExKmsRate") ? (
+              <NumericInput
+                style={{ width: "140px" }}
+                defaultValue={tarrif.purchaseExKmsRate}
+                value={tarrif.purchaseExKmsRate}
+                disabled={!enableinput?.includes("purchaseExKmsRate")}
+                onChange={(value) => {
+                  valueHandle("purchaseExKmsRate", value);
+                }}
+              />
+            ) : null}
+          </td>
           <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200">
             {enableinput?.includes("salesExHrsRate") ? (
               <NumericInput
@@ -1095,19 +1110,7 @@ const TarrifFormTable = (props) => {
               />
             ) : null}
           </td>
-          <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200">
-            {enableinput?.includes("purchaseExKmsRate") ? (
-              <NumericInput
-                style={{ width: "140px" }}
-                defaultValue={tarrif.purchaseExKmsRate}
-                value={tarrif.purchaseExKmsRate}
-                disabled={!enableinput?.includes("purchaseExKmsRate")}
-                onChange={(value) => {
-                  valueHandle("purchaseExKmsRate", value);
-                }}
-              />
-            ) : null}
-          </td>
+
           <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200">
             {enableinput?.includes("salesGraceTime") ? (
               <NumericInput

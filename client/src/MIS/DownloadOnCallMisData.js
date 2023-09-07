@@ -41,8 +41,8 @@ const DownloadOnCallMisData = () => {
     // console.log("Finish:", values);
     // moment(new Date(dateRange[0])).format("YYYY-MM-DD")
     const rangeTimejourney = fieldsValue["start_end_date"];
-    const startJourney = rangeTimejourney[0]?.format("YYYY/MM/DD");
-    const endJourney = rangeTimejourney[1]?.format("YYYY/MM/DD");
+    const startJourney = rangeTimejourney[0]?.format("DD/MM/YYYY");
+    const endJourney = rangeTimejourney[1]?.format("DD/MM/YYYY");
     const values = {
       ...fieldsValue,
       startJourney: startJourney,
