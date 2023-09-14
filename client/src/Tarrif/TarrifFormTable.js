@@ -545,8 +545,10 @@ const TarrifFormTable = (props) => {
               <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
                 {tarrif?.selectedSlabto == "" ? (
                   <span className="text-red-600">{tarrif.empty}</span>
-                ) : (
+                ) : tarrif?.selectedSlabto <= 85 ? (
                   tarrif?.selectedSlabto
+                ) : (
+                  "Above"
                 )}
               </td>
             ) : (

@@ -211,7 +211,7 @@ const NavBar = () => {
         </div>
         <ul className={`pt-2`}>
           {menuOption.map((menu, index) => (
-            <>
+            <div key={menu.title}>
               <li
                 key={index}
                 className={`text-gray-300 text-sm flex 
@@ -266,7 +266,7 @@ const NavBar = () => {
                   ))}
                 </ul>
               )}
-            </>
+            </div>
           ))}
         </ul>
       </div>

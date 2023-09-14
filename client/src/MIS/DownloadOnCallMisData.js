@@ -70,6 +70,8 @@ const DownloadOnCallMisData = () => {
         "Slab Applied": `${item?.selectedSlabhrs ?? 0}Hrs/${
           item?.selectedSlabkms ?? 0
         }Kms`,
+        ExKm: item?.exKms ?? 0,
+        ExHrs: item?.exHrs + "mins" ?? 0,
         SalesRate: item?.salesRate ?? 0,
         PurchaseRate: item?.purchaseRate ?? 0,
 
@@ -81,8 +83,7 @@ const DownloadOnCallMisData = () => {
         "PurchaseExHrs Rate": item?.purchaseExHrsRate ?? 0,
         "Purchase Grace Time": item?.purchaseGraceTime ?? 0,
         "Night Purchase Bata": item?.Night_Purchase_Bata ?? 0,
-        ExKm: item?.exKms ?? 0,
-        ExHrs: item?.exHrs ?? 0,
+
         Toll: item?.Toll ?? 0,
         Parking: item?.Parking ?? 0,
         Permit: item?.Permit ?? 0,

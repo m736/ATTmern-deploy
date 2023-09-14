@@ -17,7 +17,7 @@ const OnCallMISUpload = () => {
 
   const readUploadFile = (e) => {
     e.preventDefault();
-    if (e.target.files[0]) {
+    if (e.target.files) {
       setLoading(true);
       const file = e.target.files[0];
       setSelectedFile(file);
@@ -146,13 +146,8 @@ const OnCallMISUpload = () => {
 
   const getFinalFilteredArray = (parentList) => {
     let finalList = parentList.map((singleOnCallData) => {
-      function convertH2M(timeInHour) {
-        let timeParts = timeInHour.split(":");
-        return Number(timeParts[0]) * 60 + Number(timeParts[1]);
-      }
-      let OurTotalHrs = singleOnCallData?.Total_Hrs ?? 0;
+      const OurTotalHrs = singleOnCallData?.Total_Hrs ?? "0:00";
 
-      let timeInMinutesOurTotalHrs = convertH2M(OurTotalHrs);
       if (alltarrifData?.length) {
         let filterData = alltarrifData.filter(
           (item) =>
@@ -167,19 +162,18 @@ const OnCallMISUpload = () => {
             singleOnCallData?.Area.toUpperCase() ==
               item?.selectedArea.toUpperCase()
         );
-        // console.log(filterData);
+
         if (singleOnCallData?.Rental != "Out Station") {
-          if (timeInMinutesOurTotalHrs) {
+          if (OurTotalHrs) {
             let graceTimeFilter = filterData.filter((item) => {
-              let totalHrs = Number(item?.selectedSlabhrs) * 60;
+              let totalHrs = Number(item?.selectedSlabhrs * 60);
               if (item?.salesGraceTime) {
-                totalHrs += Number(item?.salesGraceTime) * 60;
+                totalHrs += Number(item?.salesGraceTime * 60);
               }
-              // console.log(timeInMinutesOurTotalHrs <= totalHrs);
-              // console.log(`${totalHrs}-${timeInMinutesOurTotalHrs}`);
+
               return timeInMinutesOurTotalHrs <= totalHrs;
             });
-            // console.log(graceTimeFilter);
+
             if (graceTimeFilter.length) {
               filterData = [...graceTimeFilter];
             } else {
@@ -192,12 +186,22 @@ const OnCallMISUpload = () => {
         );
 
         let calculationItem = filterData[0];
-        // console.log(calculationItem);
-        const tarrrifSlabKms = Number(calculationItem?.selectedSlabkms ?? 0);
-        const OurTotalKms = Number(singleOnCallData?.Total_Kms ?? 0);
         const tarrifSlabHrs =
           calculationItem?.selectedSlabhrs + ":00" ?? "0:00";
-        let timeInMinutesTarrifSlabHrs = convertH2M(tarrifSlabHrs);
+
+        function convertH2M(timeInHour) {
+          var timeParts = timeInHour.split(":");
+          return Number(timeParts[0]) * 60 + Number(timeParts[1]);
+        }
+
+        var timeInMinutesOurTotalHrs = convertH2M(OurTotalHrs);
+        var timeInMinutesTarrifSlabHrs = convertH2M(tarrifSlabHrs);
+        // console.log(
+        //   `${timeInMinutesOurTotalHrs}-${timeInMinutesTarrifSlabHrs}`
+        // );
+
+        const tarrrifSlabKms = Number(calculationItem?.selectedSlabkms ?? 0);
+        const OurTotalKms = Number(singleOnCallData?.Total_Kms ?? 0);
         const OurTotalDays = Number(singleOnCallData?.Total_Days ?? 0);
         const Toll = Number(singleOnCallData?.Toll ?? 0);
         const Parking = Number(singleOnCallData?.Parking ?? 0);
@@ -226,7 +230,7 @@ const OnCallMISUpload = () => {
           calculationItem?.purchaseExKmsRate ?? 0
         );
         const remainingHrs =
-          timeInMinutesTarrifSlabHrs &&
+          tarrifSlabHrs &&
           timeInMinutesOurTotalHrs >= timeInMinutesTarrifSlabHrs
             ? timeInMinutesOurTotalHrs - timeInMinutesTarrifSlabHrs
             : 0;
@@ -234,33 +238,22 @@ const OnCallMISUpload = () => {
           tarrrifSlabKms && OurTotalKms >= tarrrifSlabKms
             ? OurTotalKms - tarrrifSlabKms
             : 0;
-        // console.log(remainingKms);
+
         const remainingKmsForOutAndDay =
           OurTotalDays > 0 && OurTotalDays * tarrrifSlabKms >= OurTotalKms
             ? OurTotalDays * tarrrifSlabKms
             : OurTotalKms;
-        const exHrsMinutes =
+        const exHrs =
           singleOnCallData?.Rental !== "Out Station" ? remainingHrs : 0;
-        function toHoursAndMinutes(totalMinutes) {
-          const hours = Math.floor(totalMinutes / 60);
-          const minutes = totalMinutes % 60;
-
-          return `${padToTwoDigits(hours)}:${padToTwoDigits(minutes)}`;
-        }
-
-        function padToTwoDigits(num) {
-          return num.toString().padStart(2, "0");
-        }
-        const exHrs = toHoursAndMinutes(exHrsMinutes);
+        console.log(exHrs);
         const exKms =
           singleOnCallData?.Rental !== "Out Station"
             ? remainingKms
             : remainingKmsForOutAndDay;
-        // console.log(exKms);
-        const totalSalesHrsPrice = tarrifSlabExHrsRate * (exHrsMinutes / 60);
+
+        const totalSalesHrsPrice = (Number(exHrs) / 60) * tarrifSlabExHrsRate;
         const totalSalesKmsPrice = exKms * tarrifSlabExKmsRate;
-        const totalPurchaseHrsPrice =
-          tarrifPurchaseExHrsRate * (exHrsMinutes / 60);
+        const totalPurchaseHrsPrice = exHrs * tarrifPurchaseExHrsRate;
         const totalPurchaseKmsPrice = exKms * tarrifPurchaseExKmsRate;
         const totalKmsPriceForSalesOutAndDay = exKms * tarrifSlabExKmsRate;
         const totalKmsPriceForPurchasesOutAndDay =
@@ -287,11 +280,11 @@ const OnCallMISUpload = () => {
         //     totalPurchaseHrsPrice + totalPurchaseKmsPrice + tarrifPurchaseRate
         //   }`
         // );
-        console.log(
-          `${exHrs}*${tarrifPurchaseExHrsRate} + ${exKms}*${tarrifPurchaseExKmsRate} + ${tarrifPurchaseRate}=${
-            totalPurchaseHrsPrice + totalPurchaseKmsPrice + tarrifPurchaseRate
-          }`
-        );
+        // console.log(
+        //   `${exHrs}*${tarrifPurchaseExHrsRate} + ${exKms}*${tarrifPurchaseExKmsRate} + ${tarrifPurchaseRate}=${
+        //     totalPurchaseHrsPrice + totalPurchaseKmsPrice + tarrifPurchaseRate
+        //   }`
+        // );
         const purchaseGross =
           singleOnCallData?.Rental !== "Out Station"
             ? totalPurchaseHrsPrice + totalPurchaseKmsPrice + tarrifPurchaseRate

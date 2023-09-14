@@ -16,7 +16,7 @@ import {
 export const getVechicle = async (dispatch) => {
   try {
     dispatch(vechicleRequest());
-    const { data } = await axios.get("http://localhost:4000/api/v1/jokes");
+    const { data } = await axios.get("/api/v1/jokes");
     dispatch(vechicleSuccess(data));
   } catch (error) {
     //handle error

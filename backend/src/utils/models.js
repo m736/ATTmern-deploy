@@ -1,5 +1,16 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
+function formatDate(date) {
+  var d = new Date(date),
+    month = "" + (d.getMonth() + 1),
+    day = "" + d.getDate(),
+    year = d.getFullYear();
+
+  if (month.length < 2) month = "0" + month;
+  if (day.length < 2) day = "0" + day;
+
+  return [year, month, day].join("-");
+}
 
 // =====Vehicle Model=====
 const vehicleSchema = new Schema(
@@ -121,7 +132,11 @@ const newTripSheetEntryShema = new mongoose.Schema(
 const onCallMisSchema = new Schema(
   {
     Dutyslip_No: String,
-    Usage_Date: String,
+    Usage_Date: {
+      type: String,
+      required: true,
+      set: (date) => formatDate(date),
+    },
     Vehicle_No: String,
     Vehicle_Type: String,
     Vehicle_Billed_As: String,
@@ -154,7 +169,11 @@ const onCallMisSchema = new Schema(
 );
 const slabBaseMisSchema = new Schema(
   {
-    date: String,
+    date: {
+      type: String,
+      required: true,
+      set: (date) => formatDate(date),
+    },
     "Trip ID": String,
     "Vehicle No": String,
     "Vehicle TYPE": String,
@@ -183,15 +202,19 @@ const slabBaseMisSchema = new Schema(
     "Fuel Difference": Number,
     Company: String,
     Area: String,
-    "sale Bhata": Number,
-    "Purchase Bhata": Number,
+    Sale_Bhata: Number,
+    Purchase_Bhata: Number,
     SalesTotal: Number,
   },
   { strict: false, timestamps: true }
 );
 const tripBaseMisSchema = new Schema(
   {
-    Usage_Date: String,
+    Usage_Date: {
+      type: String,
+      required: true,
+      set: (date) => formatDate(date),
+    },
     Trip_Id: String,
     Vehicle_No: String,
     Vehicle_Type: String,
@@ -218,7 +241,11 @@ const tripBaseMisSchema = new Schema(
 );
 const dayBaseMisSchema = new Schema(
   {
-    Usage_Date: String,
+    Usage_Date: {
+      type: String,
+      required: true,
+      set: (date) => formatDate(date),
+    },
     Trip_Id: String,
     Vehicle_No: String,
     Vehicle_Type: String,

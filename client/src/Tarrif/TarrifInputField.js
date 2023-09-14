@@ -49,6 +49,7 @@ export const tarrifInputField = {
   ],
   selectedSlabkms: "",
   slabfrom: [
+    { value: 0, text: 0 },
     { value: 1, text: 1 },
     { value: 6, text: 6 },
     { value: 11, text: 11 },
@@ -86,7 +87,7 @@ export const tarrifInputField = {
     { value: 75, text: 75 },
     { value: 80, text: 80 },
     { value: 85, text: 85 },
-    { value: "Above", text: "Above" },
+    { value: 86, text: "Above" },
   ],
   selectedSlabto: null,
   addon: [

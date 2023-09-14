@@ -78,6 +78,7 @@ const SlabBaseMisUpload = () => {
           ?._id,
 
         date: obj["date"] || "",
+        // date: moment(new Date(obj["date"]).format("YYYY-MM-DD")) || "",
         "Trip ID": obj["Trip ID"] || "",
         "Vehicle No": obj["Vehicle No"] || "",
         "Vehicle TYPE": obj["Vehicle TYPE"] || "",
@@ -105,8 +106,8 @@ const SlabBaseMisUpload = () => {
         "Fuel Difference": obj["Fuel Difference"] || 0,
         Company: obj["Company"] || "",
         Area: obj["Area"] || "",
-        "sale Bhata": obj["sale Bhata"] || 0,
-        "Purchase Bhata": obj["Purchase Bhata"] || 0,
+        Sale_Bhata: obj["Sale_Bhata"] || 0,
+        Purchase_Bhata: obj["Purchase_Bhata"] || 0,
       }));
 
       const updatedlistSlabBase = listSlabBase.filter((x) => x._id);
@@ -114,34 +115,34 @@ const SlabBaseMisUpload = () => {
 
       const updateFinalSlabBase = getFinalFilteredArray(updatedlistSlabBase);
       const newFinalListSlabBase = getFinalFilteredArray(newlistSlabBase);
-      // if (updateFinalSlabBase.length) {
-      //   const result = (
-      //     await axios.post(
-      //       "http://localhost:4000/slabmis_bulk/slabbase_mis_bulk_update",
-      //       updateFinalSlabBase
-      //     )
-      //   ).data;
-      //   if (result) {
-      //     alert(
-      //       "Successfully updated " + updateFinalSlabBase.length + " documents"
-      //     );
-      //   }
-      // }
-      // if (newFinalListSlabBase.length) {
-      //   const result = (
-      //     await axios.post(
-      //       "http://localhost:4000/slabmis_bulk/slabbase_mis_bulk_insert",
-      //       newFinalListSlabBase
-      //     )
-      //   ).data;
-      //   if (result) {
-      //     alert(
-      //       "Successfully added " + newFinalListSlabBase.length + " documents"
-      //     );
-      //   }
-      // }
-      // fetchSlabBaseMisUploadData();
-      // setLoading(false);
+      if (updateFinalSlabBase.length) {
+        const result = (
+          await axios.post(
+            "http://localhost:4000/slabmis_bulk/slabbase_mis_bulk_update",
+            updateFinalSlabBase
+          )
+        ).data;
+        if (result) {
+          alert(
+            "Successfully updated " + updateFinalSlabBase.length + " documents"
+          );
+        }
+      }
+      if (newFinalListSlabBase.length) {
+        const result = (
+          await axios.post(
+            "http://localhost:4000/slabmis_bulk/slabbase_mis_bulk_insert",
+            newFinalListSlabBase
+          )
+        ).data;
+        if (result) {
+          alert(
+            "Successfully added " + newFinalListSlabBase.length + " documents"
+          );
+        }
+      }
+      fetchSlabBaseMisUploadData();
+      setLoading(false);
     } catch (error) {
       setLoading(false);
       console.log("uploadData error: ", error);
@@ -172,12 +173,17 @@ const SlabBaseMisUpload = () => {
             ActiveSlabs.push(key.replace("Slab", ""));
           }
         }
-        console.log(ActiveSlabs);
+        // console.log(ActiveSlabs);
         let SlabFilterData = [];
         ActiveSlabs.forEach((slab) => {
           if (slab.includes("E")) {
             let emptyAddOn = filterData.filter(
               (addon) => addon.selectedAddon == "escort"
+            );
+
+            emptyAddOn = emptyAddOn?.sort(
+              (a, b) =>
+                Number(a?.selectedSlabfrom) - Number(b?.selectedSlabfrom)
             );
 
             if (emptyAddOn[Number(slab.replace(" - E", "")) - 1]) {
@@ -190,6 +196,10 @@ const SlabBaseMisUpload = () => {
             let emptyAddOn = filterData.filter(
               (addon) => addon.selectedAddon == "single"
             );
+            emptyAddOn = emptyAddOn?.sort(
+              (a, b) =>
+                Number(a?.selectedSlabfrom) - Number(b?.selectedSlabfrom)
+            );
             if (emptyAddOn[Number(slab.replace(" - Single", "")) - 1]) {
               SlabFilterData.push(
                 emptyAddOn[Number(slab.replace(" - Single", "")) - 1]
@@ -200,34 +210,58 @@ const SlabBaseMisUpload = () => {
             let emptyAddOn = filterData.filter(
               (addon) => addon.selectedAddon == ""
             );
+
+            emptyAddOn = emptyAddOn?.sort(
+              (a, b) =>
+                Number(a?.selectedSlabfrom) - Number(b?.selectedSlabfrom)
+            );
+            // console.log(emptyAddOn);
             if (emptyAddOn[Number(slab) - 1]) {
               SlabFilterData.push(emptyAddOn[Number(slab) - 1]);
             }
           }
         });
-        console.log(SlabFilterData);
+        // console.log(SlabFilterData);
         let salesEscortBata = 0;
         let salesBata = 0;
         let salesSingleBata = 0;
+        let purchaseEscortBata = 0;
+        let purchaseBata = 0;
+        let purchaseSingleBata = 0;
         SlabFilterData.forEach((item) => {
           // console.log(item);
           if (item?.selectedAddon == "") {
             salesBata = Number(item?.salesRate ?? 0);
+            purchaseBata = Number(item?.purchaseRate ?? 0);
           } else if (item?.selectedAddon == "escort") {
             salesEscortBata = Number(item?.salesRate ?? 0);
+            purchaseEscortBata = Number(item?.purchaseRate ?? 0);
           } else if (item?.selectedAddon == "single") {
             salesSingleBata = Number(item?.salesRate ?? 0);
+            purchaseSingleBata = Number(item?.purchaseRate ?? 0);
           }
         });
         let salesTotal = 0;
+        let purchaseTotal = 0;
         SlabFilterData.forEach((item) => {
           salesTotal = Number(
             `${
               Number(item?.Bata ?? 0) +
+              Number(item?.Sale_Bhata ?? 0) +
               Number(item?.["Fuel Difference"] ?? 0) +
               salesEscortBata +
               salesBata +
               salesSingleBata
+            }`
+          );
+          purchaseTotal = Number(
+            `${
+              Number(item?.Bata ?? 0) +
+              Number(item?.Purchase_Bhata ?? 0) +
+              Number(item?.["Fuel Difference"] ?? 0) +
+              purchaseEscortBata +
+              purchaseBata +
+              purchaseSingleBata
             }`
           );
         });
@@ -237,6 +271,7 @@ const SlabBaseMisUpload = () => {
           salesEscortBata: salesEscortBata,
           salesSingleBata: salesSingleBata,
           salesTotal: salesTotal,
+          purchaseTotal: purchaseTotal,
           ...singleSlabBaseData,
         };
       } else {

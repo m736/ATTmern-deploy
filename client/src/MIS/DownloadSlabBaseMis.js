@@ -5,11 +5,13 @@ import { useDispatch, useSelector } from "react-redux";
 import * as FileSaver from "file-saver";
 import * as XLSX from "xlsx";
 import { getSlabBaseMisData } from "../action/slabBasMisAction";
+import moment from "moment";
 import {
   searchSlabBaseMisDataFail,
   searchSlabBaseMisDataRequest,
   searchSlabBaseMisDataSuccess,
 } from "../slices/SlabBaseMisSlice";
+import ExportToExcel from "./ExportToExcel";
 
 const DownloadSlabBaseMis = () => {
   const [form] = Form.useForm();
@@ -37,8 +39,12 @@ const DownloadSlabBaseMis = () => {
   const [onFinishValues, setOnFinishValues] = useState([]);
   const onFinish = async (fieldsValue) => {
     const rangeTimejourney = fieldsValue["start_end_date"];
-    const startJourney = rangeTimejourney[0]?.format("DD/MM/YYYY");
-    const endJourney = rangeTimejourney[1]?.format("DD/MM/YYYY");
+    const startJourney = moment(new Date(rangeTimejourney[0])).format(
+      "YYYY-MM-DD"
+    );
+    const endJourney = moment(new Date(rangeTimejourney[1])).format(
+      "YYYY-MM-DD"
+    );
     const values = {
       ...fieldsValue,
       startJourney: startJourney,
@@ -51,59 +57,50 @@ const DownloadSlabBaseMis = () => {
         "http://localhost:4000/slabmis_bulk/download_slabBase_misdata",
         values
       );
-
-      const filteredSearchData = data.map((item) => ({
-        Id: item?._id,
-        "Duty Slip No": item?.["Trip ID"],
-        Rental: item?.["Duty Type"],
-        Client: item?.Company,
-        "Vehicle billed As": item?.["Vehicle Billed as"],
-        Segment: item?.Segment,
-        "Vehicle No": item?.["Vehicle No"] ?? "-",
-        "Vehicle Type": item?.["Vehicle TYPE"] ?? "-",
-        Slab1: item?.["Slab1"] ?? 0,
-        Slab2: item?.["Slab2"] ?? 0,
-        Slab3: item?.["Slab3"] ?? 0,
-        Slab4: item?.["Slab4"] ?? 0,
-        Slab5: item?.["Slab5"] ?? 0,
-        "Slab1 - E": item?.["Slab1 - E"] ?? 0,
-        "Slab2 - E": item?.["Slab2 - E"] ?? 0,
-        "Slab3 - E": item?.["Slab3 - E"] ?? 0,
-        "Slab4 - E": item?.["Slab4 - E"] ?? 0,
-        "Slab5 - E": item?.["Slab5 - E"] ?? 0,
-        "Slab1 - Single": item?.["Slab1 - Single"] ?? 0,
-        "Slab2 - Single": item?.["Slab2 - Single"] ?? 0,
-        "Slab3 - Single": item?.["Slab3 - Single"] ?? 0,
-        "Slab4 - Single": item?.["Slab4 - Single"] ?? 0,
-        "Slab5 - Single": item?.["Slab5 - Single"] ?? 0,
-        Bata: item?.["Bata"] ?? 0,
-        Fuel: item?.["Fuel Difference"] ?? 0,
-        Company: item?.["Company"] ?? "",
-        Area: item?.["AREA"] ?? 0,
-        salesTotal: item?.["salesTotal"] ?? 0,
-      }));
-      setSearchData(filteredSearchData);
+      console.log(data);
+      setSearchData(data);
       dispatch(searchSlabBaseMisDataSuccess(data));
     } catch (error) {
       //handle error
       dispatch(searchSlabBaseMisDataFail(error.response.data.message));
     }
-    const fileType =
-      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
-    const fileExtension = ".xlsx";
-    if (searchData && searchData.length) {
-      const ws = XLSX.utils.json_to_sheet(searchData);
-      const wb = { Sheets: { data: ws }, SheetNames: ["data"] };
-      const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
-      const data = new Blob([excelBuffer], { type: fileType });
-      FileSaver.saveAs(
-        data,
-        `${fileName}${onFinishValues?.startJourney}to${onFinishValues?.endJourney}${fileExtension}`
-      );
-    } else {
-      alert("no data");
-    }
   };
+
+  let filteredSearchData = [];
+  if (searchData && searchData.length > 0) {
+    console.log(searchData);
+    filteredSearchData = searchData?.map((item) => ({
+      Id: item?._id,
+      "Duty Slip No": item?.["Trip ID"],
+      Rental: item?.["Duty Type"],
+      Client: item?.Company,
+      "Vehicle billed As": item?.["Vehicle Billed as"],
+      Segment: item?.Segment,
+      "Vehicle No": item?.["Vehicle No"] ?? "-",
+      "Vehicle Type": item?.["Vehicle TYPE"] ?? "-",
+      Slab1: item?.["Slab1"] ?? 0,
+      Slab2: item?.["Slab2"] ?? 0,
+      Slab3: item?.["Slab3"] ?? 0,
+      Slab4: item?.["Slab4"] ?? 0,
+      Slab5: item?.["Slab5"] ?? 0,
+      "Slab1 - E": item?.["Slab1 - E"] ?? 0,
+      "Slab2 - E": item?.["Slab2 - E"] ?? 0,
+      "Slab3 - E": item?.["Slab3 - E"] ?? 0,
+      "Slab4 - E": item?.["Slab4 - E"] ?? 0,
+      "Slab5 - E": item?.["Slab5 - E"] ?? 0,
+      "Slab1 - Single": item?.["Slab1 - Single"] ?? 0,
+      "Slab2 - Single": item?.["Slab2 - Single"] ?? 0,
+      "Slab3 - Single": item?.["Slab3 - Single"] ?? 0,
+      "Slab4 - Single": item?.["Slab4 - Single"] ?? 0,
+      "Slab5 - Single": item?.["Slab5 - Single"] ?? 0,
+      Bata: item?.["Bata"] ?? 0,
+      Fuel: item?.["Fuel Difference"] ?? 0,
+      Company: item?.["Company"] ?? "",
+      Area: item?.["AREA"] ?? 0,
+      salesTotal: item?.["salesTotal"] ?? 0,
+    }));
+  }
+
   return (
     <>
       <div className="container">
@@ -167,11 +164,16 @@ const DownloadSlabBaseMis = () => {
                     .length
                 }
               >
-                Download
+                Search
               </Button>
             )}
           </Form.Item>
         </Form>
+        {filteredSearchData && filteredSearchData.length > 0 ? (
+          <ExportToExcel apiData={filteredSearchData} fileName={fileName} />
+        ) : (
+          "No Data"
+        )}
       </div>
     </>
   );

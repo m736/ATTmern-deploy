@@ -25,17 +25,16 @@ const TripBaseMisUpload = () => {
         const data = e.target.result;
         const workbook = read(data, {
           type: "binary",
-          cellText: false,
           cellDates: true,
-          cellNF: true,
+          cellNF: false,
+          cellText: false,
         });
         const sheetName = workbook.SheetNames[0];
         const worksheet = workbook.Sheets[sheetName];
         const json = utils.sheet_to_json(worksheet, {
           header: 0,
-          cellDates: true,
-          cellText: false,
           raw: false,
+          dateNF: "YYYY-MM-DD",
         });
 
         setLoading(false);
@@ -44,7 +43,7 @@ const TripBaseMisUpload = () => {
       reader.readAsArrayBuffer(file);
     }
   };
-
+  console.log(excelRows);
   const fetchTripBaseMisUploadData = async () => {
     dispatch(getTripBaseMisData);
   };

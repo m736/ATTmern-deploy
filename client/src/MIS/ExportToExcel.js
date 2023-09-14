@@ -2,7 +2,7 @@ import React from "react";
 import * as FileSaver from "file-saver";
 import * as XLSX from "xlsx";
 
-const ExportToExcelOnCall = ({ apiData, fileName }) => {
+const ExportToExcel = ({ apiData, fileName }) => {
   const fileType =
     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
   const fileExtension = ".xlsx";
@@ -16,8 +16,13 @@ const ExportToExcelOnCall = ({ apiData, fileName }) => {
   };
 
   return (
-    <button onClick={(e) => exportToCSV(apiData, fileName)}>Export</button>
+    <button
+      className="bg-red-500 hover:bg-red-900 text-white py-3 px-4 ml-3 rounded"
+      onClick={(e) => exportToCSV(apiData, fileName)}
+    >
+      Export
+    </button>
   );
 };
 
-export default ExportToExcelOnCall;
+export default ExportToExcel;

@@ -2,6 +2,7 @@
   "name": "client",
   "version": "0.1.0",
   "private": true,
+  "proxy": "http://localhost:4000",
   "dependencies": {
     "@reduxjs/toolkit": "^1.9.5",
     "@testing-library/jest-dom": "^5.16.5",
@@ -15,6 +16,7 @@
     "classnames": "^2.3.2",
     "file-saver": "^2.0.5",
     "font-awesome": "^4.7.0",
+    "http-proxy-middleware": "^2.0.6",
     "mdbreact": "^5.2.0",
     "react": "^18.2.0",
     "react-bootstrap": "^2.8.0",
