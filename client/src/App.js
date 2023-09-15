@@ -1,5 +1,5 @@
 import React from "react";
-import { Routes, Route, BrowserRouter } from "react-router-dom";
+import { Routes, Route, HashRouter } from "react-router-dom";
 import "./App.css";
 // import ExcelUpload from "./Component/ExcelUpload";
 import NavBar from "./Component/NavBar";
@@ -59,7 +59,7 @@ function App() {
   // }, []);
 
   return (
-    <BrowserRouter>
+    <HashRouter>
       <div className="flex">
         <aside className="w-2/12">
           <NavBar />
@@ -136,7 +136,7 @@ function App() {
           </div>
         </main>
       </div>
-    </BrowserRouter>
+    </HashRouter>
   );
 }
 
