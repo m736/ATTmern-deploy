@@ -2,6 +2,7 @@
   "name": "creotech-mern",
   "version": "1.0.0",
   "description": "",
+  "proxy": "https://creo-8w4j.onrender.com",
   "main": "index.js",
   "scripts": {
     "install-server": "cd backend && npm install",
