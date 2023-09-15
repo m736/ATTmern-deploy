@@ -1,33 +1,33 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React from "react";
 import { Routes, Route, BrowserRouter } from "react-router-dom";
 import "./App.css";
-import ExcelUpload from "./Component/ExcelUpload";
+// import ExcelUpload from "./Component/ExcelUpload";
 import NavBar from "./Component/NavBar";
-import FormSelect from "./Component/FormSelect";
-import { useDispatch } from "react-redux";
+// import FormSelect from "./Component/FormSelect";
+// import { useDispatch } from "react-redux";
 import "react-toastify/dist/ReactToastify.css";
-import {
-  vechicleFail,
-  vechicleRequest,
-  vechicleSuccess,
-} from "./slices/VechicleDetailSlice";
-import axios from "axios";
-import VehicleList from "./Vehicle/VehicleList";
-import AddVehicleList from "./Vehicle/AddVehicleList";
-import { ToastContainer, toast } from "react-toastify";
+// import {
+//   vechicleFail,
+//   vechicleRequest,
+//   vechicleSuccess,
+// } from "./slices/VechicleDetailSlice";
+// import axios from "axios";
+// import VehicleList from "./Vehicle/VehicleList";
+// import AddVehicleList from "./Vehicle/AddVehicleList";
+import { ToastContainer } from "react-toastify";
 import { CreateNewTarrif } from "./Tarrif/CreateNewTarrif";
 import ReadUpdateDeleteTarrif from "./Tarrif/ReadUpdateDeleteTarrif";
-import NewTripSheetEntry from "./TripSheetEntry/NewTripSheetEntry";
-import SalesAndPurchaseCalculation from "./TripSheetEntry/SalesAndPurchaseCalculation";
-import OnCallMISUpload from "./MIS/OnCallMISUpload";
-import DownloadOnCallMisData from "./MIS/DownloadOnCallMisData";
-import TarrifExcelUpload from "./Tarrif/TarrifExcelUpload";
-import SlabBaseMisUpload from "./MIS/SlabBaseMisUpload";
-import DownloadSlabBaseMis from "./MIS/DownloadSlabBaseMis";
-import DownloadTripBaseMis from "./MIS/DownloadTripBaseMis";
-import DownloadDayBaseMis from "./MIS/DownloadDayBaseMis";
-import TripBaseMisUpload from "./MIS/TripBaseMisUpload";
-import DayBaseMisUpload from "./MIS/DayBaseMisUpload";
+// import NewTripSheetEntry from "./TripSheetEntry/NewTripSheetEntry";
+// import SalesAndPurchaseCalculation from "./TripSheetEntry/SalesAndPurchaseCalculation";
+// import OnCallMISUpload from "./MIS/OnCallMISUpload";
+// import DownloadOnCallMisData from "./MIS/DownloadOnCallMisData";
+// import TarrifExcelUpload from "./Tarrif/TarrifExcelUpload";
+// import SlabBaseMisUpload from "./MIS/SlabBaseMisUpload";
+// import DownloadSlabBaseMis from "./MIS/DownloadSlabBaseMis";
+// import DownloadTripBaseMis from "./MIS/DownloadTripBaseMis";
+// import DownloadDayBaseMis from "./MIS/DownloadDayBaseMis";
+// import TripBaseMisUpload from "./MIS/TripBaseMisUpload";
+// import DayBaseMisUpload from "./MIS/DayBaseMisUpload";
 import NewClientMaster from "./CompanyDetail/NewClientMaster";
 import ListClientMaster from "./CompanyDetail/ListClientMaster";
 import EditClientMaster from "./CompanyDetail/EditClientMaster";
@@ -35,26 +35,28 @@ import CreateAreaList from "./CompanyDetail/CreateAreaList";
 import ListArea from "./CompanyDetail/ListArea";
 import CreateVehicleType from "./CompanyDetail/CreateVehicleList";
 import ListVehicleType from "./CompanyDetail/ListVehicleType";
+import UploadMis from "./MIS/UploadMis";
+import DownloadMis from "./MIS/DownloadMis";
 
 function App() {
-  const [rows, setRows] = useState([]);
-  const dispatch = useDispatch();
+  // const [rows, setRows] = useState([]);
+  // const dispatch = useDispatch();
 
-  const fetchData = useCallback(async () => {
-    try {
-      dispatch(vechicleRequest());
-      const { data } = await axios.get("/api/v1/jokes");
-      setRows(data);
+  // const fetchData = useCallback(async () => {
+  //   try {
+  //     dispatch(vechicleRequest());
+  //     const { data } = await axios.get("/api/v1/jokes");
+  //     setRows(data);
 
-      dispatch(vechicleSuccess(data));
-    } catch (error) {
-      dispatch(vechicleFail());
-    }
-  }, [dispatch]);
+  //     dispatch(vechicleSuccess(data));
+  //   } catch (error) {
+  //     dispatch(vechicleFail());
+  //   }
+  // }, [dispatch]);
 
-  useEffect(() => {
-    fetchData();
-  }, []);
+  // useEffect(() => {
+  //   fetchData();
+  // }, []);
 
   return (
     <BrowserRouter>
@@ -62,14 +64,14 @@ function App() {
         <aside className="w-2/12">
           <NavBar />
         </aside>
-        <main className="px-3 pt-20 w-10/12">
+        <main className="px-3 py-10 w-10/12">
           <div>
             <ToastContainer theme="dark" />
             <Routes>
-              <Route exact path="/" element={<ExcelUpload />} />
-              <Route path="/tabledata" element={<FormSelect />} />
+              <Route exact path="/" element="Welcome Our ATT" />
+              {/* <Route path="/tabledata" element={<FormSelect />} />
               <Route path="/add_vechicle" element={<AddVehicleList />} />
-              <Route path="/vehicle_list" element={<VehicleList />} />
+              <Route path="/vehicle_list" element={<VehicleList />} /> */}
               <Route path="/client_master">
                 <Route path="new_client_master" element={<NewClientMaster />} />
                 <Route
@@ -90,13 +92,13 @@ function App() {
               </Route>
               <Route path="/tarrif">
                 <Route path="new_tarrif" element={<CreateNewTarrif />} />
-                <Route path="upload_tarrif" element={<TarrifExcelUpload />} />
+                {/* <Route path="upload_tarrif" element={<TarrifExcelUpload />} /> */}
                 <Route
                   path="tarrif_list"
                   element={<ReadUpdateDeleteTarrif />}
                 />
               </Route>
-              <Route path="/tripsheet">
+              {/* <Route path="/tripsheet">
                 <Route
                   path="new_tripsheet_entry"
                   element={<NewTripSheetEntry />}
@@ -105,9 +107,11 @@ function App() {
                   path="tripsheet_calculation"
                   element={<SalesAndPurchaseCalculation />}
                 />
-              </Route>
+              </Route> */}
               <Route path="/mis">
-                <Route path="oncall_mis_upload" element={<OnCallMISUpload />} />
+                <Route path="upload_mis" element={<UploadMis />} />
+                <Route path="download_mis" element={<DownloadMis />} />
+                {/* <Route path="oncall_mis_upload" element={<OnCallMISUpload />} />
                 <Route path="slab_mis_upload" element={<SlabBaseMisUpload />} />
                 <Route path="trip_mis_upload" element={<TripBaseMisUpload />} />
                 <Route path="day_mis_upload" element={<DayBaseMisUpload />} />
@@ -126,7 +130,7 @@ function App() {
                 <Route
                   path="download_dayBase_mis"
                   element={<DownloadDayBaseMis />}
-                />
+                /> */}
               </Route>
             </Routes>
           </div>

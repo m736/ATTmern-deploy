@@ -28,15 +28,11 @@ export const addVehicle =
   async (dispatch) => {
     try {
       dispatch(addVehicleRequest());
-      const { data } = await axios.post(
-        `http://localhost:4000/api/v1/addvehicle`,
-        formData,
-        {
-          headers: {
-            "Content-type": "multipart/form-data",
-          },
-        }
-      );
+      const { data } = await axios.post(`/api/v1/addvehicle`, formData, {
+        headers: {
+          "Content-type": "multipart/form-data",
+        },
+      });
 
       dispatch(addVehicleSuccess(data));
     } catch (error) {
@@ -48,7 +44,7 @@ export const updateVehicleList = (id, vehicleListData) => async (dispatch) => {
   try {
     dispatch(updateVehicleListRequest());
     const { data } = await axios.put(
-      `http://localhost:4000/vehicle/update_vehicle/${id}`,
+      `/vehicle/update_vehicle/${id}`,
       vehicleListData,
       {
         headers: {

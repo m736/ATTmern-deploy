@@ -11,9 +11,7 @@ import {
 export const getOnCallMisData = async (dispatch) => {
   try {
     dispatch(onCallMisUploadRequest());
-    const { data } = await axios.get(
-      "http://localhost:4000/api/v1/oncall_mis_data"
-    );
+    const { data } = await axios.get("/api/v1/oncall_mis_data");
 
     dispatch(onCallMisUploadSuccess(data));
   } catch (error) {
@@ -25,7 +23,7 @@ export const searchOnOnCallMisAction = (formData) => async (dispatch) => {
   try {
     dispatch(searchOnCallMisDataRequest());
     const { data } = await axios.post(
-      "http://localhost:4000/oncall_bulk/download_oncall_misdata",
+      "/oncall_bulk/download_oncall_misdata",
       formData
     );
 

@@ -20,10 +20,7 @@ import {
 export const createTarrif = (formData) => async (dispatch) => {
   try {
     dispatch(createTarrifRequest());
-    const { data } = await axios.post(
-      `http://localhost:4000/tarrif/add_tarrif`,
-      formData
-    );
+    const { data } = await axios.post(`/tarrif/add_tarrif`, formData);
 
     dispatch(createTarrifSuccess(data));
   } catch (error) {
@@ -33,14 +30,14 @@ export const createTarrif = (formData) => async (dispatch) => {
 export const getTarrif = (currentPage) => async (dispatch) => {
   try {
     dispatch(getTarrifListRequest());
-    let link = `http://localhost:4000/tarrif/list_tarrif`;
+    let link = `/tarrif/list_tarrif`;
 
     if (currentPage) {
       link += `?page=${currentPage}`;
     }
     const { data } = await axios.get(link);
     // const { data } = await axios.get(
-    //   "http://localhost:4000/tarrif/list_tarrif"
+    //   "/tarrif/list_tarrif"
     // );
 
     dispatch(getTarrifListSuccess(data));
@@ -53,9 +50,7 @@ export const uniqueTarrifDataAction = async (dispatch) => {
   try {
     dispatch(uniqueTarrifDataRequest());
 
-    const { data } = await axios.get(
-      "http://localhost:4000/tarrif/tarrif_unique_field"
-    );
+    const { data } = await axios.get("/tarrif/tarrif_unique_field");
     console.log(data);
     dispatch(uniqueTarrifDataSuccess(data));
   } catch (error) {
@@ -68,7 +63,7 @@ export const updateSingleTarrif =
     try {
       dispatch(updateTarrifListRequest());
       const { data } = await axios.put(
-        `http://localhost:4000/api/v1/update_tarrif/${id}`,
+        `/api/v1/update_tarrif/${id}`,
         updatedTarrifListData
       );
 
@@ -81,7 +76,7 @@ export const updateSingleTarrif =
 export const deleteTarrif = (id) => async (dispatch) => {
   try {
     dispatch(deleteTarrifRequest());
-    await axios.delete(`http://localhost:4000/api/v1/delete_tarrif/${id}`);
+    await axios.delete(`/api/v1/delete_tarrif/${id}`);
     dispatch(deleteTarrifSuccess());
   } catch (error) {
     //handle error

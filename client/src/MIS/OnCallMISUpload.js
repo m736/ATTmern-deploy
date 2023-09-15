@@ -44,7 +44,7 @@ const OnCallMISUpload = () => {
       reader.readAsArrayBuffer(file);
     }
   };
-
+  console.log(selectedFile);
   const fetchOnCallMisUploadData = async () => {
     dispatch(getOnCallMisData);
   };
@@ -110,7 +110,7 @@ const OnCallMISUpload = () => {
       if (updatedlistOnCall.length) {
         const result = (
           await axios.post(
-            "http://localhost:4000/oncall_bulk/oncallmis_bulk_update",
+            "/oncall_bulk/oncallmis_bulk_update",
             updateFinalListOnCall
           )
         ).data;
@@ -125,7 +125,7 @@ const OnCallMISUpload = () => {
       if (newlistOnCall.length) {
         const result = (
           await axios.post(
-            "http://localhost:4000/oncall_bulk/oncallmis_bulk_insert",
+            "/oncall_bulk/oncallmis_bulk_insert",
             newFinalListOnCall
           )
         ).data;
@@ -355,7 +355,7 @@ const OnCallMISUpload = () => {
         </div>
         <div>
           <div className="inline-flex ml-24">
-            {selectedFile?.name && excelRows.length ? (
+            {selectedFile ? (
               <button
                 class="bg-blue-500 hover:bg-blue-900 text-white py-3 px-4 rounded"
                 disabled={loading}

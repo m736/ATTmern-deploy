@@ -8,9 +8,7 @@ import {
 export const getDayBaseMisData = async (dispatch) => {
   try {
     dispatch(dayBaseMisUploadRequest());
-    const { data } = await axios.get(
-      "http://localhost:4000/api/v1/daybase_mis_data"
-    );
+    const { data } = await axios.get("/api/v1/daybase_mis_data");
 
     dispatch(dayBaseMisUploadSuccess(data));
   } catch (error) {

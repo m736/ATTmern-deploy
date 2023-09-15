@@ -112,19 +112,16 @@ const FormSelect = (props) => {
     if (isValid) {
       setErrorMsg("");
 
-      const res = await axios.post(
-        "http://localhost:4000/bulk/vechicle-attendance-list",
-        {
-          example: {
-            ...values,
-            company: selectedValues,
-            startDate: moment(new Date(dateRange[0])).format("YYYY-MM-DD"),
-            endDate: moment(new Date(dateRange[1])).format("YYYY-MM-DD"),
-            startTime: moment(new Date(dateRange[0])).format("HH:mm"),
-            endTime: moment(new Date(dateRange[1])).format("HH:mm"),
-          },
-        }
-      );
+      const res = await axios.post("/bulk/vechicle-attendance-list", {
+        example: {
+          ...values,
+          company: selectedValues,
+          startDate: moment(new Date(dateRange[0])).format("YYYY-MM-DD"),
+          endDate: moment(new Date(dateRange[1])).format("YYYY-MM-DD"),
+          startTime: moment(new Date(dateRange[0])).format("HH:mm"),
+          endTime: moment(new Date(dateRange[1])).format("HH:mm"),
+        },
+      });
       setData(res.data);
       setLoading(false);
     } else {

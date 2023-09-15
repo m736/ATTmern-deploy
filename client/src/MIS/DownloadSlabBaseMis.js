@@ -54,7 +54,7 @@ const DownloadSlabBaseMis = () => {
     try {
       dispatch(searchSlabBaseMisDataRequest());
       const { data } = await axios.post(
-        "http://localhost:4000/slabmis_bulk/download_slabBase_misdata",
+        "/slabmis_bulk/download_slabBase_misdata",
         values
       );
       console.log(data);

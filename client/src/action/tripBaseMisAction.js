@@ -8,9 +8,7 @@ import {
 export const getTripBaseMisData = async (dispatch) => {
   try {
     dispatch(tripBaseMisUploadRequest());
-    const { data } = await axios.get(
-      "http://localhost:4000/api/v1/tripbase_mis_data"
-    );
+    const { data } = await axios.get("/api/v1/tripbase_mis_data");
 
     dispatch(tripBaseMisUploadSuccess(data));
   } catch (error) {

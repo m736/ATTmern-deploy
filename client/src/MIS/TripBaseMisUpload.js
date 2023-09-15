@@ -108,7 +108,7 @@ const TripBaseMisUpload = () => {
       if (updateFinalTripBase.length) {
         const result = (
           await axios.post(
-            "http://localhost:4000/tripmis_bulk/tripbase_mis_bulk_update",
+            "/tripmis_bulk/tripbase_mis_bulk_update",
             updateFinalTripBase
           )
         ).data;
@@ -121,7 +121,7 @@ const TripBaseMisUpload = () => {
       if (newFinalListTripBase.length) {
         const result = (
           await axios.post(
-            "http://localhost:4000/tripmis_bulk/tripbase_mis_bulk_insert",
+            "/tripmis_bulk/tripbase_mis_bulk_insert",
             newFinalListTripBase
           )
         ).data;

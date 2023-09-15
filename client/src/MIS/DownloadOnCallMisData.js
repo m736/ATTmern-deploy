@@ -52,7 +52,7 @@ const DownloadOnCallMisData = () => {
     try {
       dispatch(searchOnCallMisDataRequest());
       const { data } = await axios.post(
-        "http://localhost:4000/oncall_bulk/download_oncall_misdata",
+        "/oncall_bulk/download_oncall_misdata",
         values
       );
       const filteredSearchData = data.map((item) => ({

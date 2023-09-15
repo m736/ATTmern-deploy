@@ -107,9 +107,7 @@ const VehicleList = () => {
   const fetchVehicleListData = async () => {
     try {
       dispatch(getVehicleListRequest());
-      const { data } = await axios.get(
-        "http://localhost:4000/api/v1/vehicle_list"
-      );
+      const { data } = await axios.get("/api/v1/vehicle_list");
 
       dispatch(getVehicleListSuccess(data));
       setData(

@@ -1,21 +1,21 @@
 import React, { useState } from "react";
 import {
   BsArrowLeftShort,
-  BsBuildingAdd,
-  BsChatRightDots,
+  // BsBuildingAdd,
+  // BsChatRightDots,
   BsChevronDown,
-  BsFillEyeFill,
+  // BsFillEyeFill,
   BsSearch,
-  BsTable,
-  BsUpload,
+  // BsTable,
+  // BsUpload,
 } from "react-icons/bs";
-import { FaTruckMoving } from "react-icons/fa";
+// import { FaTruckMoving } from "react-icons/fa";
 import { AiFillCar } from "react-icons/ai";
-import { RiDashboardFill } from "react-icons/ri";
+// import { RiDashboardFill } from "react-icons/ri";
 import { NavLink } from "react-router-dom";
 const NavBar = () => {
   const [open, setOpen] = useState(true);
-  const [submenuOpen, setSubmenuOpen] = useState(false);
+  // const [submenuOpen, setSubmenuOpen] = useState(false);
   let Menus = [
     // {
     //   title: "MIS Details",
@@ -29,7 +29,7 @@ const NavBar = () => {
     //   ],
     // },
     {
-      title: "Client Master",
+      title: "Master",
       submenu: true,
       name: "client",
       spacing: "true",
@@ -86,11 +86,11 @@ const NavBar = () => {
 
           href: "/tarrif/new_tarrif",
         },
-        {
-          title: "TarrifExcelUpload",
+        // {
+        //   title: "TarrifExcelUpload",
 
-          href: "/tarrif/upload_tarrif",
-        },
+        //   href: "/tarrif/upload_tarrif",
+        // },
         {
           title: "TarrifList",
 
@@ -119,46 +119,51 @@ const NavBar = () => {
       name: "mis",
       spacing: "true",
       submenuItems: [
-        {
-          title: "OnCall MIS Upload",
+        // {
+        //   title: "OnCall MIS Upload",
 
-          href: "/mis/oncall_mis_upload",
+        //   href: "/mis/oncall_mis_upload",
+        // },
+        {
+          title: "MIS Upload",
+
+          href: "/mis/upload_mis",
         },
         {
-          title: "SlabBase MIS Upload",
+          title: "MIS Download",
 
-          href: "/mis/slab_mis_upload",
+          href: "/mis/download_mis",
         },
-        {
-          title: "TripBase MIS Upload",
+        // {
+        //   title: "TripBase MIS Upload",
 
-          href: "/mis/trip_mis_upload",
-        },
-        {
-          title: "DayBase MIS Upload",
+        //   href: "/mis/trip_mis_upload",
+        // },
+        // {
+        //   title: "DayBase MIS Upload",
 
-          href: "/mis/day_mis_upload",
-        },
-        {
-          title: "DownloadOnCall MIS",
+        //   href: "/mis/day_mis_upload",
+        // },
+        // {
+        //   title: "DownloadOnCall MIS",
 
-          href: "/mis/download_onCall_mis",
-        },
-        {
-          title: "DownloadSlabBase MIS",
+        //   href: "/mis/download_onCall_mis",
+        // },
+        // {
+        //   title: "DownloadSlabBase MIS",
 
-          href: "/mis/download_slabBase_mis",
-        },
-        {
-          title: "DownloadTripBase MIS",
+        //   href: "/mis/download_slabBase_mis",
+        // },
+        // {
+        //   title: "DownloadTripBase MIS",
 
-          href: "/mis/download_tripBase_mis",
-        },
-        {
-          title: "DownloadDayBase MIS",
+        //   href: "/mis/download_tripBase_mis",
+        // },
+        // {
+        //   title: "DownloadDayBase MIS",
 
-          href: "/mis/download_dayBase_mis",
-        },
+        //   href: "/mis/download_dayBase_mis",
+        // },
       ],
     },
   ];

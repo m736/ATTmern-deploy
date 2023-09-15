@@ -8,9 +8,7 @@ import {
 export const getSlabBaseMisData = async (dispatch) => {
   try {
     dispatch(slabBaseMisUploadRequest());
-    const { data } = await axios.get(
-      "http://localhost:4000/api/v1/slabbase_mis_data"
-    );
+    const { data } = await axios.get("/api/v1/slabbase_mis_data");
 
     dispatch(slabBaseMisUploadSuccess(data));
   } catch (error) {

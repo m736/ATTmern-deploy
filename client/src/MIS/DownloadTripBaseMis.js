@@ -48,7 +48,7 @@ const DownloadTripBaseMis = () => {
     try {
       dispatch(searchTripBaseMisDataRequest());
       const { data } = await axios.post(
-        "http://localhost:4000/tripmis_bulk/download_tripBase_misdata",
+        "/tripmis_bulk/download_tripBase_misdata",
         values
       );
 

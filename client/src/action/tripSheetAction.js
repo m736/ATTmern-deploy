@@ -12,7 +12,7 @@ export const createTripSheetAction = (formData) => async (dispatch) => {
   try {
     dispatch(createTripSheetRequest());
     const { data } = await axios.post(
-      `http://localhost:4000/api/v1/tripsheet_entry/create_new_tripsheet_entry`,
+      `/api/v1/tripsheet_entry/create_new_tripsheet_entry`,
 
       formData
     );
@@ -26,7 +26,7 @@ export const getTripSheetAction = async (dispatch) => {
   try {
     dispatch(getTripSheetListRequest());
     const { data } = await axios.get(
-      "http://localhost:4000/api/v1/tripsheet_entry/get_tripsheet_list"
+      "/api/v1/tripsheet_entry/get_tripsheet_list"
     );
 
     dispatch(getTripSheetListSuccess(data));

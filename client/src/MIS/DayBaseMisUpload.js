@@ -110,7 +110,7 @@ const DayBaseMisUpload = () => {
       if (updateFinalDayBase.length) {
         const result = (
           await axios.post(
-            "http://localhost:4000/daymis_bulk/daybase_mis_bulk_update",
+            "/daymis_bulk/daybase_mis_bulk_update",
             updateFinalDayBase
           )
         ).data;
@@ -123,7 +123,7 @@ const DayBaseMisUpload = () => {
       if (newFinalListDayBase.length) {
         const result = (
           await axios.post(
-            "http://localhost:4000/daymis_bulk/daybase_mis_bulk_insert",
+            "/daymis_bulk/daybase_mis_bulk_insert",
             newFinalListDayBase
           )
         ).data;

@@ -96,7 +96,7 @@ const TarrifExcelUpload = () => {
       if (updatedTarrifList.length) {
         const result = (
           await axios.post(
-            "http://localhost:4000/tarrifexcel_bulk/tarrif_bulk_update",
+            "/tarrifexcel_bulk/tarrif_bulk_update",
             updatedTarrifList
           )
         ).data;
@@ -109,7 +109,7 @@ const TarrifExcelUpload = () => {
       if (newTarrifList.length) {
         const result = (
           await axios.post(
-            "http://localhost:4000/tarrifexcel_bulk/tarrif_bulk_insert",
+            "/tarrifexcel_bulk/tarrif_bulk_insert",
             newTarrifList
           )
         ).data;

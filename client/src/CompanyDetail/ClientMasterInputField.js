@@ -5,7 +5,7 @@ export const clientLocation = {
     { text: "SEZ", value: "SEZ" },
     { text: "Non SEZ", value: "Non SEZ" },
   ],
-  selectedEconomicZone: "SEZ",
+  selectedEconomicZone: "Non SEZ",
   SGST: [
     { text: 2.5, value: 2.5 },
     { text: 3.5, value: 3.5 },
@@ -66,17 +66,17 @@ export const clientInputField = {
     },
   ],
   selectedEntity: "",
-  FormErrors: [
-    {
-      Company_Name: "",
-      Address: "",
-      Agreement_validity: "",
-      selectedGroup: "",
-    },
-  ],
-  companyValid: false,
-  addressValid: false,
-  aggreementValid: false,
-  selectedGroupValid: false,
-  formValid: false,
+  // FormErrors: [
+  //   {
+  //     Company_Name: "",
+  //     Address: "",
+  //     Agreement_validity: "",
+  //     selectedGroup: "",
+  //   },
+  // ],
+  // companyValid: false,
+  // addressValid: false,
+  // aggreementValid: false,
+  // selectedGroupValid: false,
+  // formValid: false,
 };

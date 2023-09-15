@@ -118,7 +118,7 @@ const SlabBaseMisUpload = () => {
       if (updateFinalSlabBase.length) {
         const result = (
           await axios.post(
-            "http://localhost:4000/slabmis_bulk/slabbase_mis_bulk_update",
+            "/slabmis_bulk/slabbase_mis_bulk_update",
             updateFinalSlabBase
           )
         ).data;
@@ -131,7 +131,7 @@ const SlabBaseMisUpload = () => {
       if (newFinalListSlabBase.length) {
         const result = (
           await axios.post(
-            "http://localhost:4000/slabmis_bulk/slabbase_mis_bulk_insert",
+            "/slabmis_bulk/slabbase_mis_bulk_insert",
             newFinalListSlabBase
           )
         ).data;

@@ -48,7 +48,7 @@ const DownloadDayBaseMis = () => {
     try {
       dispatch(searchDayBaseMisDataRequest());
       const { data } = await axios.post(
-        "http://localhost:4000/daymis_bulk/download_dayBase_misdata",
+        "/daymis_bulk/download_dayBase_misdata",
         values
       );
 

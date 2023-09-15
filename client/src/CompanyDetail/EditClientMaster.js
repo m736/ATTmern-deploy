@@ -5,7 +5,7 @@ import { NumericInput } from "../Tarrif/NumericInput";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { useNavigate, useParams } from "react-router-dom";
-import moment from "moment";
+import dayjs from "dayjs";
 import {
   clearClientMasterError,
   clearClientMasterUpdated,
@@ -23,7 +23,7 @@ const EditClientMaster = (props) => {
   const [clientList, setClientList] = useState(clientInputField);
   const { Option } = Select;
   const { TextArea } = Input;
-
+  const dateFormat = "YYYY-MM-DD";
   // On change function for all Input
   const handleChange = (field, value) => {
     setClientList({
@@ -54,7 +54,7 @@ const EditClientMaster = (props) => {
     try {
       dispatch(getIndividualClientRequest());
       const { data } = await axios.get(
-        `http://localhost:4000/api/v1/client/client_master_api/${id}`
+        `/api/v1/client/client_master_api/${id}`
       );
 
       setClientList(data.getIndividualClientMaster);
@@ -214,7 +214,7 @@ const EditClientMaster = (props) => {
               </div>
             </div>
 
-            {Location?.selectedEconomicZone === "SEZ" && (
+            {Location?.selectedEconomicZone === "Non SEZ" && (
               <>
                 <div className="md:flex md:items-center mb-6">
                   <div className="md:w-1/3"></div>
@@ -222,11 +222,11 @@ const EditClientMaster = (props) => {
                     <div className="md:flex md:items-center">
                       <div className="md:w-6/12 mr-4">
                         {" "}
-                        <NumericInput
+                        <Input
                           value={Location?.Client_GST}
-                          placeholder="GST"
                           onChange={(e) => {
-                            handleLocation("Client_GST", e, index);
+                            console.log(e);
+                            handleLocation("Client_GST", e.target.value, index);
                           }}
                         />
                       </div>
@@ -237,7 +237,7 @@ const EditClientMaster = (props) => {
                           style={{ width: "100%" }}
                           value={Location?.selectedSGST}
                           onChange={(e) => {
-                            handleLocation("selectedSGST", e);
+                            handleLocation("selectedSGST", e, index);
                           }}
                         >
                           {Location?.SGST?.map((item) => {
@@ -293,7 +293,7 @@ const EditClientMaster = (props) => {
               </>
             )}
 
-            {Location?.selectedEconomicZone === "Non SEZ" && (
+            {Location?.selectedEconomicZone === "SEZ" && (
               <>
                 {" "}
                 <div className="md:flex md:items-center mb-6">
@@ -302,11 +302,11 @@ const EditClientMaster = (props) => {
                     <div className="md:flex md:items-center">
                       <div className="md:w-6/12 mr-4">
                         {" "}
-                        <NumericInput
+                        <Input
                           value={Location?.Client_GST}
-                          placeholder="GST"
                           onChange={(e) => {
-                            handleLocation("Client_GST", e, index);
+                            console.log(e);
+                            handleLocation("Client_GST", e.target.value, index);
                           }}
                         />
                       </div>
@@ -479,10 +479,17 @@ const EditClientMaster = (props) => {
           </label>
         </div>
         <div className="md:w-4/12">
-          <DatePicker
+          {/* <DatePicker
             id="agreement_validity"
             style={{ width: "100%" }}
-            value={moment(clientList?.Agreement_validity)}
+            onChange={(value, Aggreement_validity_Date) => {
+              // const Aggreement_validity_Date = e.format("YYYY-MM-DD");
+              handleChange("Agreement_validity", Aggreement_validity_Date);
+            }}
+          /> */}
+          <DatePicker
+            value={dayjs(`${clientList?.Agreement_validity}`, dateFormat)}
+            format={dateFormat}
             onChange={(value, Aggreement_validity_Date) => {
               // const Aggreement_validity_Date = e.format("YYYY-MM-DD");
               handleChange("Agreement_validity", Aggreement_validity_Date);

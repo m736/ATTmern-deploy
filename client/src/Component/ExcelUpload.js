@@ -101,22 +101,15 @@ function ExcelUpload() {
       const newJokes = jokes.filter((x) => !x._id);
       if (updatedJokes.length) {
         const result = (
-          await axios.post(
-            "http://localhost:4000/bulk/jokes-bulk-update",
-            updatedJokes
-          )
+          await axios.post("/bulk/jokes-bulk-update", updatedJokes)
         ).data;
         if (result) {
           alert("Successfully updated " + updatedJokes.length + " documents");
         }
       }
       if (newJokes.length) {
-        const result = (
-          await axios.post(
-            "http://localhost:4000/bulk/jokes-bulk-insert",
-            newJokes
-          )
-        ).data;
+        const result = (await axios.post("/bulk/jokes-bulk-insert", newJokes))
+          .data;
         if (result) {
           alert("Successfully added " + newJokes.length + " documents");
         }

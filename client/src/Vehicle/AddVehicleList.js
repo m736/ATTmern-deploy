@@ -112,15 +112,11 @@ const AdvancedSearchForm = () => {
 
     try {
       dispatch(addVehicleRequest());
-      const { data } = await axios.post(
-        `http://localhost:4000/vehicle/addvehicle`,
-        formData,
-        {
-          headers: {
-            "Content-type": "multipart/form-data",
-          },
-        }
-      );
+      const { data } = await axios.post(`/vehicle/addvehicle`, formData, {
+        headers: {
+          "Content-type": "multipart/form-data",
+        },
+      });
       dispatch(addVehicleSuccess(data));
     } catch (error) {
       dispatch(addVehicleFail(error.response.data.message));

@@ -104,7 +104,7 @@ const ReadUpdateDeleteTarrif = () => {
   //   try {
   //     dispatch(searchTarrifDataRequest());
   //     const { data } = await axios.post(
-  //       `http://localhost:4000/tarrif/tarrif_search_company_name`,
+  //       `/tarrif/tarrif_search_company_name`,
   //       formData
   //     );
 

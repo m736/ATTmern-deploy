@@ -38,7 +38,7 @@ function App() {
   const fetchData = useCallback(async () => {
     try {
       dispatch(vechicleRequest());
-      const { data } = await axios.get("http://localhost:4000/api/v1/jokes");
+      const { data } = await axios.get("/api/v1/jokes");
       setRows(data);
 
       dispatch(vechicleSuccess(data));

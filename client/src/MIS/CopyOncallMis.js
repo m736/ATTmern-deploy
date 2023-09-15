@@ -110,7 +110,7 @@ const OnCallMISUpload = () => {
       if (updatedlistOnCall.length) {
         const result = (
           await axios.post(
-            "http://localhost:4000/oncall_bulk/oncallmis_bulk_update",
+            "/oncall_bulk/oncallmis_bulk_update",
             updateFinalListOnCall
           )
         ).data;
@@ -125,7 +125,7 @@ const OnCallMISUpload = () => {
       if (newlistOnCall.length) {
         const result = (
           await axios.post(
-            "http://localhost:4000/oncall_bulk/oncallmis_bulk_insert",
+            "/oncall_bulk/oncallmis_bulk_insert",
             newFinalListOnCall
           )
         ).data;
