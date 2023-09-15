@@ -16,7 +16,9 @@ import {
 export const getVechicle = async (dispatch) => {
   try {
     dispatch(vechicleRequest());
-    const { data } = await axios.get("/api/v1/jokes");
+    const { data } = await axios.get(
+      "https://creo-8w4j.onrender.com/api/v1/jokes"
+    );
     dispatch(vechicleSuccess(data));
   } catch (error) {
     //handle error
@@ -28,11 +30,15 @@ export const addVehicle =
   async (dispatch) => {
     try {
       dispatch(addVehicleRequest());
-      const { data } = await axios.post(`/api/v1/addvehicle`, formData, {
-        headers: {
-          "Content-type": "multipart/form-data",
-        },
-      });
+      const { data } = await axios.post(
+        `https://creo-8w4j.onrender.com/api/v1/addvehicle`,
+        formData,
+        {
+          headers: {
+            "Content-type": "multipart/form-data",
+          },
+        }
+      );
 
       dispatch(addVehicleSuccess(data));
     } catch (error) {
@@ -44,7 +50,7 @@ export const updateVehicleList = (id, vehicleListData) => async (dispatch) => {
   try {
     dispatch(updateVehicleListRequest());
     const { data } = await axios.put(
-      `/vehicle/update_vehicle/${id}`,
+      `https://creo-8w4j.onrender.com/vehicle/update_vehicle/${id}`,
       vehicleListData,
       {
         headers: {
