@@ -346,7 +346,7 @@ const OnCallMISUpload = () => {
           exHrs: exHrs,
           exKms: exKms,
           salesGross: salesGross,
-          salesTotal: Math.round(salesNett),
+          salesNett: Math.round(salesNett),
           purchaseGross: purchaseGross,
           purchaseNett: Math.round(purchaseNett),
           client: selectedCompany,

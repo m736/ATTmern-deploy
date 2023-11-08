@@ -106,7 +106,7 @@ const DownloadOnCallMisData = () => {
       "Fuel Difference": item?.Fuel_Difference ?? 0,
       "Sales Gross": item?.salesGross ?? 0,
       "Purchase Gross": item?.purchaseGross ?? 0,
-      "Sales Nett Amount": item?.salesNett ?? 0,
+      salesNett: item?.salesNett ?? 0,
       "Purchase Nett Amount": item?.purchaseNett ?? 0,
     }));
   }

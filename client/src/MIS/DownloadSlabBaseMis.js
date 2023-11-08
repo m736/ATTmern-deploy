@@ -95,7 +95,7 @@ const DownloadSlabBaseMis = () => {
       Fuel: item?.["Fuel Difference"] ?? 0,
       Company: item?.["Company"] ?? "",
       Area: item?.["AREA"] ?? 0,
-      salesTotal: item?.["salesTotal"] ?? 0,
+      salesNett: item?.["salesNett"] ?? 0,
     }));
   }
 

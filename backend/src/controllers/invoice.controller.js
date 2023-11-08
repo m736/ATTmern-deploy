@@ -33,7 +33,7 @@ router.post(
           client: 1,
           location: 1,
           date: 1,
-          salesTotal: 1,
+          salesNett: 1,
           Invoice_No: 1,
         },
       },
@@ -52,10 +52,12 @@ router.post(
           ],
         },
       },
+      { $sort: { date: 1 } },
       {
         $group: {
           _id: null,
-          salesTotalAmount: { $sum: "$salesTotal" },
+          salesTotalAmount: { $sum: "$salesNett" },
+          updated_date: { $first: "$date" },
         },
       },
       {
@@ -124,8 +126,9 @@ router.post(
     }
   })
 );
-router.delete("/delete_invoice/:id", async (req, res, next) => {
-  try {
+router.delete(
+  "/delete_invoice/:id",
+  catchAsyncError(async (req, res, next) => {
     const { id } = req.params;
     // console.log(id);
     // console.log(req);
@@ -136,58 +139,59 @@ router.delete("/delete_invoice/:id", async (req, res, next) => {
     //   });
     //   return res;
     // });
-    const promises = await BackDatedInvoice.findByIdAndRemove(id);
-
-    Promise.all(promises)
-      .then(() => {
-        res.json({
-          success: true,
-          message: "invoice list delete successfully",
-        });
-      })
-      .catch((err) => res.status(400).json(err));
-    await BackDatedInvoice.findById(id, async function (err, docs) {
-      if (err) {
-        console.log(err);
-      } else {
-        console.log("Result : ", docs);
-        const slabBaseResponse = await SlabBaseMisUploadData.updateMany(
-          {
-            $and: [
-              { client: docs.client },
-              { location: docs.location },
-              {
-                date: {
-                  $gte: docs.from_date,
-                  $lte: docs.to_date,
+    const promises = await BackDatedInvoice.findById(
+      id,
+      async function (err, docs) {
+        if (err) {
+          console.log(err);
+        } else {
+          const checking = await BackDatedInvoice.deleteOne({ _id: id });
+          console.log(checking);
+          const slabBaseResponse = await SlabBaseMisUploadData.updateMany(
+            {
+              $and: [
+                { client: docs.client },
+                { location: docs.location },
+                {
+                  date: {
+                    $gte: docs.from_date,
+                    $lte: docs.to_date,
+                  },
                 },
-              },
-              { Invoice_No: { $ne: 0 } },
-            ],
-          },
-          { $set: { Invoice_No: 0 } }
-        );
-        const onCallResponse = await OnCallMisUploadData.updateMany(
-          {
-            $and: [
-              { client: docs.client },
-              { location: docs.location },
-              {
-                date: {
-                  $gte: docs.from_date,
-                  $lte: docs.to_date,
+                { Invoice_No: { $ne: 0 } },
+              ],
+            },
+            { $set: { Invoice_No: 0 } }
+          );
+          const onCallResponse = await OnCallMisUploadData.updateMany(
+            {
+              $and: [
+                { client: docs.client },
+                { location: docs.location },
+                {
+                  date: {
+                    $gte: docs.from_date,
+                    $lte: docs.to_date,
+                  },
                 },
-              },
-              { Invoice_No: { $ne: 0 } },
-            ],
-          },
-          { $set: { Invoice_No: 0 } }
-        );
+                { Invoice_No: { $ne: 0 } },
+              ],
+            },
+            { $set: { Invoice_No: 0 } }
+          );
+        }
       }
-    });
-  } catch (err) {
-    console.error("invoice-delete-list error: ", err);
-    res.status(500).json({ success: false, message: "internal_server_error" });
-  }
-});
+    );
+    // const promises = await BackDatedInvoice.findByIdAndRemove(id);
+
+    // Promise.all(promises)
+    //   .then(() => {
+    //     res.json({
+    //       success: true,
+    //       message: "invoice list delete successfully",
+    //     });
+    //   })
+    //   .catch((err) => res.status(400).json(err));
+  })
+);
 module.exports = router;

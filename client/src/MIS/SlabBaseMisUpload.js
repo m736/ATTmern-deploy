@@ -305,7 +305,7 @@ const SlabBaseMisUpload = () => {
           salesBata: salesBata,
           salesEscortBata: salesEscortBata,
           salesSingleBata: salesSingleBata,
-          salesTotal: salesTotal,
+          salesNett: salesTotal,
           purchaseTotal: purchaseTotal,
           client: selectedCompany,
           location: selectedLocation,
