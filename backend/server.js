@@ -51,6 +51,7 @@ app.use("/daymis_bulk", require("src/controllers/daymis.controller"));
 app.use("/tarrifexcel_bulk", require("src/controllers/tarrifbulk.controller"));
 app.use("/vehicle", require("src/controllers/vehicle.controller"));
 app.use("/tarrif", require("src/controllers/tarrif.controller"));
+app.use("/invoice", require("src/controllers/invoice.controller"));
 app.get("*", (req, res) => res.status(404).json("API route not found"));
 
 if (process.env.NODE_ENV === "production") {

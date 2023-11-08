@@ -11,6 +11,7 @@ import TripBaseMisSliceReducer from "./slices/TripBaseMisSlice";
 import DayBaseMisSliceReducer from "./slices/DayBaseMisSlice";
 import AreaListReducer from "./slices/AreaListSlice";
 import VehicleTypeReducer from "./slices/VehicleTypeSlice";
+import BackDatedInvoSliceReducer from "./slices/BackDatedInvoSlice";
 const reducer = combineReducers({
   VechicleDetailState: VechicleDetailSliceReducer,
   VechicleInductionState: VehicleInductionSliceReducer,
@@ -23,6 +24,7 @@ const reducer = combineReducers({
   SlabBaseMisState: SlabBaseMisSliceReducer,
   TripBaseMisState: TripBaseMisSliceReducer,
   DayBaseMisState: DayBaseMisSliceReducer,
+  BackDateInvoiceGenerateState: BackDatedInvoSliceReducer,
 });
 
 const store = configureStore({

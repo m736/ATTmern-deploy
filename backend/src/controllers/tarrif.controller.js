@@ -85,15 +85,121 @@ router.post(
   upload.none(),
   catchAsyncError(async (req, res, next) => {
     const searchTarrif = req.body;
+    console.log(searchTarrif);
     const resPerPage = 3;
-    let getTarrrifDetails = await Createtarrif.find({
-      $or: [
-        { company: searchTarrif?.company },
-        { vehicleType: searchTarrif?.vehicleType },
-        { selectedRental: searchTarrif?.selectedRental },
-        { selectedSegment: searchTarrif?.selectedSegment },
-      ],
-    }).exec();
+    let getTarrrifDetails;
+    const s1 = searchTarrif?.company;
+    const s2 = searchTarrif?.vehicleType;
+    const s3 = searchTarrif?.selectedRental;
+    const s4 = searchTarrif?.selectedSegment;
+    // first method
+    // let getTarrrifDetails = await Createtarrif.find({
+    //   $and: [
+    //     { company: searchTarrif?.company },
+    //     { vehicleType: searchTarrif?.vehicleType },
+    //     { selectedRental: searchTarrif?.selectedRental },
+    //     { selectedSegment: searchTarrif?.selectedSegment },
+    //   ],
+    // }).exec();
+
+    // second method
+    // let getTarrrifDetails = await Createtarrif.aggregate([
+    //   {
+    //     $project: {
+    //       company: 1,
+    //       company: {
+    //         $switch: {
+    //           branches: [
+    //             {
+    //               case: {
+    //                 $and: [
+    //                   { $eq: ["$company", searchTarrif?.company] },
+    //                   { $eq: ["$vehicleType", searchTarrif?.vehicleType] },
+    //                   {
+    //                     $eq: ["$selectedRental", searchTarrif?.selectedRental],
+    //                   },
+    //                   {
+    //                     $eq: [
+    //                       "$selectedSegment",
+    //                       searchTarrif?.selectedSegment,
+    //                     ],
+    //                   },
+    //                 ],
+    //               },
+    //               then: "c,v,r and s",
+    //             },
+    //             {
+    //               case: {
+    //                 $and: [
+    //                   { $eq: ["$company", searchTarrif?.company] },
+    //                   { $eq: ["$vehicleType", searchTarrif?.vehicleType] },
+    //                   {
+    //                     $eq: ["$selectedRental", searchTarrif?.selectedRental],
+    //                   },
+    //                 ],
+    //               },
+    //               then: "c ,v and r",
+    //             },
+    //             {
+    //               case: {
+    //                 $and: [
+    //                   { $eq: ["$company", searchTarrif?.company] },
+    //                   { $eq: ["$vehicleType", searchTarrif?.vehicleType] },
+    //                 ],
+    //               },
+    //               then: "c and v",
+    //             },
+    //             {
+    //               case: {
+    //                 $and: [{ $eq: ["$company", searchTarrif?.company] }],
+    //               },
+    //               then: "c only",
+    //             },
+    //           ],
+    //           default: "nothing",
+    //         },
+    //       },
+    //     },
+    //   },
+    // ]);
+    // third method
+    console.log(`${s1}-${s2}-${s3}-${s4}`);
+    if (s1) {
+      console.log("1 values");
+      getTarrrifDetails = await Createtarrif.find({
+        company: searchTarrif?.company,
+      }).exec();
+    } else if (s1 && s2) {
+      console.log("2 values");
+      getTarrrifDetails = await Createtarrif.find({
+        $and: [
+          { company: searchTarrif?.company },
+          { vehicleType: searchTarrif?.vehicleType },
+        ],
+      }).exec();
+    } else if (s1 && s2 && s3) {
+      console.log("3 values");
+      getTarrrifDetails = await Createtarrif.find({
+        $and: [
+          { company: searchTarrif?.company },
+          { vehicleType: searchTarrif?.vehicleType },
+          { selectedRental: searchTarrif?.selectedRental },
+        ],
+      }).exec();
+    } else if (s1 && s2 && s3 && s4) {
+      console.log("4 values");
+      getTarrrifDetails = await Createtarrif.find({
+        $and: [
+          { company: searchTarrif?.company },
+          { vehicleType: searchTarrif?.vehicleType },
+          { selectedRental: searchTarrif?.selectedRental },
+          { selectedSegment: searchTarrif?.selectedSegment },
+        ],
+      }).exec();
+    } else {
+      getTarrrifDetails = await Createtarrif.find();
+    }
+    console.log(getTarrrifDetails.length);
 
     res.status(201).json({
       success: true,

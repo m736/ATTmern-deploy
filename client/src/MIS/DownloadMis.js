@@ -15,10 +15,10 @@ const DownloadMis = () => {
     <div>
       <Radio.Group onChange={onChange} value={value}>
         <Space direction="vertical">
-          <Radio value={1}>OnCall Mis Upload</Radio>
-          <Radio value={2}>Slab Base Mis Upload</Radio>
-          <Radio value={3}>Trip Base Mis Upload</Radio>
-          <Radio value={4}>Day Base Mis Upload</Radio>
+          <Radio value={1}>OnCall Mis Download</Radio>
+          <Radio value={2}>Slab Base Mis Download</Radio>
+          <Radio value={3}>Trip Base Mis Download</Radio>
+          <Radio value={4}>Day Base Mis Download</Radio>
         </Space>
       </Radio.Group>
 

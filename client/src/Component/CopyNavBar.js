@@ -60,20 +60,20 @@ const NavBar = () => {
         },
       ],
     },
-    {
-      title: "Vehicle",
+    // {
+    //   title: "Vehicle",
 
-      submenu: true,
-      name: "vehicle",
-      spacing: "true",
-      submenuItems: [
-        { title: "AddVehicle", href: "/add_vechicle" },
-        {
-          title: "VehicleList",
-          href: "/vehicle_list",
-        },
-      ],
-    },
+    //   submenu: true,
+    //   name: "vehicle",
+    //   spacing: "true",
+    //   submenuItems: [
+    //     { title: "AddVehicle", href: "/add_vechicle" },
+    //     {
+    //       title: "VehicleList",
+    //       href: "/vehicle_list",
+    //     },
+    //   ],
+    // },
     {
       title: "Tarrif",
       submenu: true,
@@ -170,22 +170,19 @@ const NavBar = () => {
       name: "invoice",
       spacing: "true",
       submenuItems: [
-        // {
-        //   title: "Manual Invoice",
-        //   href: "/invoice/manual_invoice",
-        // },
+        {
+          title: "Manual Invoice",
+          href: "/invoice/manual_invoice",
+        },
         {
           title: "Invoice Generate",
           href: "/invoice/invoice_generate",
-        },
-        {
-          title: "Invoice List",
-          href: "/invoice/invoice_list",
         },
       ],
     },
   ];
   const [menuOption, setMenuOption] = useState(Menus);
+  const [isSubMenuOpen, setIsSubMenuOpen] = useState(false);
 
   return (
     <>
@@ -262,12 +259,13 @@ const NavBar = () => {
                     onClick={() => {
                       let menulist = [...menuOption];
                       menulist[index].submenu = !menulist[index].submenu;
+                      setIsSubMenuOpen(true);
                       setMenuOption(menulist);
                     }}
                   />
                 )}
               </li>
-              {!menu.submenu && open && (
+              {menu.submenu && isSubMenuOpen && open && (
                 <ul>
                   {menu.submenuItems.map((submenuItem, index) => (
                     <li

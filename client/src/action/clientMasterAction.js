@@ -21,7 +21,7 @@ export const createClientMasterAction = (formData) => async (dispatch) => {
   try {
     dispatch(createClientMasterRequest());
     const { data } = await axios.post(
-      `https://creo-8w4j.onrender.com/api/v1/client/client_master_api`,
+      `/api/v1/client/client_master_api`,
       formData
     );
 
@@ -39,9 +39,7 @@ export const getClientMasterAction = async (dispatch) => {
     //   link += `?page=${currentPage}`;
     // }
 
-    const { data } = await axios.get(
-      "https://creo-8w4j.onrender.com/api/v1/client/client_master_api"
-    );
+    const { data } = await axios.get("/api/v1/client/client_master_api");
     // const { data } = await axios.get(link);
 
     dispatch(getClientMasterSuccess(data));
@@ -69,7 +67,7 @@ export const editClientMasterAction =
     try {
       dispatch(updateClientMasterRequest());
       const { data } = await axios.put(
-        `https://creo-8w4j.onrender.com/api/v1/client/client_master_api/${id}`,
+        `/api/v1/client/client_master_api/${id}`,
         updatedClientMasterData
       );
 
@@ -82,9 +80,7 @@ export const editClientMasterAction =
 export const deleteClientMasterAction = (id) => async (dispatch) => {
   try {
     dispatch(deleteClientMasterRequest());
-    await axios.delete(
-      `https://creo-8w4j.onrender.com/api/v1/client/client_master_api/${id}`
-    );
+    await axios.delete(`/api/v1/client/client_master_api/${id}`);
     dispatch(deleteClientMasterSuccess());
   } catch (error) {
     //handle error
@@ -94,9 +90,7 @@ export const deleteClientMasterAction = (id) => async (dispatch) => {
 export const DistinctClientMasterAction = async (dispatch) => {
   try {
     dispatch(getUniqueClientNameRequest());
-    const { data } = await axios.get(
-      `https://creo-8w4j.onrender.com/api/v1/client/unique_company_name_api`
-    );
+    const { data } = await axios.get(`/api/v1/client/unique_company_name_api`);
 
     dispatch(getUniqueClientNameSuccess(data));
   } catch (error) {

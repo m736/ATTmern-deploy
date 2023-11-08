@@ -41,9 +41,7 @@
   overflow-x: hidden;
 } */
 
-:where(.css-dev-only-do-not-override-1wazalj).ant-form-item
-  .ant-form-item-label
-  > label {
+.ant-form-item .ant-form-item-label > label {
   width: 25vh;
 }
 .driverdetails .ant-form-item .ant-form-item-label > label {
@@ -61,7 +59,7 @@
   top: 100%;
   font-size: 12px;
 }
-:where(.css-dev-only-do-not-override-1wazalj).ant-btn-primary {
+.ant-btn-primary {
   background-color: #1677ff !important;
 }
 .ant-btn-warning {
@@ -82,4 +80,7 @@
 
 .page-link:hover {
   color: #fa9c23;
+}
+.active {
+  color: red;
 }

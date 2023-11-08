@@ -411,9 +411,7 @@ const NewTripSheetEntry = () => {
         <NumericInput />
       </Form.Item> */}
       <Form.Item {...tailFormItemLayout}>
-        <Button type="primary" htmlType="submit">
-          Next
-        </Button>
+        <Button htmlType="submit">Next</Button>
       </Form.Item>
     </Form>
   );

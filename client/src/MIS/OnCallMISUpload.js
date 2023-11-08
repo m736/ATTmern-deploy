@@ -5,16 +5,49 @@ import { useDispatch, useSelector } from "react-redux";
 import { getOnCallMisData } from "../action/onCallMisAction";
 import axios from "axios";
 import { getTarrif } from "../action/tarrifAction";
+import { getClientMasterAction } from "../action/clientMasterAction";
 const OnCallMISUpload = () => {
   const [loading, setLoading] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const [excelRows, setExcelRows] = useState([]);
+  const [companyList, setCompanyList] = useState([]);
+  const [selectedCompany, setSelectedCompany] = useState("");
+  const [clLocation, setClLocation] = useState([]);
+  const [selectedLocation, setSelectedLocation] = useState([]);
   const dispatch = useDispatch();
   const { oncall_mis_uploadlist } = useSelector(
     (state) => state.OnCallMisState
   );
   const { alltarrifData } = useSelector((state) => state.TarrifState);
+  const { client_master_detail } = useSelector(
+    (state) => state.ClientMasterState || []
+  );
+  useEffect(() => {
+    if (client_master_detail.length) {
+      let companyList = client_master_detail.map((item) => {
+        return {
+          text: item.Company_Name,
+          value: item.Company_Name,
+        };
+      });
+      setCompanyList(removeDuplicateObjects(companyList, "value"));
+    } else {
+      dispatch(getClientMasterAction);
+    }
+  }, [client_master_detail]);
 
+  function removeDuplicateObjects(array, property) {
+    const uniqueIds = [];
+    const unique = array.filter((element) => {
+      const isDuplicate = uniqueIds.includes(element[property]);
+      if (!isDuplicate) {
+        uniqueIds.push(element[property]);
+        return true;
+      }
+      return false;
+    });
+    return unique;
+  }
   const readUploadFile = (e) => {
     e.preventDefault();
     if (e.target.files[0]) {
@@ -75,7 +108,7 @@ const OnCallMISUpload = () => {
           (x) => x.Dutyslip_No === obj["Dutyslip_No"]
         )?._id,
 
-        Usage_Date: obj["Usage_Date"] || "",
+        date: obj["date"] || "",
         Vehicle_No: obj["Vehicle_No"] || "",
         Vehicle_Type: obj["Vehicle_Type"] || "",
         Vehicle_Billed_As: obj["Vehicle_Billed_As"] || "",
@@ -313,9 +346,11 @@ const OnCallMISUpload = () => {
           exHrs: exHrs,
           exKms: exKms,
           salesGross: salesGross,
-          salesNett: Math.round(salesNett),
+          salesTotal: Math.round(salesNett),
           purchaseGross: purchaseGross,
           purchaseNett: Math.round(purchaseNett),
+          client: selectedCompany,
+          location: selectedLocation,
         };
       } else {
         return singleOnCallData;
@@ -328,6 +363,17 @@ const OnCallMISUpload = () => {
     setExcelRows([]);
     window.location.reload();
   };
+  let durationBody =
+    clLocation.length &&
+    clLocation?.map((item, i) => {
+      return item?.map((again) => {
+        return (
+          <option key={again} value={again}>
+            {again}
+          </option>
+        );
+      });
+    });
   return (
     <>
       <h1 className="text-black mt-5 mb-10 text-2xl">
@@ -336,6 +382,40 @@ const OnCallMISUpload = () => {
 
       <div className="grid grid-cols-2">
         <div>
+          <select
+            id="countries"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-6"
+            onChange={(e) => {
+              let updated = client_master_detail.filter(
+                (item) => e.target.value == item.Company_Name
+              );
+              let updatedLocation = updated.map((item) =>
+                item?.Location?.map((loc) => loc?.Client_Location)
+              );
+              console.log(updatedLocation);
+              setClLocation(updatedLocation);
+              setSelectedCompany(e.target.value);
+            }}
+            value={selectedCompany}
+          >
+            <option selected>Choose a company</option>
+            {companyList.map((comapny) => (
+              <option value={comapny.value}>{comapny.text}</option>
+            ))}
+            ;
+          </select>
+          <select
+            id="location"
+            class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-6"
+            onChange={(e) => {
+              console.log(e.target.value);
+              setSelectedLocation(e.target.value);
+            }}
+            value={selectedLocation}
+          >
+            <option selected>Choose Location</option>
+            {durationBody ? durationBody : null}
+          </select>
           <input
             type="file"
             name="oncall_mis"

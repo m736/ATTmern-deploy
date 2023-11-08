@@ -3,13 +3,13 @@ import { DatePicker, Button, Form, Select } from "antd";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { getOnCallMisData } from "../action/onCallMisAction";
-import * as FileSaver from "file-saver";
-import * as XLSX from "xlsx";
+import moment from "moment";
 import {
   searchOnCallMisDataFail,
   searchOnCallMisDataRequest,
   searchOnCallMisDataSuccess,
 } from "../slices/OnCallMisSlice";
+import ExportToExcel from "./ExportToExcel";
 
 const DownloadOnCallMisData = () => {
   const [form] = Form.useForm();
@@ -34,15 +34,19 @@ const DownloadOnCallMisData = () => {
     } else {
       dispatch(getOnCallMisData);
     }
-  }, [oncall_mis_uploadlist]);
+  }, []);
   const [searchData, setSearchData] = useState([]);
   const [onFinishValues, setOnFinishValues] = useState([]);
   const onFinish = async (fieldsValue) => {
     // console.log("Finish:", values);
     // moment(new Date(dateRange[0])).format("YYYY-MM-DD")
     const rangeTimejourney = fieldsValue["start_end_date"];
-    const startJourney = rangeTimejourney[0]?.format("DD/MM/YYYY");
-    const endJourney = rangeTimejourney[1]?.format("DD/MM/YYYY");
+    const startJourney = moment(new Date(rangeTimejourney[0])).format(
+      "YYYY-MM-DD"
+    );
+    const endJourney = moment(new Date(rangeTimejourney[1])).format(
+      "YYYY-MM-DD"
+    );
     const values = {
       ...fieldsValue,
       startJourney: startJourney,
@@ -55,69 +59,57 @@ const DownloadOnCallMisData = () => {
         "/oncall_bulk/download_oncall_misdata",
         values
       );
-      const filteredSearchData = data.map((item) => ({
-        Id: item?._id,
-        "Duty Slip No": item?.Dutyslip_No,
-        Rental: item?.Rental,
-        Client: item?.Company_Name,
-        "Vehicle billed As": item?.Vehicle_Billed_As,
-        Segment: item?.Segment,
-        "Vehicle No": item?.Vehicle_No ?? "-",
-        "Vehicle Type": item?.Vehicle_Type ?? "-",
-        "Our Total Kms": item?.Total_Kms ?? 0,
-        "Our Total Hrs": item?.Total_Hrs ?? 0,
-        "Our Total Days": item?.Total_Days ?? 0,
-        "Slab Applied": `${item?.selectedSlabhrs ?? 0}Hrs/${
-          item?.selectedSlabkms ?? 0
-        }Kms`,
-        ExKm: item?.exKms ?? 0,
-        ExHrs: item?.exHrs + "mins" ?? 0,
-        SalesRate: item?.salesRate ?? 0,
-        PurchaseRate: item?.purchaseRate ?? 0,
 
-        "SalesExKm Rate": item?.salesExKmsRate ?? 0,
-        "SalesExHrs Rate": item?.salesExHrsRate ?? 0,
-        "Sales Grace Time": item?.salesGraceTime ?? 0,
-        "Night Sales Bata": item?.Night_Sales_Bata ?? 0,
-        "PurchaseExKm Rate": item?.purchaseExKmsRate ?? 0,
-        "PurchaseExHrs Rate": item?.purchaseExHrsRate ?? 0,
-        "Purchase Grace Time": item?.purchaseGraceTime ?? 0,
-        "Night Purchase Bata": item?.Night_Purchase_Bata ?? 0,
-
-        Toll: item?.Toll ?? 0,
-        Parking: item?.Parking ?? 0,
-        Permit: item?.Permit ?? 0,
-        "Driver Bata": item?.Driver_Batta ?? 0,
-        "Day Bata": item?.Day_Bata ?? 0,
-        Others: item?.Others ?? 0,
-        "Fuel Difference": item?.Fuel_Difference ?? 0,
-        "Sales Gross": item?.salesGross ?? 0,
-        "Purchase Gross": item?.purchaseGross ?? 0,
-        "Sales Nett Amount": item?.salesNett ?? 0,
-        "Purchase Nett Amount": item?.purchaseNett ?? 0,
-      }));
-      setSearchData(filteredSearchData);
+      setSearchData(data);
       dispatch(searchOnCallMisDataSuccess(data));
     } catch (error) {
       //handle error
       dispatch(searchOnCallMisDataFail(error.response.data.message));
     }
-    const fileType =
-      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
-    const fileExtension = ".xlsx";
-    if (searchData && searchData.length) {
-      const ws = XLSX.utils.json_to_sheet(searchData);
-      const wb = { Sheets: { data: ws }, SheetNames: ["data"] };
-      const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
-      const data = new Blob([excelBuffer], { type: fileType });
-      FileSaver.saveAs(
-        data,
-        `${fileName}${onFinishValues?.startJourney}to${onFinishValues?.endJourney}${fileExtension}`
-      );
-    } else {
-      alert("no data");
-    }
   };
+  let filteredSearchData = [];
+  if (searchData && searchData.length > 0) {
+    filteredSearchData = searchData.map((item) => ({
+      Invoice_No: item?.Invoice_No,
+      Id: item?._id,
+      "Duty Slip No": item?.Dutyslip_No,
+      Rental: item?.Rental,
+      Client: item?.Company_Name,
+      "Vehicle billed As": item?.Vehicle_Billed_As,
+      Segment: item?.Segment,
+      "Vehicle No": item?.Vehicle_No ?? "-",
+      "Vehicle Type": item?.Vehicle_Type ?? "-",
+      "Our Total Kms": item?.Total_Kms ?? 0,
+      "Our Total Hrs": item?.Total_Hrs ?? 0,
+      "Our Total Days": item?.Total_Days ?? 0,
+      "Slab Applied": `${item?.selectedSlabhrs ?? 0}Hrs/${
+        item?.selectedSlabkms ?? 0
+      }Kms`,
+      ExKm: item?.exKms ?? 0,
+      ExHrs: item?.exHrs + "mins" ?? 0,
+      SalesRate: item?.salesRate ?? 0,
+      PurchaseRate: item?.purchaseRate ?? 0,
+      "SalesExKm Rate": item?.salesExKmsRate ?? 0,
+      "SalesExHrs Rate": item?.salesExHrsRate ?? 0,
+      "Sales Grace Time": item?.salesGraceTime ?? 0,
+      "Night Sales Bata": item?.Night_Sales_Bata ?? 0,
+      "PurchaseExKm Rate": item?.purchaseExKmsRate ?? 0,
+      "PurchaseExHrs Rate": item?.purchaseExHrsRate ?? 0,
+      "Purchase Grace Time": item?.purchaseGraceTime ?? 0,
+      "Night Purchase Bata": item?.Night_Purchase_Bata ?? 0,
+      Toll: item?.Toll ?? 0,
+      Parking: item?.Parking ?? 0,
+      Permit: item?.Permit ?? 0,
+      "Driver Bata": item?.Driver_Batta ?? 0,
+      "Day Bata": item?.Day_Bata ?? 0,
+      Others: item?.Others ?? 0,
+      "Fuel Difference": item?.Fuel_Difference ?? 0,
+      "Sales Gross": item?.salesGross ?? 0,
+      "Purchase Gross": item?.purchaseGross ?? 0,
+      "Sales Nett Amount": item?.salesNett ?? 0,
+      "Purchase Nett Amount": item?.purchaseNett ?? 0,
+    }));
+  }
   return (
     <>
       <div className="container">
@@ -181,11 +173,16 @@ const DownloadOnCallMisData = () => {
                     .length
                 }
               >
-                Download
+                Search
               </Button>
             )}
           </Form.Item>
         </Form>
+        {filteredSearchData && filteredSearchData.length > 0 ? (
+          <ExportToExcel apiData={filteredSearchData} fileName={fileName} />
+        ) : (
+          "No Data"
+        )}
       </div>
     </>
   );

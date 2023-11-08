@@ -1,5 +1,5 @@
 import React from "react";
-import { Routes, Route, HashRouter } from "react-router-dom";
+import { Routes, Route, HashRouter, BrowserRouter } from "react-router-dom";
 import "./App.css";
 // import ExcelUpload from "./Component/ExcelUpload";
 import NavBar from "./Component/NavBar";
@@ -12,8 +12,8 @@ import "react-toastify/dist/ReactToastify.css";
 //   vechicleSuccess,
 // } from "./slices/VechicleDetailSlice";
 // import axios from "axios";
-// import VehicleList from "./Vehicle/VehicleList";
-// import AddVehicleList from "./Vehicle/AddVehicleList";
+import VehicleList from "./Vehicle/VehicleList";
+import AddVehicleList from "./Vehicle/AddVehicleList";
 import { ToastContainer } from "react-toastify";
 import { CreateNewTarrif } from "./Tarrif/CreateNewTarrif";
 import ReadUpdateDeleteTarrif from "./Tarrif/ReadUpdateDeleteTarrif";
@@ -37,6 +37,9 @@ import CreateVehicleType from "./CompanyDetail/CreateVehicleList";
 import ListVehicleType from "./CompanyDetail/ListVehicleType";
 import UploadMis from "./MIS/UploadMis";
 import DownloadMis from "./MIS/DownloadMis";
+import ManualInvoice from "./Invoice/ManualInvoice";
+import InvoiceGenerate from "./Invoice/InvoiceGenerate";
+import InvoiceList from "./Invoice/InvoiceList";
 
 function App() {
   // const [rows, setRows] = useState([]);
@@ -59,7 +62,7 @@ function App() {
   // }, []);
 
   return (
-    <HashRouter>
+    <BrowserRouter>
       <div className="flex">
         <aside className="w-2/12">
           <NavBar />
@@ -69,9 +72,9 @@ function App() {
             <ToastContainer theme="dark" />
             <Routes>
               <Route exact path="/" element="Welcome Our ATT" />
-              {/* <Route path="/tabledata" element={<FormSelect />} />
+              {/* <Route path="/tabledata" element={<FormSelect />} /> */}
               <Route path="/add_vechicle" element={<AddVehicleList />} />
-              <Route path="/vehicle_list" element={<VehicleList />} /> */}
+              <Route path="/vehicle_list" element={<VehicleList />} />
               <Route path="/client_master">
                 <Route path="new_client_master" element={<NewClientMaster />} />
                 <Route
@@ -132,11 +135,16 @@ function App() {
                   element={<DownloadDayBaseMis />}
                 /> */}
               </Route>
+              <Route path="/invoice">
+                <Route path="manual_invoice" element={<ManualInvoice />} />
+                <Route path="invoice_generate" element={<InvoiceGenerate />} />
+                <Route path="invoice_list" element={<InvoiceList />} />
+              </Route>
             </Routes>
           </div>
         </main>
       </div>
-    </HashRouter>
+    </BrowserRouter>
   );
 }
 

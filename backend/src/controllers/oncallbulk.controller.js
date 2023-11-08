@@ -63,7 +63,7 @@ router.post("/download_oncall_misdata", async (req, res, next) => {
       $and: [
         { Company_Name: searchData.company },
         {
-          Usage_Date: {
+          date: {
             $gte: searchData.startJourney,
             $lte: searchData.endJourney,
           },

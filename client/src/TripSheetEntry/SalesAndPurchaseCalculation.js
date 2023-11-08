@@ -9,7 +9,7 @@ const SalesAndPurchaseCalculation = () => {
   };
   return (
     <>
-      <Button type="primary" htmlType="submit" onClick={handleClick}>
+      <Button htmlType="submit" onClick={handleClick}>
         Go Back
       </Button>
       <div className="flex flex-col mb-14 mt-5">

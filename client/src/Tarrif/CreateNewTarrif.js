@@ -313,12 +313,7 @@ export const CreateNewTarrif = () => {
         </div>
       </div>
       <Space>
-        <Button
-          type="primary"
-          className="mt-3"
-          onClick={formDetails}
-          disabled={!output}
-        >
+        <Button className="mt-3" onClick={formDetails} disabled={!output}>
           Submit
         </Button>
       </Space>

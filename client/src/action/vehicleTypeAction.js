@@ -17,10 +17,7 @@ import {
 export const createVehicleTypeAction = (formData) => async (dispatch) => {
   try {
     dispatch(createVehicleTypeRequest());
-    const { data } = await axios.post(
-      `https://creo-8w4j.onrender.com/api/v1/vehicle_type_api`,
-      formData
-    );
+    const { data } = await axios.post(`/api/v1/vehicle_type_api`, formData);
 
     dispatch(createVehicleTypeSuccess(data));
   } catch (error) {
@@ -31,9 +28,7 @@ export const getVehicleTypeAction = async (dispatch) => {
   try {
     dispatch(getVehicleTypeRequest());
 
-    const { data } = await axios.get(
-      "https://creo-8w4j.onrender.com/api/v1/vehicle_type_api"
-    );
+    const { data } = await axios.get("/api/v1/vehicle_type_api");
 
     dispatch(getVehicleTypeSuccess(data));
   } catch (error) {
@@ -47,7 +42,7 @@ export const editVehicleTypeAction =
     try {
       dispatch(updateVehicleTypeRequest());
       const { data } = await axios.put(
-        `https://creo-8w4j.onrender.com/api/v1/vehicle_type_api/${id}`,
+        `/api/v1/vehicle_type_api/${id}`,
         updatedVehicleTypeData
       );
 
@@ -60,9 +55,7 @@ export const editVehicleTypeAction =
 export const deleteVehicleTypeAction = (id) => async (dispatch) => {
   try {
     dispatch(deleteVehicleTypeRequest());
-    await axios.delete(
-      `https://creo-8w4j.onrender.com/api/v1/vehicle_type_api/${id}`
-    );
+    await axios.delete(`/api/v1/vehicle_type_api/${id}`);
     dispatch(deleteVehicleTypeSuccess());
   } catch (error) {
     //handle error

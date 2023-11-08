@@ -819,7 +819,6 @@ const TarrifFormTable = (props) => {
                 {tarrif.editable ? (
                   <>
                     <Button
-                      type="primary"
                       className="mt-3"
                       onClick={() => updateTarrifData(index)}
                     >

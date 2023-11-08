@@ -16,10 +16,7 @@ import {
 export const createAreaListAction = (formData) => async (dispatch) => {
   try {
     dispatch(createAreaListRequest());
-    const { data } = await axios.post(
-      `https://creo-8w4j.onrender.com/api/v1/area_list_api`,
-      formData
-    );
+    const { data } = await axios.post(`/api/v1/area_list_api`, formData);
     console.log(data);
 
     dispatch(createAreaListSuccess(data));
@@ -31,9 +28,7 @@ export const getAreaListAction = async (dispatch) => {
   try {
     dispatch(getAreaListRequest());
 
-    const { data } = await axios.get(
-      "https://creo-8w4j.onrender.com/api/v1/area_list_api"
-    );
+    const { data } = await axios.get("/api/v1/area_list_api");
 
     dispatch(getAreaListSuccess(data));
   } catch (error) {
@@ -47,7 +42,7 @@ export const editAreaAction = (id, updatedAreaData) => async (dispatch) => {
     console.log(updatedAreaData);
     dispatch(updateAreaListRequest());
     const { data } = await axios.put(
-      `https://creo-8w4j.onrender.com/api/v1/area_list_api/${id}`,
+      `/api/v1/area_list_api/${id}`,
       updatedAreaData
     );
     console.log(data);
@@ -60,9 +55,7 @@ export const editAreaAction = (id, updatedAreaData) => async (dispatch) => {
 export const deleteAreaListAction = (id) => async (dispatch) => {
   try {
     dispatch(deleteAreaListRequest());
-    await axios.delete(
-      `https://creo-8w4j.onrender.com/api/v1/area_list_api/${id}`
-    );
+    await axios.delete(`/api/v1/area_list_api/${id}`);
     dispatch(deleteAreaListSuccess());
   } catch (error) {
     //handle error

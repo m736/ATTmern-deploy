@@ -132,7 +132,7 @@ const newTripSheetEntryShema = new mongoose.Schema(
 const onCallMisSchema = new Schema(
   {
     Dutyslip_No: String,
-    Usage_Date: {
+    date: {
       type: String,
       required: true,
       set: (date) => formatDate(date),
@@ -164,6 +164,7 @@ const onCallMisSchema = new Schema(
     salesGraceTime: String,
     gross: Number,
     Area: String,
+    Invoice_No: { type: Number, default: 0 },
   },
   { strict: false, timestamps: true }
 );
@@ -205,6 +206,7 @@ const slabBaseMisSchema = new Schema(
     Sale_Bhata: Number,
     Purchase_Bhata: Number,
     SalesTotal: Number,
+    Invoice_No: { type: Number, default: 0 },
   },
   { strict: false, timestamps: true }
 );
@@ -319,7 +321,16 @@ const vehicleTypeSchema = new Schema(
   },
   { strict: false, timestamps: true }
 );
+const invoiceSchema = new Schema(
+  {
+    Client: String,
+    Rangedate: String,
+    Location: String,
+  },
+  { strict: false, timestamps: true }
+);
 module.exports = {
+  BackDatedInvoice: mongoose.model("invoice_list_table", invoiceSchema),
   Location: mongoose.model("location_table", locationSchema),
   Vehicle: mongoose.model("vehicles", vehicleSchema),
   AddVehicle: mongoose.model("addvehicles", addVehicleSchema),

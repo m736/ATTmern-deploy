@@ -10,6 +10,7 @@ import {
   searchDayBaseMisDataSuccess,
 } from "../slices/DayBaseMisSlice";
 import { getDayBaseMisData } from "../action/dayBaseMisAction";
+import ExportToExcel from "./ExportToExcel";
 
 const DownloadDayBaseMis = () => {
   const [form] = Form.useForm();
@@ -32,7 +33,7 @@ const DownloadDayBaseMis = () => {
     } else {
       dispatch(getDayBaseMisData);
     }
-  }, [day_base_mis_uploadlist]);
+  }, []);
   const [searchData, setSearchData] = useState([]);
   const [onFinishValues, setOnFinishValues] = useState([]);
   const onFinish = async (fieldsValue) => {
@@ -52,53 +53,41 @@ const DownloadDayBaseMis = () => {
         values
       );
 
-      const filteredSearchData = data.map((item) => ({
-        Usage_Date: item?.Usage_Date,
-        Trip_Id: item?.Trip_Id,
-        Vehicle_No: item?.Vehicle_No,
-        Vehicle_Type: item?.Vehicle_Type,
-        Vehicle_Billed_As: item?.Vehicle_Billed_As,
-        Segment: item?.Segment,
-        Rental: item?.Rental,
-        Total_Days: item?.Total_Days,
-        No_Of_Months: item?.No_Of_Months,
-        Total_Kms: item?.Total_Kms,
-        Total_Hrs: item?.Total_Hrs,
-        Toll: item?.Toll,
-        Parking: item?.Parking,
-        Permit: item?.Permit,
-        Driver_Batta: item?.Driver_Batta,
-        Day_Bata: item?.Day_Bata,
-        Night_Sales_Bata: item?.Night_Sales_Bata,
-        Night_Purchase_Bata: item?.Night_Purchase_Bata,
-        Fuel_Difference: item?.Fuel_Difference,
-        Company: item?.Company,
-        Area: item?.Area,
-        salesTotal: item?.salesTotal,
-        purchaseTotal: item?.purchaseTotal,
-      }));
-      setSearchData(filteredSearchData);
+      setSearchData(data);
       dispatch(searchDayBaseMisDataSuccess(data));
     } catch (error) {
       //handle error
       dispatch(searchDayBaseMisDataFail(error.response.data.message));
     }
-    const fileType =
-      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
-    const fileExtension = ".xlsx";
-    if (searchData && searchData.length) {
-      const ws = XLSX.utils.json_to_sheet(searchData);
-      const wb = { Sheets: { data: ws }, SheetNames: ["data"] };
-      const excelBuffer = XLSX.write(wb, { bookType: "xlsx", type: "array" });
-      const data = new Blob([excelBuffer], { type: fileType });
-      FileSaver.saveAs(
-        data,
-        `${fileName}${onFinishValues?.startJourney}to${onFinishValues?.endJourney}${fileExtension}`
-      );
-    } else {
-      alert("no data");
-    }
   };
+  let filteredSearchData = [];
+  if (searchData && searchData.length > 0) {
+    filteredSearchData = searchData.map((item) => ({
+      Usage_Date: item?.Usage_Date,
+      Trip_Id: item?.Trip_Id,
+      Vehicle_No: item?.Vehicle_No,
+      Vehicle_Type: item?.Vehicle_Type,
+      Vehicle_Billed_As: item?.Vehicle_Billed_As,
+      Segment: item?.Segment,
+      Rental: item?.Rental,
+      Total_Days: item?.Total_Days,
+      No_Of_Months: item?.No_Of_Months,
+      Total_Kms: item?.Total_Kms,
+      Total_Hrs: item?.Total_Hrs,
+      Toll: item?.Toll,
+      Parking: item?.Parking,
+      Permit: item?.Permit,
+      Driver_Batta: item?.Driver_Batta,
+      Day_Bata: item?.Day_Bata,
+      Night_Sales_Bata: item?.Night_Sales_Bata,
+      Night_Purchase_Bata: item?.Night_Purchase_Bata,
+      Fuel_Difference: item?.Fuel_Difference,
+      Company: item?.Company,
+      Area: item?.Area,
+      salesTotal: item?.salesTotal,
+      purchaseTotal: item?.purchaseTotal,
+    }));
+  }
   return (
     <>
       <div className="container">
@@ -162,11 +151,16 @@ const DownloadDayBaseMis = () => {
                     .length
                 }
               >
-                Download
+                Search
               </Button>
             )}
           </Form.Item>
         </Form>
+        {filteredSearchData && filteredSearchData.length > 0 ? (
+          <ExportToExcel apiData={filteredSearchData} fileName={fileName} />
+        ) : (
+          "No Data"
+        )}
       </div>
     </>
   );

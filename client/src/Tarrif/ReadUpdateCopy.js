@@ -88,42 +88,42 @@ const ReadUpdateDeleteTarrif = () => {
   const addTarrifPage = () => {
     navigate("/tarrif/new_tarrif");
   };
-  useEffect(() => {
-    if (alltarrifData && alltarrifData.length) {
-      let updatedClient = alltarrifData.map((item) => item.company);
-      setClientList([...new Set(updatedClient)]);
-    }
-  }, [alltarrifData]);
-  const searchTarrifData = async (item) => {
-    // setTarrifInput(updated);
-    const formData = new FormData();
-    formData.append("company", selectedCompany);
-    formData.append("vehicleType", selectedVehicle);
-    formData.append("selectedRental", selectedRental);
-    formData.append("selectedSegment", selectedSegment);
-    try {
-      dispatch(searchTarrifDataRequest());
-      const { data } = await axios.post(
-        `/tarrif/tarrif_search_company_name`,
-        formData
-      );
+  // useEffect(() => {
+  //   if (alltarrifData && alltarrifData.length) {
+  //     let updatedClient = alltarrifData.map((item) => item.company);
+  //     setClientList([...new Set(updatedClient)]);
+  //   }
+  // }, [alltarrifData]);
+  // const searchTarrifData = async (item) => {
+  //   // setTarrifInput(updated);
+  //   const formData = new FormData();
+  //   formData.append("company", selectedCompany);
+  //   formData.append("vehicleType", selectedVehicle);
+  //   formData.append("selectedRental", selectedRental);
+  //   formData.append("selectedSegment", selectedSegment);
+  //   try {
+  //     dispatch(searchTarrifDataRequest());
+  //     const { data } = await axios.post(
+  //       `/tarrif/tarrif_search_company_name`,
+  //       formData
+  //     );
 
-      // dispatch(searchTarrifDataSuccess(data));
-      setTarrifInput(
-        data?.getTarrrifDetails?.length ? data?.getTarrrifDetails : []
-      );
-      setPageCount(data?.count);
-      setResPerPage(data?.resPerPage);
-      setCurrentPage(1);
-      setSelectedCompany(null);
-      setSelectedVehicle(null);
-      setSelectedRental(null);
-      setSelectedSegment(null);
-    } catch (error) {
-      //handle error
-      dispatch(searchTarrifDataFail(error.response.data.message));
-    }
-  };
+  //     // dispatch(searchTarrifDataSuccess(data));
+  //     setTarrifInput(
+  //       data?.getTarrrifDetails?.length ? data?.getTarrrifDetails : []
+  //     );
+  //     setPageCount(data?.count);
+  //     setResPerPage(data?.resPerPage);
+  //     setCurrentPage(1);
+  //     setSelectedCompany(null);
+  //     setSelectedVehicle(null);
+  //     setSelectedRental(null);
+  //     setSelectedSegment(null);
+  //   } catch (error) {
+  //     //handle error
+  //     dispatch(searchTarrifDataFail(error.response.data.message));
+  //   }
+  // };
   useEffect(() => {
     if (isTarrifDeleted) {
       toast("Tarrif Deleted Succesfully!", {
@@ -275,7 +275,9 @@ const ReadUpdateDeleteTarrif = () => {
           </Select>
         </Col>
         <Col className="gutter-row" span={4}>
-          <Button onClick={searchTarrifData}>Search</Button>
+          <Button type="primary" onClick={searchTarrifData}>
+            Search
+          </Button>
         </Col>
       </Row>
 

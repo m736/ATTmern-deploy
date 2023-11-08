@@ -1,6 +1,7 @@
 import {
   Avatar,
   Button,
+  DatePicker,
   Form,
   Image,
   Input,
@@ -25,6 +26,7 @@ import {
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+
 const EditableCell = ({
   editing,
   dataIndex,
@@ -66,6 +68,7 @@ const EditableCell = ({
 
     return e && e?.fileList[0]?.originFileObj;
   };
+
   const inputNode =
     inputType === "file" ? (
       <>
@@ -85,8 +88,23 @@ const EditableCell = ({
           </Upload>
         </Form.Item>
       </>
+    ) : inputType === "date" ? (
+      <Form.Item style={{ margin: 0 }} name={dataIndex}>
+        <DatePicker />
+      </Form.Item>
     ) : (
-      <Input />
+      <Form.Item
+        style={{ margin: 0 }}
+        name={dataIndex}
+        rules={[
+          {
+            required: true,
+            message: `Please Input ${title}!`,
+          },
+        ]}
+      >
+        <Input />
+      </Form.Item>
     );
   return (
     <td {...restProps}>
@@ -127,11 +145,24 @@ const VehicleList = () => {
   const [editingKey, setEditingKey] = useState("");
   const isEditing = (record) => record.key === editingKey;
   const edit = (record) => {
+    const {
+      Registration_No,
+      Vehicle_Type,
+      PUC,
+      Model,
+      TaxDate,
+      RegDate,
+      FitnessDate,
+      InsuranceDate,
+    } = record;
+
     form.setFieldsValue({
-      Registration_No: "",
-      Vehicle_Type: "",
-      PUC: "",
-      Model: "",
+      Registration_No: Registration_No || "",
+      Vehicle_Type: Vehicle_Type || "",
+      PUC: PUC || "",
+      Model: Model || "",
+      RegDate: RegDate ? RegDate : "",
+
       ...record,
     });
     setEditingKey(record.key);
@@ -142,9 +173,7 @@ const VehicleList = () => {
   const fetchVehicleListData = async () => {
     try {
       dispatch(getVehicleListRequest());
-      const { data } = await axios.get(
-        "https://localhost:4000/api/v1/vehicle_list"
-      );
+      const { data } = await axios.get("/api/v1/vehicle_list");
 
       dispatch(getVehicleListSuccess(data));
       setData(
@@ -250,7 +279,7 @@ const VehicleList = () => {
     {
       title: "Regdate_Exp",
       dataIndex: "RegDate",
-      // editable: true,
+      editable: true,
     },
     {
       title: "Taxdate_Exp",
@@ -331,7 +360,12 @@ const VehicleList = () => {
       ...col,
       onCell: (record) => ({
         record,
-        inputType: col.dataIndex === "PUC" ? "file" : "text",
+        inputType:
+          col.dataIndex === "PUC"
+            ? "file"
+            : col.dataIndex === "RegDate"
+            ? "date"
+            : "text",
         dataIndex: col.dataIndex,
         title: col.title,
         editing: isEditing(record),

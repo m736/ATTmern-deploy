@@ -2,8 +2,6 @@ import React, { useEffect, useState } from "react";
 import { DatePicker, Button, Form, Select } from "antd";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
-import * as FileSaver from "file-saver";
-import * as XLSX from "xlsx";
 import { getSlabBaseMisData } from "../action/slabBasMisAction";
 import moment from "moment";
 import {
@@ -34,7 +32,7 @@ const DownloadSlabBaseMis = () => {
     } else {
       dispatch(getSlabBaseMisData);
     }
-  }, [slab_base_mis_uploadlist]);
+  }, []);
   const [searchData, setSearchData] = useState([]);
   const [onFinishValues, setOnFinishValues] = useState([]);
   const onFinish = async (fieldsValue) => {
@@ -57,7 +55,7 @@ const DownloadSlabBaseMis = () => {
         "/slabmis_bulk/download_slabBase_misdata",
         values
       );
-      console.log(data);
+
       setSearchData(data);
       dispatch(searchSlabBaseMisDataSuccess(data));
     } catch (error) {
@@ -68,8 +66,8 @@ const DownloadSlabBaseMis = () => {
 
   let filteredSearchData = [];
   if (searchData && searchData.length > 0) {
-    console.log(searchData);
     filteredSearchData = searchData?.map((item) => ({
+      Invoice_No: item?.Invoice_No,
       Id: item?._id,
       "Duty Slip No": item?.["Trip ID"],
       Rental: item?.["Duty Type"],

@@ -270,11 +270,7 @@ const AdvancedSearchForm = () => {
             }}
           >
             <Space size="small">
-              <Button
-                type="primary"
-                htmlType="submit"
-                disabled={loading ? <Spin /> : null}
-              >
+              <Button htmlType="submit" disabled={loading ? <Spin /> : null}>
                 Submit
               </Button>
               <Button
