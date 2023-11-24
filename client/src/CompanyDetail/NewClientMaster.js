@@ -1,6 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { clientInputField, clientLocation } from "./ClientMasterInputField";
-import { Button, DatePicker, Input, Radio, Select, Space } from "antd";
+import {
+  Button,
+  DatePicker,
+  Input,
+  Radio,
+  Select,
+  Space,
+  Spin,
+  Typography,
+} from "antd";
 import { NumericInput } from "../Tarrif/NumericInput";
 import { useDispatch, useSelector } from "react-redux";
 import { createClientMasterAction } from "../action/clientMasterAction";
@@ -12,14 +21,19 @@ import {
 } from "../slices/ClientMasterSlice";
 import { useNavigate } from "react-router-dom";
 const NewClientMaster = () => {
-  const [allClientMasterList, setAllClientMasterList] =
-    useState(clientInputField);
   const { Option } = Select;
+  const { Text, Link } = Typography;
   const { TextArea } = Input;
   const dateFormat = "YYYY-MM-DD";
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { isClientMasterCreated, error } = useSelector(
+  const [allClientMasterList, setAllClientMasterList] =
+    useState(clientInputField);
+  const [formerror, setFormerror] = useState({});
+  const [issubmit, setSubmit] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const { isClientMasterCreated, error, clientMasterLoading } = useSelector(
     (state) => state.ClientMasterState || []
   );
 
@@ -57,12 +71,37 @@ const NewClientMaster = () => {
       Location: updatedList,
     });
   };
-  console.log(allClientMasterList);
+
   // Submit Function
   const saveClientMasterDetail = () => {
-    setAllClientMasterList(allClientMasterList);
-    dispatch(createClientMasterAction(allClientMasterList));
+    setFormerror(validationform(allClientMasterList));
+    setSubmit(true);
   };
+  const validationform = (value) => {
+    console.log(value);
+    const errors = {};
+
+    if (!value.Company_Name) {
+      errors.Company_Name = "Please Enter Company_Name";
+    }
+    // location validation comment
+
+    // if (!value?.Location[0]?.Client_Location) {
+    //   errors.Client_Location = "Please Enter Client Location";
+    // }
+    // value.Location.forEach((element,index) => {
+    //   if (!element?.Client_Location) {
+    //     errors.Client_Location = "Please Enter Client Location";
+    //   }
+    // });
+    return errors;
+  };
+  useEffect(() => {
+    if (Object.keys(formerror).length === 0 && issubmit) {
+      setAllClientMasterList(allClientMasterList);
+      dispatch(createClientMasterAction(allClientMasterList));
+    }
+  }, [formerror, allClientMasterList, issubmit]);
   // useEffect(() => {
   //   saveClientMasterDetail();
   // }, []);
@@ -123,12 +162,15 @@ const NewClientMaster = () => {
           <Input
             id="company"
             value={allClientMasterList.Company_Name}
+            status={formerror.Company_Name && "error"}
             onChange={(e) => {
               handleChange("Company_Name", e.target.value);
             }}
           />
+          <Text type="danger">{formerror.Company_Name}</Text>
         </div>
       </div>
+
       {/* Client_Location */}
 
       {allClientMasterList?.Location?.map((Location, index) => {
@@ -159,6 +201,9 @@ const NewClientMaster = () => {
                       }}
                     />
                   </div>
+                  <span className="text-danger">
+                    {formerror?.Client_Location}{" "}
+                  </span>
                   <div className="md:w-6/12 mr-4">
                     {" "}
                     <Radio.Group

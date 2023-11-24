@@ -40,6 +40,9 @@ import DownloadMis from "./MIS/DownloadMis";
 import ManualInvoice from "./Invoice/ManualInvoice";
 import InvoiceGenerate from "./Invoice/InvoiceGenerate";
 import InvoiceList from "./Invoice/InvoiceList";
+import DeleteTripsExcelData from "./Invoice/DeleteTripsExcelData";
+import InvoiceNumber from "./Invoice/InvoiceNumber";
+import MergeInvoiceGenerate from "./Invoice/MergeInvoiceGenerate";
 
 function App() {
   // const [rows, setRows] = useState([]);
@@ -137,7 +140,18 @@ function App() {
               </Route>
               <Route path="/invoice">
                 <Route path="manual_invoice" element={<ManualInvoice />} />
+
+                <Route
+                  path="delete_excel_data"
+                  element={<DeleteTripsExcelData />}
+                />
+                <Route path="invoice_no" element={<InvoiceNumber />} />
                 <Route path="invoice_generate" element={<InvoiceGenerate />} />
+
+                <Route
+                  path="merge_invoice_generate"
+                  element={<MergeInvoiceGenerate />}
+                />
                 <Route path="invoice_list" element={<InvoiceList />} />
               </Route>
             </Routes>

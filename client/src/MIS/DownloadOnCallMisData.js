@@ -34,7 +34,7 @@ const DownloadOnCallMisData = () => {
     } else {
       dispatch(getOnCallMisData);
     }
-  }, []);
+  }, [oncall_mis_uploadlist]);
   const [searchData, setSearchData] = useState([]);
   const [onFinishValues, setOnFinishValues] = useState([]);
   const onFinish = async (fieldsValue) => {

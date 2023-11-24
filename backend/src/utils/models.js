@@ -329,7 +329,15 @@ const invoiceSchema = new Schema(
   },
   { strict: false, timestamps: true }
 );
+const invoiceNumberSchema = new Schema(
+  {
+    last_invoice_no: { type: Number, default: 0 },
+    next_invoice_no: { type: Number, default: 1 },
+  },
+  { strict: false, timestamps: true }
+);
 module.exports = {
+  InvoiceNumberModel: mongoose.model("invoice_no_table", invoiceNumberSchema),
   BackDatedInvoice: mongoose.model("invoice_list_table", invoiceSchema),
   Location: mongoose.model("location_table", locationSchema),
   Vehicle: mongoose.model("vehicles", vehicleSchema),

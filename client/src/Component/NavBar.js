@@ -175,12 +175,26 @@ const NavBar = () => {
         //   href: "/invoice/manual_invoice",
         // },
         {
+          title: "Updated Invoice Number",
+          href: "/invoice/invoice_no",
+        },
+        {
           title: "Invoice Generate",
           href: "/invoice/invoice_generate",
+        },
+
+        {
+          title: "Merge Invoice Generate",
+          href: "/invoice/merge_invoice_generate",
         },
         {
           title: "Invoice List",
           href: "/invoice/invoice_list",
+        },
+
+        {
+          title: "Delete Trips From Excel Data",
+          href: "/invoice/delete_excel_data",
         },
       ],
     },

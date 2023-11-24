@@ -24,8 +24,9 @@ export const createClientMasterAction = (formData) => async (dispatch) => {
       `/api/v1/client/client_master_api`,
       formData
     );
-
-    dispatch(createClientMasterSuccess(data));
+    setTimeout(() => {
+      dispatch(createClientMasterSuccess(data));
+    }, [4000]);
   } catch (error) {
     dispatch(createClientMasterFail(error));
   }
@@ -81,6 +82,7 @@ export const deleteClientMasterAction = (id) => async (dispatch) => {
   try {
     dispatch(deleteClientMasterRequest());
     await axios.delete(`/api/v1/client/client_master_api/${id}`);
+    dispatch(getClientMasterAction);
     dispatch(deleteClientMasterSuccess());
   } catch (error) {
     //handle error

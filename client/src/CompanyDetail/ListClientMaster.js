@@ -23,11 +23,12 @@ const ListClientMaster = () => {
     bordered,
   };
   const {
-    client_master_detail = [],
+    client_master_detail,
     clientMasterLoading,
     isClientMasterDeleted,
     error,
-  } = useSelector((state) => state.ClientMasterState || []);
+  } = useSelector((state) => state.ClientMasterState);
+  console.log(client_master_detail);
   useEffect(() => {
     if (isClientMasterDeleted) {
       toast("Client master Deleted Succesfully!", {
@@ -138,9 +139,6 @@ const ListClientMaster = () => {
 
       onOk() {
         dispatch(deleteClientMasterAction(id));
-        setTimeout(() => {
-          dispatch(getClientMasterAction);
-        }, [1000]);
       },
       onCancel() {
         console.log("Cancel");
@@ -173,7 +171,9 @@ const ListClientMaster = () => {
     });
     return unique;
   }
-
+  useEffect(() => {
+    dispatch(getClientMasterAction);
+  }, []);
   useEffect(() => {
     if (client_master_detail && client_master_detail.length > 0) {
       let updatedClient = client_master_detail.map((item) => {
@@ -205,8 +205,9 @@ const ListClientMaster = () => {
 
       setTabledata(updatedClient);
     } else {
-      dispatch(getClientMasterAction);
+      setTabledata([]);
     }
+    console.log(tabledata);
   }, [client_master_detail]);
   return (
     <>

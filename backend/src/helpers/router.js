@@ -5,9 +5,13 @@ const models = require("./../utils/models");
 // Api Routes
 router.use("/jokes", require("src/helpers/base.crud")(models.Vehicle));
 router.use(
-  "/invoice_list_api",
-  require("src/helpers/base.crud")(models.BackDatedInvoice)
+  "/invoice_no_api",
+  require("src/helpers/base.crud")(models.InvoiceNumberModel)
 );
+// router.use(
+//   "/invoice_list_api",
+//   require("src/helpers/base.crud")(models.BackDatedInvoice)
+// );
 router.use(
   "/area_list_api",
   require("src/helpers/base.crud")(models.AreaListModel)

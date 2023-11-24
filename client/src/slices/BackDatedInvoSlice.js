@@ -6,8 +6,11 @@ const TarrifSlice = createSlice({
     invoiceLoading: false,
     isBackDatedInvoiceCreated: false,
     isInvoiceDeleted: false,
-    BackDatedInvoiceInput: [],
+    isExcelDataDeleted: false,
+    isMergeInvoiceCreated: false,
     invoice_list: [],
+    invoice_no: [],
+    isInvoiceNoUpdated: false,
   },
   reducers: {
     invoiceListRequest(state, action) {
@@ -20,7 +23,7 @@ const TarrifSlice = createSlice({
       return {
         ...state,
         invoiceLoading: false,
-        invoice_list: action.payload,
+        invoice_list: action.payload.getInvoiceList,
       };
     },
     invoiceListFail(state, action) {
@@ -39,7 +42,7 @@ const TarrifSlice = createSlice({
       return {
         ...state,
         invoiceLoading: false,
-        BackDatedInvoiceInput: action.payload.createTarrif,
+        invoice_list: action.payload,
         isBackDatedInvoiceCreated: true,
       };
     },
@@ -52,6 +55,34 @@ const TarrifSlice = createSlice({
       };
     },
     clearBackDatedInvoiceGenerateInput(state, action) {
+      return {
+        ...state,
+        isBackDatedInvoiceCreated: false,
+      };
+    },
+    MergeInvoiceGenerateRequest(state, action) {
+      return {
+        ...state,
+        invoiceLoading: true,
+      };
+    },
+    MergeInvoiceGenerateSuccess(state, action) {
+      return {
+        ...state,
+        invoiceLoading: false,
+        invoice_list: action.payload,
+        isMergeInvoiceCreated: true,
+      };
+    },
+    MergeInvoiceGenerateFail(state, action) {
+      return {
+        ...state,
+        invoiceLoading: false,
+        error: action.payload,
+        isMergeInvoiceCreated: false,
+      };
+    },
+    clearMergeInvoiceGenerateInput(state, action) {
       return {
         ...state,
         isBackDatedInvoiceCreated: false,
@@ -83,7 +114,77 @@ const TarrifSlice = createSlice({
         isInvoiceDeleted: false,
       };
     },
-
+    deleteExcelDataRequest(state, action) {
+      return {
+        ...state,
+        invoiceLoading: true,
+      };
+    },
+    deleteExcelDataSuccess(state, action) {
+      return {
+        ...state,
+        invoiceLoading: false,
+        isExcelDataDeleted: true,
+      };
+    },
+    deleteExcelDataFail(state, action) {
+      return {
+        ...state,
+        invoiceLoading: false,
+        error: action.payload,
+      };
+    },
+    clearExcelDataDeleted(state, action) {
+      return {
+        ...state,
+        isExcelDataDeleted: false,
+      };
+    },
+    getInvoiceNoRequest(state, action) {
+      return {
+        ...state,
+        invoiceLoading: true,
+      };
+    },
+    getInvoiceNoSuccess(state, action) {
+      return {
+        ...state,
+        invoiceLoading: false,
+        invoice_no: action.payload.getInvoiceNumber,
+      };
+    },
+    getInvoiceNoFail(state, action) {
+      return {
+        invoiceLoading: false,
+        error: action.payload,
+      };
+    },
+    updateInvoiceNoRequest(state, action) {
+      return {
+        ...state,
+        invoiceLoading: true,
+      };
+    },
+    updateInvoiceNoSuccess(state, action) {
+      return {
+        ...state,
+        invoiceLoading: false,
+        invoice_no: action.payload.updateInvoiceNumber,
+        isInvoiceNoUpdated: true,
+      };
+    },
+    updateInvoiceNoFail(state, action) {
+      return {
+        invoiceLoading: false,
+        error: action.payload,
+      };
+    },
+    clearUpdateInvoiceNoDeleted(state, action) {
+      return {
+        ...state,
+        isInvoiceNoUpdated: false,
+      };
+    },
     clearBackDatedInvoiceError(state, action) {
       return { ...state, error: null };
     },
@@ -105,6 +206,21 @@ export const {
   deleteInvoiceListSuccess,
   deleteInvoiceListFail,
   clearInvoiceListDeleted,
+  deleteExcelDataRequest,
+  deleteExcelDataSuccess,
+  deleteExcelDataFail,
+  clearExcelDataDeleted,
+  getInvoiceNoRequest,
+  getInvoiceNoSuccess,
+  getInvoiceNoFail,
+  updateInvoiceNoRequest,
+  updateInvoiceNoSuccess,
+  updateInvoiceNoFail,
+  clearUpdateInvoiceNoDeleted,
+  MergeInvoiceGenerateRequest,
+  MergeInvoiceGenerateSuccess,
+  MergeInvoiceGenerateFail,
+  clearMergeInvoiceGenerateInput,
 } = actions;
 
 export default reducer;

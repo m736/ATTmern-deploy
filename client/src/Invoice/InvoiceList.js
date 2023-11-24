@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import { toast } from "react-toastify";
@@ -18,6 +18,12 @@ import {
   deleteInvoiceListAction,
   getInvoiceListAction,
 } from "../action/BackDatedInvoiceGenerateAction";
+import {
+  invoiceListFail,
+  invoiceListRequest,
+  invoiceListSuccess,
+} from "../slices/BackDatedInvoSlice";
+import axios from "axios";
 
 const ListArea = () => {
   const [bordered, setBordered] = useState(true);
@@ -32,26 +38,41 @@ const ListArea = () => {
     invoiceLoading,
     error,
   } = useSelector((state) => state.BackDateInvoiceGenerateState || []);
-  useEffect(() => {
-    if (invoice_list && invoice_list.length > 0) {
-      let updatedInvoiceList = invoice_list.map((item) => {
-        const Created = moment
-          .utc(item.createdAt)
-          .local()
-          .format("DD-MM-YYYY hh:mm A");
-        return {
-          ...item,
-          Created: Created,
-        };
-      });
-      // console.log(updatedClient);
+  // useEffect(() => {
+  //   if (invoice_list && invoice_list?.length > 0) {
+  //     let updatedInvoiceList = invoice_list.map((item) => {
+  //       const Created = moment
+  //         .utc(item.createdAt)
+  //         .local()
+  //         .format("DD-MM-YYYY hh:mm A");
+  //       return {
+  //         ...item,
+  //         Created: Created,
+  //       };
+  //     });
+  //     // console.log(updatedClient);
 
-      setTabledata(updatedInvoiceList);
-    } else {
-      dispatch(getInvoiceListAction);
-    }
-  }, [invoice_list]);
+  //     setTabledata(updatedInvoiceList);
+  //   } else {
+  //     dispatch(getInvoiceListAction);
+  //   }
+  // }, []);
   const [tabledata, setTabledata] = useState([]);
+  const fetchData = useCallback(async () => {
+    try {
+      dispatch(invoiceListRequest());
+
+      const { data } = await axios.get("/invoice/invoice_list_api");
+      setTabledata(data.getInvoiceList);
+      dispatch(invoiceListSuccess(data));
+    } catch (error) {
+      //handle error
+      dispatch(invoiceListFail(error));
+    }
+  }, [dispatch]);
+  useEffect(() => {
+    fetchData();
+  }, [fetchData]);
   const columns = [
     {
       title: "Invoice_No",
@@ -76,7 +97,7 @@ const ListArea = () => {
       render: (_, record) => (
         <Button
           className="bg-red-700 hover:bg-red-400  border-red-700 hover:border-red-500 text-white"
-          onClick={() => deleteInvoiceFunc(record?._id)}
+          onClick={() => deleteInvoiceFunc(record)}
         >
           Delete
         </Button>
@@ -92,7 +113,7 @@ const ListArea = () => {
       onOk() {
         dispatch(deleteInvoiceListAction(id));
         setTimeout(() => {
-          dispatch(getInvoiceListAction);
+          fetchData();
         }, [1000]);
       },
       onCancel() {

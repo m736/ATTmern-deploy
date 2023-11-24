@@ -488,7 +488,10 @@ const EditClientMaster = (props) => {
             }}
           /> */}
           <DatePicker
-            value={dayjs(`${clientList?.Agreement_validity}`, dateFormat)}
+            defaultValue={dayjs(
+              `${clientList?.Agreement_validity}`,
+              dateFormat
+            )}
             format={dateFormat}
             onChange={(value, Aggreement_validity_Date) => {
               // const Aggreement_validity_Date = e.format("YYYY-MM-DD");
