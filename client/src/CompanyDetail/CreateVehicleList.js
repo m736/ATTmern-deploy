@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Button, Checkbox, Form, Input } from "antd";
+import { Button, Checkbox, Form, Input, Spin } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
@@ -10,8 +10,9 @@ import {
   clearVehicleTypeError,
 } from "../slices/VehicleTypeSlice";
 const CreateVehicleType = () => {
-  const { vehicle_types, vehicleTypeLoading, isVehicleTypeCreated, error } =
-    useSelector((state) => state.VehicleTypeState || []);
+  const { vehicleTypeLoading, isVehicleTypeCreated, error } = useSelector(
+    (state) => state.VehicleTypeState || []
+  );
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const onFinish = (values) => {
@@ -42,45 +43,47 @@ const CreateVehicleType = () => {
   }, [isVehicleTypeCreated, error, dispatch]);
   return (
     <div>
-      <Form
-        name="vehicle_type_form"
-        labelCol={{
-          span: 8,
-        }}
-        wrapperCol={{
-          span: 16,
-        }}
-        style={{
-          maxWidth: 600,
-        }}
-        initialValues={{
-          remember: true,
-        }}
-        onFinish={onFinish}
-        autoComplete="off"
-      >
-        <Form.Item
-          label="Vehicle Type"
-          name="VehicleType"
-          rules={[
-            {
-              required: true,
-              message: "Please enter Vehicle Type!",
-            },
-          ]}
-        >
-          <Input />
-        </Form.Item>
-
-        <Form.Item
+      <Spin spinning={vehicleTypeLoading} tip="loading">
+        <Form
+          name="vehicle_type_form"
+          labelCol={{
+            span: 8,
+          }}
           wrapperCol={{
-            offset: 8,
             span: 16,
           }}
+          style={{
+            maxWidth: 600,
+          }}
+          initialValues={{
+            remember: true,
+          }}
+          onFinish={onFinish}
+          autoComplete="off"
         >
-          <Button htmlType="submit">Submit</Button>
-        </Form.Item>
-      </Form>
+          <Form.Item
+            label="Vehicle Type"
+            name="VehicleType"
+            rules={[
+              {
+                required: true,
+                message: "Please enter Vehicle Type!",
+              },
+            ]}
+          >
+            <Input />
+          </Form.Item>
+
+          <Form.Item
+            wrapperCol={{
+              offset: 8,
+              span: 16,
+            }}
+          >
+            <Button htmlType="submit">Submit</Button>
+          </Form.Item>
+        </Form>
+      </Spin>
     </div>
   );
 };

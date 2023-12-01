@@ -71,7 +71,7 @@ const CreatetarrifShema = new mongoose.Schema(
     selectedRental: String,
     segment: Array,
     selectedSegment: String,
-    area: Array,
+    areas: Array,
     selectedArea: String,
     slabhrs: Array,
     selectedSlabhrs: String,

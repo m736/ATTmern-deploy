@@ -43,7 +43,7 @@ const TripSheetCalculation = () => {
       );
       setCalculation([filterData[0]]);
     } else {
-      dispatch(getTarrif());
+      dispatch(getTarrif);
     }
   }, [tarrifData]);
   // console.log(tarrifData);

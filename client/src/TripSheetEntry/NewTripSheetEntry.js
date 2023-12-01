@@ -75,7 +75,7 @@ const NewTripSheetEntry = () => {
       let updatedClient = tarrifData.map((item) => item.company);
       setClientList([...new Set(updatedClient)]);
     } else {
-      dispatch(getTarrif());
+      dispatch(getTarrif);
     }
   }, [tarrifData]);
   const onFinish = (fieldsValue) => {

@@ -23,6 +23,8 @@ import {
   clearTarrifError,
   clearUpdateTarrifListCreated,
 } from "../slices/TarrifSlice";
+import { getVehicleTypeAction } from "../action/vehicleTypeAction";
+import { getAreaListAction } from "../action/AreaListAction";
 
 const ReadUpdateDeleteTarrif = () => {
   const dispatch = useDispatch();
@@ -38,6 +40,9 @@ const ReadUpdateDeleteTarrif = () => {
   const [selectedVehicle, setSelectedVehicle] = useState("");
   const [selectedRental, setSelectedRental] = useState("");
   const [selectedSegment, setSelectedSegment] = useState("");
+  const [companyArr, setCompanyArr] = useState([]);
+  const [vehicleArr, setVehicleArr] = useState([]);
+  const [areaArr, setAreaArr] = useState([]);
   const { Option } = Select;
   const {
     tarrifData,
@@ -48,26 +53,54 @@ const ReadUpdateDeleteTarrif = () => {
     isTarrifUpdated,
     error,
   } = useSelector((state) => state.TarrifState);
-  const [pageCount, setPageCount] = useState(10);
-  const [perPage, setResPerPage] = useState(3);
-  const [currentPage, setCurrentPage] = useState(1);
-  const setCurrentPageNo = (pageNo) => {
-    setCurrentPage(pageNo);
-  };
+  const { area_list } = useSelector((state) => state.AreaListState || []);
+  const { vehicle_types } = useSelector(
+    (state) => state.VehicleTypeState || []
+  );
+  const { client_master_detail } = useSelector(
+    (state) => state.ClientMasterState || []
+  );
+  useEffect(() => {
+    dispatch(getClientMasterAction);
+    dispatch(getVehicleTypeAction);
+    dispatch(getAreaListAction);
+  }, []);
+  useEffect(() => {
+    if (client_master_detail && client_master_detail.length > 0) {
+      let companyList = client_master_detail.map((item) => {
+        return {
+          text: item.Company_Name,
+          value: item.Company_Name,
+        };
+      });
+      setCompanyArr(removeDuplicateObjects(companyList, "value"));
+    }
+    if (vehicle_types && vehicle_types.length > 0) {
+      setVehicleArr(removeDuplicateObjects(vehicle_types, "value"));
+    }
+    if (area_list && area_list.length > 0) {
+      setAreaArr(removeDuplicateObjects(area_list, "value"));
+    }
+  }, [client_master_detail, vehicle_types, area_list]);
+
+  function removeDuplicateObjects(array, property) {
+    const uniqueIds = [];
+    const unique = array.filter((element) => {
+      const isDuplicate = uniqueIds.includes(element[property]);
+      if (!isDuplicate) {
+        uniqueIds.push(element[property]);
+        return true;
+      }
+      return false;
+    });
+    return unique;
+  }
+  useEffect(() => {
+    dispatch(getTarrif);
+  }, []);
 
   useEffect(() => {
-    dispatch(getTarrif(currentPage));
-  }, [currentPage]);
-
-  useEffect(() => {
-    setPageCount(page_count);
-  }, [page_count]);
-  useEffect(() => {
-    setResPerPage(resPerPage);
-  }, [resPerPage]);
-
-  useEffect(() => {
-    if (tarrifData && tarrifData.length) {
+    if (tarrifData && tarrifData.length > 0) {
       setTarrifInput(
         tarrifData.map((item, index) => {
           return {
@@ -83,95 +116,9 @@ const ReadUpdateDeleteTarrif = () => {
     }
   }, [tarrifData]);
 
-  const navigate = useNavigate();
-
-  const addTarrifPage = () => {
-    navigate("/tarrif/new_tarrif");
-  };
-  useEffect(() => {
-    if (alltarrifData && alltarrifData.length) {
-      let updatedClient = alltarrifData.map((item) => item.company);
-      setClientList([...new Set(updatedClient)]);
-    }
-  }, [alltarrifData]);
-  const searchTarrifData = async (item) => {
-    // setTarrifInput(updated);
-    const formData = new FormData();
-    formData.append("company", selectedCompany);
-    formData.append("vehicleType", selectedVehicle);
-    formData.append("selectedRental", selectedRental);
-    formData.append("selectedSegment", selectedSegment);
-    try {
-      dispatch(searchTarrifDataRequest());
-      const { data } = await axios.post(
-        `/tarrif/tarrif_search_company_name`,
-        formData
-      );
-
-      // dispatch(searchTarrifDataSuccess(data));
-      setTarrifInput(
-        data?.getTarrrifDetails?.length ? data?.getTarrrifDetails : []
-      );
-      setPageCount(data?.count);
-      setResPerPage(data?.resPerPage);
-      setCurrentPage(1);
-      setSelectedCompany(null);
-      setSelectedVehicle(null);
-      setSelectedRental(null);
-      setSelectedSegment(null);
-    } catch (error) {
-      //handle error
-      dispatch(searchTarrifDataFail(error.response.data.message));
-    }
-  };
-  useEffect(() => {
-    if (isTarrifDeleted) {
-      toast("Tarrif Deleted Succesfully!", {
-        type: "success",
-        position: toast.POSITION.BOTTOM_CENTER,
-        onOpen: () => dispatch(clearTarrifDeleted()),
-      });
-
-      return;
-    }
-
-    if (error) {
-      toast(error, {
-        position: toast.POSITION.BOTTOM_CENTER,
-        type: "error",
-        onOpen: () => {
-          dispatch(clearTarrifError());
-        },
-      });
-      return;
-    }
-  }, [isTarrifDeleted, error, dispatch]);
-  useEffect(() => {
-    if (isTarrifUpdated) {
-      toast("Tarrif updated Succesfully!", {
-        type: "success",
-        position: toast.POSITION.BOTTOM_CENTER,
-        onOpen: () => dispatch(clearUpdateTarrifListCreated()),
-      });
-
-      return;
-    }
-
-    if (error) {
-      toast(error, {
-        position: toast.POSITION.BOTTOM_CENTER,
-        type: "error",
-        onOpen: () => {
-          dispatch(clearTarrifError());
-        },
-      });
-      return;
-    }
-  }, [isTarrifUpdated, error, dispatch]);
-
   return (
     <>
-      <Row className="mb-5" gutter={[16, 24]}>
+      {/* <Row className="mb-5" gutter={[16, 24]}>
         <Col className="gutter-row" span={4}>
           <Select
             placeholder="Select Company"
@@ -277,7 +224,7 @@ const ReadUpdateDeleteTarrif = () => {
         <Col className="gutter-row" span={4}>
           <Button onClick={searchTarrifData}>Search</Button>
         </Col>
-      </Row>
+      </Row> */}
 
       {tarrifInput?.length > 0 ? (
         <>
@@ -427,6 +374,9 @@ const ReadUpdateDeleteTarrif = () => {
                             tarrifInputField={tarrifInputField}
                             editableRow={editableRow}
                             setEditableRow={setEditableRow}
+                            areaArr={areaArr}
+                            companyArr={companyArr}
+                            vehicleArr={vehicleArr}
                           />
                         );
                       })}
@@ -436,16 +386,6 @@ const ReadUpdateDeleteTarrif = () => {
               </div>
             </div>
           </div>
-          {pageCount > 0 && pageCount > perPage ? (
-            <div className="flex justify-center">
-              <Pagination
-                // current={currentPage}
-                onChange={setCurrentPageNo}
-                total={pageCount}
-                pageSize={perPage}
-              />
-            </div>
-          ) : null}
         </>
       ) : (
         <>
@@ -454,7 +394,7 @@ const ReadUpdateDeleteTarrif = () => {
           </h1>
           <div class="flex items-center justify-center">
             <Button
-              onClick={addTarrifPage}
+              // onClick={addTarrifPage}
               className="bg-green-700  hover:bg-green-400  border-green-700 hover:border-green-500 text-white"
             >
               Add

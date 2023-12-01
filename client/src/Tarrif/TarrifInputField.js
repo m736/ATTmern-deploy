@@ -15,14 +15,12 @@ export const tarrifInputField = {
     { value: "Railway Bus Transfer", text: "Railway Bus Transfer" },
     { value: "KMS Rate", text: "KMS Rate" },
   ],
-
   selectedRental: "Local",
   segment: [
     { value: "a/c", text: "a/c" },
     { value: "non a/c", text: "non a/c" },
   ],
   selectedSegment: "",
-
   selectedArea: "",
   slabhrs: [
     { value: 1, text: "1 Hours" },
@@ -119,13 +117,6 @@ export const tarrifInputField = {
   salesGraceTime: null,
   driverbata: null,
   position: 1,
-  formErrors: [
-    {
-      selectedSegment: "",
-    },
-  ],
-  segmentValid: false,
-  formValid: false,
 };
 export const onCallMisrequiredFields = [
   "date",

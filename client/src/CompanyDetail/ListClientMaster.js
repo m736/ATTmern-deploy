@@ -7,7 +7,7 @@ import {
 import { toast } from "react-toastify";
 import { Button, Space, Pagination, Spin, Modal, Typography } from "antd";
 import { ExclamationCircleFilled } from "@ant-design/icons";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import moment from "moment";
 import { Table } from "antd";
 import {
@@ -17,6 +17,7 @@ import {
 const ListClientMaster = () => {
   const [bordered, setBordered] = useState(true);
   const [company, setCompany] = useState([]);
+  const [tabledata, setTabledata] = useState([]);
   const { confirm } = Modal;
   const dispatch = useDispatch();
   const tableProps = {
@@ -28,7 +29,7 @@ const ListClientMaster = () => {
     isClientMasterDeleted,
     error,
   } = useSelector((state) => state.ClientMasterState);
-  console.log(client_master_detail);
+
   useEffect(() => {
     if (isClientMasterDeleted) {
       toast("Client master Deleted Succesfully!", {
@@ -140,37 +141,10 @@ const ListClientMaster = () => {
       onOk() {
         dispatch(deleteClientMasterAction(id));
       },
-      onCancel() {
-        console.log("Cancel");
-      },
+      onCancel() {},
     });
   };
-  // console.log(client_master_detail);
-  const [tabledata, setTabledata] = useState([]);
-  useEffect(() => {
-    if (client_master_detail.length) {
-      let companyList = client_master_detail.map((item) => {
-        return {
-          text: item.Company_Name,
-          value: item.Company_Name,
-        };
-      });
-      setCompany(removeDuplicateObjects(companyList, "value"));
-    }
-  }, []);
 
-  function removeDuplicateObjects(array, property) {
-    const uniqueIds = [];
-    const unique = array.filter((element) => {
-      const isDuplicate = uniqueIds.includes(element[property]);
-      if (!isDuplicate) {
-        uniqueIds.push(element[property]);
-        return true;
-      }
-      return false;
-    });
-    return unique;
-  }
   useEffect(() => {
     dispatch(getClientMasterAction);
   }, []);
@@ -201,26 +175,59 @@ const ListClientMaster = () => {
           Updated: Updated,
         };
       });
-      // console.log(updatedClient);
-
       setTabledata(updatedClient);
+      let companyList = client_master_detail.map((item) => {
+        return {
+          text: item.Company_Name,
+          value: item.Company_Name,
+        };
+      });
+      setCompany(removeDuplicateObjects(companyList, "value"));
     } else {
       setTabledata([]);
     }
-    console.log(tabledata);
   }, [client_master_detail]);
+
+  function removeDuplicateObjects(array, property) {
+    const uniqueIds = [];
+    const unique = array.filter((element) => {
+      const isDuplicate = uniqueIds.includes(element[property]);
+      if (!isDuplicate) {
+        uniqueIds.push(element[property]);
+        return true;
+      }
+      return false;
+    });
+    return unique;
+  }
+
+  const navigate = useNavigate();
+  const AddClientMaster = () => {
+    navigate("/client_master/new_client_master");
+  };
   return (
     <>
-      <Table
-        id={"company_list"}
-        {...tableProps}
-        columns={columns}
-        dataSource={tabledata}
-        scroll={{
-          y: 900,
-          x: 2500,
-        }}
-      />
+      <Spin spinning={clientMasterLoading}>
+        <div class="flex flex-row items-center justify-end">
+          <Button
+            className="text-white border-green-500 bg-green-500 hover:bg-white mb-7"
+            onClick={AddClientMaster}
+          >
+            Add Client
+          </Button>
+        </div>
+
+        <Table
+          id={"company_list"}
+          {...tableProps}
+          columns={columns}
+          dataSource={tabledata}
+          scroll={{
+            y: 900,
+            x: 2500,
+          }}
+        />
+      </Spin>
     </>
   );
 };

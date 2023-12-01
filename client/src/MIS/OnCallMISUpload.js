@@ -82,7 +82,7 @@ const OnCallMISUpload = () => {
     dispatch(getOnCallMisData);
   };
   useEffect(() => {
-    dispatch(getTarrif());
+    dispatch(getTarrif);
     fetchOnCallMisUploadData();
   }, []);
   const uploadData = async () => {

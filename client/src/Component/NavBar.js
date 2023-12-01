@@ -60,20 +60,20 @@ const NavBar = () => {
         },
       ],
     },
-    {
-      title: "Vehicle",
+    // {
+    //   title: "Vehicle",
 
-      submenu: true,
-      name: "vehicle",
-      spacing: "true",
-      submenuItems: [
-        { title: "AddVehicle", href: "/add_vechicle" },
-        {
-          title: "VehicleList",
-          href: "/vehicle_list",
-        },
-      ],
-    },
+    //   submenu: true,
+    //   name: "vehicle",
+    //   spacing: "true",
+    //   submenuItems: [
+    //     { title: "AddVehicle", href: "/add_vechicle" },
+    //     {
+    //       title: "VehicleList",
+    //       href: "/vehicle_list",
+    //     },
+    //   ],
+    // },
     {
       title: "Tarrif",
       submenu: true,

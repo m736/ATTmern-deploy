@@ -47,6 +47,9 @@ export const editAreaAction = (id, updatedAreaData) => async (dispatch) => {
     );
     console.log(data);
     dispatch(updateAreaListSuccess(data));
+    setTimeout(() => {
+      dispatch(getAreaListAction);
+    }, 1000);
   } catch (error) {
     //handle error
     dispatch(updateAreaListFail(error.response.data.message));

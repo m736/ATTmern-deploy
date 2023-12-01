@@ -26,7 +26,7 @@ export const createClientMasterAction = (formData) => async (dispatch) => {
     );
     setTimeout(() => {
       dispatch(createClientMasterSuccess(data));
-    }, [4000]);
+    }, [1000]);
   } catch (error) {
     dispatch(createClientMasterFail(error));
   }

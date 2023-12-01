@@ -10,6 +10,7 @@ import {
   Popconfirm,
   Input,
   Space,
+  Spin,
 } from "antd";
 import { ExclamationCircleFilled } from "@ant-design/icons";
 import moment from "moment";
@@ -24,6 +25,7 @@ import {
   editAreaAction,
   getAreaListAction,
 } from "../action/AreaListAction";
+import { useNavigate } from "react-router-dom";
 const EditableCell = ({
   editing,
   dataIndex,
@@ -59,6 +61,8 @@ const EditableCell = ({
 };
 const ListArea = () => {
   const [bordered, setBordered] = useState(true);
+  const [tabledata, setTabledata] = useState([]);
+  const [editingKey, setEditingKey] = useState("");
   const [form] = Form.useForm();
   const { confirm } = Modal;
   const dispatch = useDispatch();
@@ -73,18 +77,9 @@ const ListArea = () => {
     error,
   } = useSelector((state) => state.AreaListState || []);
 
-  const [editingKey, setEditingKey] = useState("");
-  const isEditing = (record) => record._id === editingKey;
-  const edit = (record) => {
-    form.setFieldsValue({
-      Area: "",
-      ...record,
-    });
-    setEditingKey(record._id);
-  };
-  const cancel = () => {
-    setEditingKey("");
-  };
+  useEffect(() => {
+    dispatch(getAreaListAction);
+  }, []);
   useEffect(() => {
     if (area_list && area_list.length > 0) {
       let updatedArea = area_list.map((item) => {
@@ -103,49 +98,24 @@ const ListArea = () => {
           Updated: Updated,
         };
       });
-      // console.log(updatedClient);
 
       setTabledata(updatedArea);
     } else {
-      dispatch(getAreaListAction);
+      setTabledata([]);
     }
   }, [area_list]);
-  const save = async (key) => {
-    try {
-      console.log(key);
-      const row = await form.validateFields();
-      dispatch(editAreaAction(key, { Area: row.value }));
-      setEditingKey("");
-      // setTimeout(() => {
-      //   dispatch(getAreaListAction);
-      // }, 1000);
-    } catch (errInfo) {
-      console.log("Validate Failed:", errInfo);
-    }
+
+  const isEditing = (record) => record._id === editingKey;
+  const edit = (record) => {
+    form.setFieldsValue({
+      Area: "",
+      ...record,
+    });
+    setEditingKey(record._id);
   };
-  useEffect(() => {
-    if (isAreaUpdated) {
-      toast("Area Updated Succesfully!", {
-        type: "success",
-        position: toast.POSITION.BOTTOM_CENTER,
-        onOpen: () => dispatch(clearAreaListUpdated()),
-      });
-
-      return;
-    }
-
-    if (error) {
-      toast(error, {
-        position: toast.POSITION.BOTTOM_CENTER,
-        type: "error",
-        onOpen: () => {
-          dispatch(clearAreaListError());
-        },
-      });
-      return;
-    }
-  }, [isAreaUpdated, error, dispatch]);
-  const [tabledata, setTabledata] = useState([]);
+  const cancel = () => {
+    setEditingKey("");
+  };
 
   const columns = [
     {
@@ -169,7 +139,7 @@ const ListArea = () => {
         return editable ? (
           <Space>
             <Typography.Link
-              onClick={() => save(record._id)}
+              onClick={() => saveArea(record._id)}
               style={{
                 marginRight: 8,
               }}
@@ -203,7 +173,6 @@ const ListArea = () => {
     if (!col.editable) {
       return col;
     }
-
     return {
       ...col,
       onCell: (record) => ({
@@ -215,6 +184,15 @@ const ListArea = () => {
       }),
     };
   });
+  const saveArea = async (key) => {
+    try {
+      const row = await form.validateFields();
+      dispatch(editAreaAction(key, { Area: row.value }));
+      setEditingKey("");
+    } catch (errInfo) {
+      console.log("Validate Failed:", errInfo);
+    }
+  };
   const deleteAreaFunc = (id) => {
     // setCurrentPage(1);
     confirm({
@@ -233,6 +211,15 @@ const ListArea = () => {
     });
   };
   useEffect(() => {
+    if (isAreaUpdated) {
+      toast("Area Updated Succesfully!", {
+        type: "success",
+        position: toast.POSITION.BOTTOM_CENTER,
+        onOpen: () => dispatch(clearAreaListUpdated()),
+      });
+
+      return;
+    }
     if (isAreaDeleted) {
       toast("Client master Deleted Succesfully!", {
         type: "success",
@@ -252,27 +239,39 @@ const ListArea = () => {
       });
       return;
     }
-  }, [isAreaDeleted, error, dispatch]);
-  // console.log(client_master_detail);
-
+  }, [isAreaUpdated, isAreaDeleted, error, dispatch]);
+  const navigate = useNavigate();
+  const AddClientMaster = () => {
+    navigate("/client_master/create_area");
+  };
   return (
     <>
-      <Form form={form} component={false}>
-        <Table
-          id={"area_list"}
-          {...tableProps}
-          columns={mergedColumns}
-          dataSource={tabledata}
-          components={{
-            body: {
-              cell: EditableCell,
-            },
-          }}
-          pagination={{
-            onChange: cancel,
-          }}
-        />
-      </Form>
+      <Spin spinning={areaListLoading} tip="loading">
+        <div class="flex flex-row items-center justify-end">
+          <Button
+            className="text-white border-green-500 bg-green-500 hover:bg-white mb-7"
+            onClick={AddClientMaster}
+          >
+            Add Area
+          </Button>
+        </div>
+        <Form form={form} component={false}>
+          <Table
+            id={"area_list"}
+            {...tableProps}
+            columns={mergedColumns}
+            dataSource={tabledata}
+            components={{
+              body: {
+                cell: EditableCell,
+              },
+            }}
+            pagination={{
+              onChange: cancel,
+            }}
+          />
+        </Form>
+      </Spin>
     </>
   );
 };

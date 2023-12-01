@@ -45,8 +45,10 @@ export const editVehicleTypeAction =
         `/api/v1/vehicle_type_api/${id}`,
         updatedVehicleTypeData
       );
-
       dispatch(updateVehicleTypeSuccess(data));
+      setTimeout(() => {
+        dispatch(getVehicleTypeAction);
+      }, 1000);
     } catch (error) {
       //handle error
       dispatch(updateVehicleTypeFail(error.response.data.message));

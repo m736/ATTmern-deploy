@@ -84,7 +84,7 @@ const SlabBaseMisUpload = () => {
     dispatch(getSlabBaseMisData);
   };
   useEffect(() => {
-    dispatch(getTarrif());
+    dispatch(getTarrif);
     fetchSlabBaseMisUploadData();
   }, []);
   const uploadData = async (e) => {

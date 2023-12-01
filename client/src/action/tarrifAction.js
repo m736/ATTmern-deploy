@@ -23,22 +23,23 @@ export const createTarrif = (formData) => async (dispatch) => {
     const { data } = await axios.post(`/tarrif/add_tarrif`, formData);
 
     dispatch(createTarrifSuccess(data));
+    setTimeout(() => {
+      dispatch(getTarrif);
+    }, 1000);
   } catch (error) {
     dispatch(createTarrifFail(error));
   }
 };
-export const getTarrif = (currentPage) => async (dispatch) => {
+export const getTarrif = async (dispatch) => {
   try {
     dispatch(getTarrifListRequest());
-    let link = `/tarrif/list_tarrif`;
+    // let link = `/tarrif/list_tarrif`;
 
-    if (currentPage) {
-      link += `?page=${currentPage}`;
-    }
-    const { data } = await axios.get(link);
-    // const { data } = await axios.get(
-    //   "/tarrif/list_tarrif"
-    // );
+    // if (currentPage) {
+    //   link += `?page=${currentPage}`;
+    // }
+    // const { data } = await axios.get(link);
+    const { data } = await axios.get("/tarrif/list_tarrif");
 
     dispatch(getTarrifListSuccess(data));
   } catch (error) {
@@ -66,8 +67,10 @@ export const updateSingleTarrif =
         `/api/v1/update_tarrif/${id}`,
         updatedTarrifListData
       );
-
       dispatch(updateTarrifListSuccess(data));
+      setTimeout(() => {
+        dispatch(getTarrif);
+      }, 1000);
     } catch (error) {
       //handle error
       dispatch(updateTarrifListFail(error.response.data.message));
@@ -78,6 +81,9 @@ export const deleteTarrif = (id) => async (dispatch) => {
     dispatch(deleteTarrifRequest());
     await axios.delete(`/api/v1/delete_tarrif/${id}`);
     dispatch(deleteTarrifSuccess());
+    setTimeout(() => {
+      dispatch(getTarrif);
+    }, 1000);
   } catch (error) {
     //handle error
     dispatch(deleteTarrifFail(error.response.data.message));

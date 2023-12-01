@@ -42,7 +42,7 @@ const TarrifExcelUpload = () => {
   };
   // console.log(excelRows);
   const fetchOnCallMisUploadData = async () => {
-    dispatch(getTarrif());
+    dispatch(getTarrif);
   };
   useEffect(() => {
     fetchOnCallMisUploadData();

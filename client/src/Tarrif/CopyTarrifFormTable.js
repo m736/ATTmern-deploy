@@ -32,8 +32,7 @@ const TarrifFormTable = (props) => {
     setEditableRow,
     editableRow,
     areaArr,
-    companyArr,
-    vehicleArr,
+    companies,
   } = props;
   const [form] = Form.useForm();
 
@@ -237,7 +236,7 @@ const TarrifFormTable = (props) => {
 
     setTarrifInput([...tarrifInput, newItem]);
   };
-  console.log(tarrifInput);
+
   const RemoveTarrifInput = () => {
     let activeIndex = tarrifInput.findIndex(
       (item) => item.position == tarrif.position
@@ -284,11 +283,16 @@ const TarrifFormTable = (props) => {
     let updated = tarrifInput.find((i, ind) => ind == index);
 
     dispatch(updateSingleTarrif(updated?._id, updated));
-
+    setTimeout(() => {
+      dispatch(getTarrif);
+    }, 1000);
     setEditableIndex(null);
   };
   const deleteTarrifData = (id) => {
     dispatch(deleteTarrif(id));
+    setTimeout(() => {
+      dispatch(getTarrif);
+    }, 1000);
   };
 
   return (
@@ -314,7 +318,7 @@ const TarrifFormTable = (props) => {
                     valueHandle("company", value);
                   }}
                 >
-                  {companyArr?.map((item) => {
+                  {tarrif?.companies?.map((item) => {
                     return (
                       <Option key={item.value} value={item.value}>
                         {item.text}
@@ -343,7 +347,7 @@ const TarrifFormTable = (props) => {
                     valueHandle("vehicleType", value);
                   }}
                 >
-                  {vehicleArr?.map((item) => {
+                  {tarrif?.vehicleTypes?.map((item) => {
                     return (
                       <Option key={item.value} value={item.value}>
                         {item.text}
@@ -427,7 +431,7 @@ const TarrifFormTable = (props) => {
                       valueHandle("selectedArea", value);
                     }}
                   >
-                    {areaArr?.map((item) => {
+                    {tarrif?.areas?.map((item) => {
                       return (
                         <Option key={item.value} value={item.value}>
                           {item.text}

@@ -48,7 +48,7 @@ const TripBaseMisUpload = () => {
     dispatch(getTripBaseMisData);
   };
   useEffect(() => {
-    dispatch(getTarrif());
+    dispatch(getTarrif);
     fetchTripBaseMisUploadData();
   }, []);
   const uploadData = async (e) => {

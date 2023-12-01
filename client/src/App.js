@@ -43,6 +43,8 @@ import InvoiceList from "./Invoice/InvoiceList";
 import DeleteTripsExcelData from "./Invoice/DeleteTripsExcelData";
 import InvoiceNumber from "./Invoice/InvoiceNumber";
 import MergeInvoiceGenerate from "./Invoice/MergeInvoiceGenerate";
+import TarrifListTable from "./Tarrif/TarrifListTable";
+import EditTarrifMaster from "./Tarrif/EditTarrifMaster";
 
 function App() {
   // const [rows, setRows] = useState([]);
@@ -99,9 +101,10 @@ function App() {
               <Route path="/tarrif">
                 <Route path="new_tarrif" element={<CreateNewTarrif />} />
                 {/* <Route path="upload_tarrif" element={<TarrifExcelUpload />} /> */}
+                <Route path="tarrif_list" element={<TarrifListTable />} />
                 <Route
-                  path="tarrif_list"
-                  element={<ReadUpdateDeleteTarrif />}
+                  path="edit_tarrif_list/:id"
+                  element={<EditTarrifMaster />}
                 />
               </Route>
               {/* <Route path="/tripsheet">

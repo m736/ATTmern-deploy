@@ -49,7 +49,7 @@ const DayBaseMisUpload = () => {
     dispatch(getDayBaseMisData);
   };
   useEffect(() => {
-    dispatch(getTarrif());
+    dispatch(getTarrif);
     fetchDayBaseMisUploadData();
   }, []);
   const uploadData = async (e) => {

@@ -32,6 +32,25 @@ const TarrifSlice = createSlice({
         error: action.payload,
       };
     },
+    getIndividualTarrifRequest(state, action) {
+      return {
+        ...state,
+        loading: true,
+      };
+    },
+    getIndividualTarrifSuccess(state, action) {
+      return {
+        loading: false,
+        tarrifData: action.payload.getSingleTarrifMaster,
+      };
+    },
+    getIndividualTarrifFail(state, action) {
+      return {
+        ...state,
+        loading: false,
+        error: action.payload,
+      };
+    },
     createTarrifRequest(state, action) {
       return {
         ...state,
@@ -189,6 +208,9 @@ export const {
   uniqueTarrifDataRequest,
   uniqueTarrifDataSuccess,
   uniqueTarrifDataFail,
+  getIndividualTarrifRequest,
+  getIndividualTarrifSuccess,
+  getIndividualTarrifFail,
 } = actions;
 
 export default reducer;

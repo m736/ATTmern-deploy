@@ -1,3 +1,6 @@
+import dayjs from "dayjs";
+import moment from "moment";
+const dateFormat = "YYYY-MM-DD";
 export const clientLocation = {
   Client_Location: "",
   Client_GST: "",
@@ -43,6 +46,7 @@ export const clientInputField = {
   Mailto: "",
   Telephone: "",
   Phone_No: "",
+  // Agreement_validity: moment().utc().format("Y-MM-DD"),
   Agreement_validity: "",
   service_Tax: [
     { text: 0, value: 0 },

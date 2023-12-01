@@ -44,14 +44,14 @@ router.get(
     if (filteredTarrifCount !== totalTarrifCount) {
       tarrifCount = filteredTarrifCount;
     }
-    const getTarrifData = await buildQuery().paginate(resPerPage).query;
-    const getAllTarrifData = await Createtarrif.find();
+    // const getTarrifData = await buildQuery().paginate(resPerPage).query;
+    const getTarrifData = await Createtarrif.find();
     res.status(201).json({
       success: true,
-      count: tarrifCount,
-      resPerPage,
+      // count: tarrifCount,
+      // resPerPage,
+      // getTarrifData,
       getTarrifData,
-      getAllTarrifData,
     });
   })
 );
@@ -206,6 +206,25 @@ router.post(
       getTarrrifDetails,
       count: getTarrrifDetails.length,
       resPerPage,
+    });
+  })
+);
+router.get(
+  "/single_tarrif_master_api/:id",
+  catchAsyncError(async (req, res, next) => {
+    const getSingleTarrifMaster = await Createtarrif.findById(req.params.id);
+    // console.log(getIndividualClientMaster);
+    if (!getSingleTarrifMaster) {
+      return next(
+        new ErrorHandler(
+          `TarrifMaster not found with this id: ${req.params.id}`,
+          404
+        )
+      );
+    }
+    res.status(201).json({
+      success: true,
+      getSingleTarrifMaster,
     });
   })
 );

@@ -10,6 +10,7 @@ import {
   Popconfirm,
   Input,
   Space,
+  Spin,
 } from "antd";
 import { ExclamationCircleFilled } from "@ant-design/icons";
 import moment from "moment";
@@ -24,6 +25,7 @@ import {
   editVehicleTypeAction,
   getVehicleTypeAction,
 } from "../action/vehicleTypeAction";
+import { useNavigate } from "react-router-dom";
 
 const EditableCell = ({
   editing,
@@ -60,32 +62,24 @@ const EditableCell = ({
 };
 const ListVehicleType = () => {
   const [bordered, setBordered] = useState(true);
+  const [editingKey, setEditingKey] = useState("");
   const [form] = Form.useForm();
   const { confirm } = Modal;
   const dispatch = useDispatch();
+  const [tabledata, setTabledata] = useState([]);
   const tableProps = {
     bordered,
   };
   const {
-    vehicle_types = [],
+    vehicle_types,
     vehicleTypeLoading,
     isVehicleTypeUpdated,
     isVehicleTypeDeleted,
     error,
   } = useSelector((state) => state.VehicleTypeState || []);
-
-  const [editingKey, setEditingKey] = useState("");
-  const isEditing = (record) => record._id === editingKey;
-  const edit = (record) => {
-    form.setFieldsValue({
-      VehicleType: "",
-      ...record,
-    });
-    setEditingKey(record._id);
-  };
-  const cancel = () => {
-    setEditingKey("");
-  };
+  useEffect(() => {
+    dispatch(getVehicleTypeAction);
+  }, []);
   useEffect(() => {
     if (vehicle_types && vehicle_types.length > 0) {
       let updatedVehicleType = vehicle_types.map((item) => {
@@ -104,51 +98,22 @@ const ListVehicleType = () => {
           Updated: Updated,
         };
       });
-      console.log(updatedVehicleType);
-
       setTabledata(updatedVehicleType);
     } else {
-      dispatch(getVehicleTypeAction);
+      setTabledata([]);
     }
   }, [vehicle_types]);
-  const save = async (key) => {
-    try {
-      console.log(key);
-      const row = await form.validateFields();
-      console.log(row);
-      dispatch(editVehicleTypeAction(key, { VehicleType: row.value }));
-      setEditingKey("");
-      setTimeout(() => {
-        dispatch(getVehicleTypeAction);
-      }, 1000);
-    } catch (errInfo) {
-      console.log("Validate Failed:", errInfo);
-    }
+  const isEditing = (record) => record._id === editingKey;
+  const edit = (record) => {
+    form.setFieldsValue({
+      VehicleType: "",
+      ...record,
+    });
+    setEditingKey(record._id);
   };
-  useEffect(() => {
-    if (isVehicleTypeUpdated) {
-      toast("Vehicle Type Updated Succesfully!", {
-        type: "success",
-        position: toast.POSITION.BOTTOM_CENTER,
-        onOpen: () => dispatch(clearVehicleTypeUpdated()),
-      });
-
-      return;
-    }
-
-    if (error) {
-      toast(error, {
-        position: toast.POSITION.BOTTOM_CENTER,
-        type: "error",
-        onOpen: () => {
-          dispatch(clearVehicleTypeError());
-        },
-      });
-      return;
-    }
-  }, [isVehicleTypeUpdated, error, dispatch]);
-  const [tabledata, setTabledata] = useState([]);
-
+  const cancel = () => {
+    setEditingKey("");
+  };
   const columns = [
     {
       title: "Vehicle Type",
@@ -171,7 +136,7 @@ const ListVehicleType = () => {
         return editable ? (
           <Space>
             <Typography.Link
-              onClick={() => save(record._id)}
+              onClick={() => saveVehicle(record._id)}
               style={{
                 marginRight: 8,
               }}
@@ -205,7 +170,6 @@ const ListVehicleType = () => {
     if (!col.editable) {
       return col;
     }
-
     return {
       ...col,
       onCell: (record) => ({
@@ -217,8 +181,17 @@ const ListVehicleType = () => {
       }),
     };
   });
+  const saveVehicle = async (key) => {
+    try {
+      const row = await form.validateFields();
+      console.log(row);
+      dispatch(editVehicleTypeAction(key, { VehicleType: row.value }));
+      setEditingKey("");
+    } catch (errInfo) {
+      console.log("Validate Failed:", errInfo);
+    }
+  };
   const deleteVehicleTypeFunc = (id) => {
-    // setCurrentPage(1);
     confirm({
       title: "Do you want to Delete these Client Details?",
       icon: <ExclamationCircleFilled />,
@@ -235,6 +208,14 @@ const ListVehicleType = () => {
     });
   };
   useEffect(() => {
+    if (isVehicleTypeUpdated) {
+      toast("Vehicle Type Updated Succesfully!", {
+        type: "success",
+        position: toast.POSITION.BOTTOM_CENTER,
+        onOpen: () => dispatch(clearVehicleTypeUpdated()),
+      });
+      return;
+    }
     if (isVehicleTypeDeleted) {
       toast("Vehicle Type Deleted Succesfully!", {
         type: "success",
@@ -243,7 +224,6 @@ const ListVehicleType = () => {
       });
       return;
     }
-
     if (error) {
       toast(error, {
         position: toast.POSITION.BOTTOM_CENTER,
@@ -254,27 +234,40 @@ const ListVehicleType = () => {
       });
       return;
     }
-  }, [isVehicleTypeDeleted, error, dispatch]);
+  }, [isVehicleTypeUpdated, isVehicleTypeDeleted, error, dispatch]);
   // console.log(client_master_detail);
-
+  const navigate = useNavigate();
+  const AddVehicleMaster = () => {
+    navigate("/client_master/create_vehicle_type");
+  };
   return (
     <>
-      <Form form={form} component={false}>
-        <Table
-          id={"vehicle_types"}
-          {...tableProps}
-          columns={mergedColumns}
-          dataSource={tabledata}
-          components={{
-            body: {
-              cell: EditableCell,
-            },
-          }}
-          pagination={{
-            onChange: cancel,
-          }}
-        />
-      </Form>
+      <Spin spinning={vehicleTypeLoading} tip="loading">
+        <div class="flex flex-row items-center justify-end">
+          <Button
+            className="text-white border-green-500 bg-green-500 hover:bg-white mb-7"
+            onClick={AddVehicleMaster}
+          >
+            Add Vehicle
+          </Button>
+        </div>
+        <Form form={form} component={false}>
+          <Table
+            id={"vehicle_types"}
+            {...tableProps}
+            columns={mergedColumns}
+            dataSource={tabledata}
+            components={{
+              body: {
+                cell: EditableCell,
+              },
+            }}
+            pagination={{
+              onChange: cancel,
+            }}
+          />
+        </Form>
+      </Spin>
     </>
   );
 };
