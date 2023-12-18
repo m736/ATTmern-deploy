@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { read, utils } from "xlsx";
 import { slabExcelUploadrequiredFields } from "../Tarrif/TarrifInputField";
 import { useDispatch, useSelector } from "react-redux";
@@ -6,10 +6,8 @@ import axios from "axios";
 import { getTarrif } from "../action/tarrifAction";
 import { getSlabBaseMisData } from "../action/slabBasMisAction";
 import { getClientMasterAction } from "../action/clientMasterAction";
-import { Spin } from "antd";
 const SlabBaseMisUpload = () => {
-  const [fileLoading, setLoading] = useState(false);
-
+  const [loading, setLoading] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const [companyList, setCompanyList] = useState([]);
   const [excelRows, setExcelRows] = useState([]);
@@ -20,10 +18,8 @@ const SlabBaseMisUpload = () => {
   const { slab_base_mis_uploadlist } = useSelector(
     (state) => state.SlabBaseMisState || []
   );
-  const { tarrifData, loading } = useSelector(
-    (state) => state.TarrifState || []
-  );
-  const { client_master_detail, clientMasterLoading } = useSelector(
+  const { tarrifData } = useSelector((state) => state.TarrifState || []);
+  const { client_master_detail } = useSelector(
     (state) => state.ClientMasterState || []
   );
 
@@ -49,8 +45,9 @@ const SlabBaseMisUpload = () => {
           cellDates: true,
           raw: false,
         });
-        setExcelRows(json);
+
         setLoading(false);
+        setExcelRows(json);
       };
       reader.readAsArrayBuffer(file);
     }
@@ -90,11 +87,11 @@ const SlabBaseMisUpload = () => {
   }
   const uploadData = async (e) => {
     e.preventDefault();
-    setLoading(true);
     try {
+      setLoading(true);
       const firstItemKeys = excelRows[0] && Object.keys(excelRows[0]);
       let requiredValidation = false;
-      if (firstItemKeys?.length) {
+      if (firstItemKeys.length) {
         slabExcelUploadrequiredFields.forEach((element) => {
           if (!firstItemKeys.find((x) => x === element)) {
             requiredValidation = true;
@@ -151,8 +148,9 @@ const SlabBaseMisUpload = () => {
 
       const updateFinalSlabBase = getFinalFilteredArray(updatedlistSlabBase);
       const newFinalListSlabBase = getFinalFilteredArray(newlistSlabBase);
+      console.log(getFinalFilteredArray(newlistSlabBase));
 
-      if (updateFinalSlabBase.length > 0) {
+      if (updateFinalSlabBase.length) {
         const result = (
           await axios.post(
             "/slabmis_bulk/slabbase_mis_bulk_update",
@@ -163,12 +161,9 @@ const SlabBaseMisUpload = () => {
           alert(
             "Successfully updated " + updateFinalSlabBase.length + " documents"
           );
-          inputRef.current.value = null;
-          setSelectedFile(null);
-          setExcelRows([]);
         }
       }
-      if (newFinalListSlabBase.length > 0) {
+      if (newFinalListSlabBase.length) {
         const result = (
           await axios.post(
             "/slabmis_bulk/slabbase_mis_bulk_insert",
@@ -179,9 +174,6 @@ const SlabBaseMisUpload = () => {
           alert(
             "Successfully added " + newFinalListSlabBase.length + " documents"
           );
-          inputRef.current.value = null;
-          setSelectedFile(null);
-          setExcelRows([]);
         }
       }
       fetchSlabBaseMisUploadData();
@@ -194,8 +186,10 @@ const SlabBaseMisUpload = () => {
 
   const getFinalFilteredArray = (parentList) => {
     let finalList = parentList.map((singleSlabBaseData) => {
+      // console.log(singleSlabBaseData);
       if (tarrifData?.length) {
         let filterData = tarrifData.filter((item) => {
+          // console.log(item);
           return (
             singleSlabBaseData?.Company_Name?.toUpperCase() ==
               item?.company?.toUpperCase() &&
@@ -209,7 +203,7 @@ const SlabBaseMisUpload = () => {
               item?.selectedArea.toUpperCase()
           );
         });
-
+        console.log(filterData);
         let ActiveSlabs = [];
         for (let [key, value] of Object.entries(singleSlabBaseData)) {
           if (key.includes("Slab") && value == 1) {
@@ -322,11 +316,10 @@ const SlabBaseMisUpload = () => {
 
     return finalList;
   };
-  const inputRef = useRef(null);
-  const removeFile = (e) => {
-    inputRef.current.value = null;
+  const removeFile = () => {
     setSelectedFile(null);
     setExcelRows([]);
+    window.location.reload();
   };
   let durationBody =
     clLocation.length &&
@@ -340,7 +333,6 @@ const SlabBaseMisUpload = () => {
       });
     });
 
-  console.log(loading);
   return (
     <>
       <h1 className="text-black mt-5 mb-10 text-2xl">
@@ -364,19 +356,12 @@ const SlabBaseMisUpload = () => {
                 setSelectedCompany(e.target.value);
               }}
               value={selectedCompany}
-              required
             >
-              {clientMasterLoading ? (
-                <Spin spinning={clientMasterLoading}></Spin>
-              ) : (
-                <>
-                  <option selected>Choose a company</option>
-                  {companyList.map((comapny) => (
-                    <option value={comapny.value}>{comapny.text}</option>
-                  ))}
-                  ;
-                </>
-              )}
+              <option selected>Choose a company</option>
+              {companyList.map((comapny) => (
+                <option value={comapny.value}>{comapny.text}</option>
+              ))}
+              ;
             </select>
             <select
               id="location"
@@ -392,7 +377,6 @@ const SlabBaseMisUpload = () => {
             <input
               type="file"
               name="oncall_mis"
-              ref={inputRef}
               onChange={readUploadFile}
               accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
               className={`file:bg-gradient-to-b file:from-blue-500 file:to-blue-600
@@ -404,31 +388,29 @@ const SlabBaseMisUpload = () => {
             <div className="text-sm pt-5">
               {" "}
               {"NOTE: The headers in the Excel file should be as follows!. => "}
-              {slabExcelUploadrequiredFields?.join(", ")}
+              {slabExcelUploadrequiredFields.join(", ")}
             </div>
           </div>
           <div>
             <div className="inline-flex ml-24">
-              {fileLoading ? (
-                <Spin spinning={fileLoading} tip="fileLoading">
-                  {" "}
-                </Spin>
-              ) : selectedFile?.name && excelRows.length > 0 ? (
-                <>
-                  <button
-                    className="bg-blue-500 hover:bg-blue-900 text-white py-3 px-4 rounded"
-                    onClick={uploadData}
-                  >
-                    UploadMISData
-                  </button>
-                  <button
-                    className="bg-red-500 hover:bg-red-900 text-white py-3 px-4 ml-3 rounded"
-                    onClick={removeFile}
-                  >
-                    Remove
-                  </button>
-                </>
+              {selectedFile?.name && excelRows.length ? (
+                <button
+                  className="bg-blue-500 hover:bg-blue-900 text-white py-3 px-4 rounded"
+                  disabled={loading}
+                  onClick={uploadData}
+                >
+                  UploadMISData
+                </button>
               ) : null}{" "}
+              {selectedFile?.name && excelRows.length ? (
+                <button
+                  className="bg-red-500 hover:bg-red-900 text-white py-3 px-4 ml-3 rounded"
+                  disabled={loading}
+                  onClick={removeFile}
+                >
+                  Remove
+                </button>
+              ) : null}
             </div>
           </div>
         </div>

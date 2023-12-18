@@ -231,8 +231,8 @@ const TarrifFormTable = (props) => {
     let newItem = {
       ...tarrifInputField,
       position: tarrifInput[tarrifInput.length - 1]?.position + 1,
-      // company: company,
-      // vehicleType: vehicleType,
+      company: company,
+      vehicleType: vehicleType,
     };
 
     setTarrifInput([...tarrifInput, newItem]);

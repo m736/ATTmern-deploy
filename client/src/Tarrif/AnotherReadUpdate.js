@@ -21,7 +21,7 @@ import { toast } from "react-toastify";
 import {
   clearTarrifDeleted,
   clearTarrifError,
-  clearUpdateTarrifListCreated,
+  clearUpdateTarrifList,
 } from "../slices/TarrifSlice";
 
 const ReadUpdateDeleteTarrif = () => {

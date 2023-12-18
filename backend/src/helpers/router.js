@@ -29,6 +29,10 @@ router.use(
   require("src/helpers/base.crud")(models.SlabBaseMisUploadData)
 );
 router.use(
+  "/get_site_slabbase_mis_data_api",
+  require("src/helpers/base.crud")(models.SiteSlabBaseMisUploadModel)
+);
+router.use(
   "/tripbase_mis_data",
   require("src/helpers/base.crud")(models.TripBaseMisUploadData)
 );

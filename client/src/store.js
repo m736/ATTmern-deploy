@@ -7,6 +7,7 @@ import ClientMasterReducer from "./slices/ClientMasterSlice";
 import TripSheetSliceReducer from "./slices/TripSheetSlice";
 import OnCallMisSliceReducer from "./slices/OnCallMisSlice";
 import SlabBaseMisSliceReducer from "./slices/SlabBaseMisSlice";
+import SiteSlabBaseSliceReducer from "./slices/SiteSlabBaseSlice";
 import TripBaseMisSliceReducer from "./slices/TripBaseMisSlice";
 import DayBaseMisSliceReducer from "./slices/DayBaseMisSlice";
 import AreaListReducer from "./slices/AreaListSlice";
@@ -22,6 +23,7 @@ const reducer = combineReducers({
   TripSheetState: TripSheetSliceReducer,
   OnCallMisState: OnCallMisSliceReducer,
   SlabBaseMisState: SlabBaseMisSliceReducer,
+  SiteSlabBaseState: SiteSlabBaseSliceReducer,
   TripBaseMisState: TripBaseMisSliceReducer,
   DayBaseMisState: DayBaseMisSliceReducer,
   BackDateInvoiceGenerateState: BackDatedInvoSliceReducer,

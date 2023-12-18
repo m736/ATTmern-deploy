@@ -42,6 +42,10 @@ app.use(
   "/api/v1/client",
   require("src/clientcontrollers/client.basecrud.controller")
 );
+app.use(
+  "/api/v1/site_mis",
+  require("src/sitemiscontrollers/site.mis.controller")
+);
 app.use("/api/v1/tripsheet_entry", require("src/helpers/router"));
 app.use("/bulk", require("src/controllers/bulk.controller"));
 app.use("/oncall_bulk", require("src/controllers/oncallbulk.controller"));

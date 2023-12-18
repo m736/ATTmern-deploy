@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { DatePicker, Button, Form, Select } from "antd";
+import { DatePicker, Button, Form, Select, Spin } from "antd";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import * as FileSaver from "file-saver";
@@ -11,6 +11,7 @@ import {
 } from "../slices/DayBaseMisSlice";
 import { getDayBaseMisData } from "../action/dayBaseMisAction";
 import ExportToExcel from "./ExportToExcel";
+import { getClientMasterAction } from "../action/clientMasterAction";
 
 const DownloadDayBaseMis = () => {
   const [form] = Form.useForm();
@@ -18,22 +19,34 @@ const DownloadDayBaseMis = () => {
   const { Option } = Select;
   const dispatch = useDispatch();
   const [companyList, setCompanyList] = useState([]);
+  const [selectedCompany, setSelectedCompany] = useState("");
+  const [clLocation, setClLocation] = useState([]);
+  const [selectedLocation, setSelectedLocation] = useState(null);
+  const [loading, setLoading] = useState(false);
   const fileName = "dayBaseMisDownloadData";
   // To disable submit button at the beginning.
+  const { client_master_detail } = useSelector(
+    (state) => state.ClientMasterState || []
+  );
+
   useEffect(() => {
+    dispatch(getClientMasterAction);
     forceUpdate({});
   }, []);
-  const { day_base_mis_uploadlist } = useSelector(
-    (state) => state.DayBaseMisState
-  );
   useEffect(() => {
-    if (day_base_mis_uploadlist && day_base_mis_uploadlist.length) {
-      let updatedCompany = day_base_mis_uploadlist.map((item) => item.Company);
-      setCompanyList([...new Set(updatedCompany)]);
-    } else {
-      dispatch(getDayBaseMisData);
+    if (client_master_detail && client_master_detail?.length > 0) {
+      let companyList = client_master_detail.map((item) => {
+        return {
+          text: item.Company_Name,
+          value: item.Company_Name,
+        };
+      });
+      setCompanyList(removeDuplicateObjects(companyList, "value"));
     }
-  }, []);
+  }, [client_master_detail]);
+  // important remove duplicate
+  // setCompanyList([...new Set(updatedCompany)]);
+
   const [searchData, setSearchData] = useState([]);
   const [onFinishValues, setOnFinishValues] = useState([]);
   const onFinish = async (fieldsValue) => {
@@ -47,6 +60,7 @@ const DownloadDayBaseMis = () => {
     };
     setOnFinishValues(values);
     try {
+      setLoading(true);
       dispatch(searchDayBaseMisDataRequest());
       const { data } = await axios.post(
         "/daymis_bulk/download_dayBase_misdata",
@@ -55,16 +69,44 @@ const DownloadDayBaseMis = () => {
 
       setSearchData(data);
       dispatch(searchDayBaseMisDataSuccess(data));
+      setLoading(false);
     } catch (error) {
       //handle error
+      setLoading(false);
       dispatch(searchDayBaseMisDataFail(error.response.data.message));
     }
   };
+  function removeDuplicateObjects(array, property) {
+    const uniqueIds = [];
+    const unique = array.filter((element) => {
+      const isDuplicate = uniqueIds.includes(element[property]);
+      if (!isDuplicate) {
+        uniqueIds.push(element[property]);
+        return true;
+      }
+      return false;
+    });
+    return unique;
+  }
+  let durationBody =
+    clLocation?.length &&
+    clLocation?.map((item, i) => {
+      return item?.map((again) => {
+        return (
+          <Option key={again} value={again}>
+            {again}
+          </Option>
+        );
+      });
+    });
   let filteredSearchData = [];
   if (searchData && searchData.length > 0) {
     filteredSearchData = searchData.map((item) => ({
-      Usage_Date: item?.Usage_Date,
-      Trip_Id: item?.Trip_Id,
+      Invoice_No: item?.Invoice_No,
+      Client: item?.Client,
+      Location: item?.Location,
+      Date: item?.Date,
+      Dutyslip_No: item?.Dutyslip_No,
       Vehicle_No: item?.Vehicle_No,
       Vehicle_Type: item?.Vehicle_Type,
       Vehicle_Billed_As: item?.Vehicle_Billed_As,
@@ -82,10 +124,10 @@ const DownloadDayBaseMis = () => {
       Night_Sales_Bata: item?.Night_Sales_Bata,
       Night_Purchase_Bata: item?.Night_Purchase_Bata,
       Fuel_Difference: item?.Fuel_Difference,
-      Company: item?.Company,
+      Company_Name: item?.Company,
       Area: item?.Area,
-      salesTotal: item?.salesTotal,
-      purchaseTotal: item?.purchaseTotal,
+      Sales_Nett: item?.Sales_Nett,
+      Purchase_Nett: item?.Purchase_Nett,
     }));
   }
   return (
@@ -113,23 +155,57 @@ const DownloadDayBaseMis = () => {
           >
             <Select
               showSearch
+              style={{
+                width: 120,
+              }}
               allowClear={true}
               optionFilterProp="children"
               filterOption={(input, option) =>
                 option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
               }
               placeholder="company"
+              onChange={(e) => {
+                let updated = client_master_detail?.filter(
+                  (item) => e == item.Company_Name
+                );
+                let updatedLocation = updated.map((item) =>
+                  item?.Location?.map((loc) => loc?.Client_Location)
+                );
+                setSelectedCompany(e);
+                setSelectedLocation(null);
+                form.resetFields(["location"]);
+                setClLocation(updatedLocation);
+              }}
+              value={selectedCompany}
             >
-              {companyList.map((item) => {
+              {companyList?.map((comapny) => {
                 return (
-                  <Option key={item} value={item}>
-                    {item}
+                  <Option key={comapny.value} value={comapny.value}>
+                    {comapny.text}
                   </Option>
                 );
               })}
             </Select>
           </Form.Item>
-
+          <Form.Item
+            name="location"
+            rules={[
+              {
+                required: true,
+                message: "fill",
+              },
+            ]}
+          >
+            <Select
+              placeholder="location"
+              onChange={(e) => {
+                setSelectedLocation(e);
+              }}
+            >
+              <Option>Choose Location</Option>
+              {durationBody ? durationBody : null}
+            </Select>
+          </Form.Item>
           <Form.Item
             name="start_end_date"
             rules={[
@@ -156,10 +232,16 @@ const DownloadDayBaseMis = () => {
             )}
           </Form.Item>
         </Form>
-        {filteredSearchData && filteredSearchData.length > 0 ? (
-          <ExportToExcel apiData={filteredSearchData} fileName={fileName} />
+        {loading ? (
+          <Spin spinning={loading}></Spin>
         ) : (
-          "No Data"
+          <>
+            {filteredSearchData && filteredSearchData.length > 0 ? (
+              <ExportToExcel apiData={filteredSearchData} fileName={fileName} />
+            ) : (
+              "No Data"
+            )}
+          </>
         )}
       </div>
     </>

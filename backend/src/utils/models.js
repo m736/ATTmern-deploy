@@ -94,7 +94,7 @@ const CreatetarrifShema = new mongoose.Schema(
     driverbata: String,
     position: Number,
   },
-  { timestamps: true }
+  { strict: false, timestamps: true }
 );
 const newTripSheetEntryShema = new mongoose.Schema(
   {
@@ -131,8 +131,10 @@ const newTripSheetEntryShema = new mongoose.Schema(
 );
 const onCallMisSchema = new Schema(
   {
+    Client: String,
+    Location: String,
     Dutyslip_No: String,
-    date: {
+    Date: {
       type: String,
       required: true,
       set: (date) => formatDate(date),
@@ -157,32 +159,30 @@ const onCallMisSchema = new Schema(
     Others: Number,
     Fuel_Difference: Number,
     Company_Name: String,
-    salesRate: Number,
-    selectedSlabhrs: String,
-    selectedSlabkms: String,
-    salesExHrsRate: Number,
-    salesGraceTime: String,
-    gross: Number,
     Area: String,
+    Sales_Nett: Number,
+    Purchase_Nett: Number,
     Invoice_No: { type: Number, default: 0 },
   },
   { strict: false, timestamps: true }
 );
 const slabBaseMisSchema = new Schema(
   {
-    date: {
+    Client: String,
+    Location: Array,
+    Date: {
       type: String,
       required: true,
       set: (date) => formatDate(date),
     },
-    "Trip ID": String,
-    "Vehicle No": String,
-    "Vehicle TYPE": String,
-    "Vehicle Billed as": String,
+    Dutyslip_No: String,
+    Vehicle_No: String,
+    Vehicle_Type: String,
+    Vehicle_Billed_As: String,
     Segment: String,
-    "Tot Kms": Number,
-    "Trip Type": String,
-    "Duty Type": String,
+    Total_Kms: Number,
+    Trip_Type: String,
+    Rental: String,
     Slab1: Number,
     Slab2: Number,
     Slab3: Number,
@@ -200,30 +200,33 @@ const slabBaseMisSchema = new Schema(
     "Slab5 - Single": Number,
     "Slab1 - Single": Number,
     Bata: Number,
-    "Fuel Difference": Number,
-    Company: String,
+    Fuel_Difference: Number,
+    Company_Name: String,
     Area: String,
     Sale_Bhata: Number,
     Purchase_Bhata: Number,
-    SalesTotal: Number,
+    Sales_Nett: Number,
+    Purchase_Nett: Number,
     Invoice_No: { type: Number, default: 0 },
   },
   { strict: false, timestamps: true }
 );
 const tripBaseMisSchema = new Schema(
   {
-    Usage_Date: {
+    Client: String,
+    Location: String,
+    Date: {
       type: String,
       required: true,
       set: (date) => formatDate(date),
     },
-    Trip_Id: String,
+    Dutyslip_No: String,
     Vehicle_No: String,
     Vehicle_Type: String,
     Vehicle_Billed_As: String,
     Segment: String,
     Total_Kms: Number,
-    Trip_Type: String,
+    Rental: String,
     Duty_Type: String,
     Trip: Number,
     Trip_Single: Number,
@@ -232,23 +235,26 @@ const tripBaseMisSchema = new Schema(
     Trip_Single_Long: Number,
     Toll: Number,
     Fuel_Difference: Number,
-    Company: String,
-    Area: String,
     Sales_Bata: Number,
     Purchase_Bata: Number,
-    salesTotal: Number,
-    purchaseTotal: Number,
+    Company_Name: String,
+    Area: String,
+    Sales_Nett: Number,
+    Purchase_Nett: Number,
+    Invoice_No: { type: Number, default: 0 },
   },
   { strict: false, timestamps: true }
 );
 const dayBaseMisSchema = new Schema(
   {
-    Usage_Date: {
+    client: String,
+    Location: String,
+    Date: {
       type: String,
       required: true,
       set: (date) => formatDate(date),
     },
-    Trip_Id: String,
+    Dutyslip_No: String,
     Vehicle_No: String,
     Vehicle_Type: String,
     Vehicle_Billed_As: String,
@@ -266,10 +272,11 @@ const dayBaseMisSchema = new Schema(
     Night_Sales_Bata: Number,
     Night_Purchase_Bata: Number,
     Fuel_Difference: Number,
-    Company: String,
+    Company_Name: String,
     Area: String,
-    salesTotal: Number,
-    purchaseTotal: Number,
+    Sales_Nett: Number,
+    Purchase_Nett: Number,
+    Invoice_No: { type: Number, default: 0 },
   },
   { strict: false, timestamps: true }
 );
@@ -336,7 +343,51 @@ const invoiceNumberSchema = new Schema(
   },
   { strict: false, timestamps: true }
 );
+const siteSlabBaseMisSchema = new Schema(
+  {
+    Date: {
+      type: String,
+      required: true,
+      set: (date) => formatDate(date),
+    },
+    Dutyslip_No: String,
+    Vehicle_No: String,
+    Vehicle_Type: String,
+    Vehicle_Billed_As: String,
+    Segment: String,
+    Time: String,
+    P_D: String,
+    Total_Kms: Number,
+    Trip_Type: String,
+    Rental: String,
+    Slab1: Number,
+    Slab2: Number,
+    Slab3: Number,
+    Slab4: Number,
+    Slab5: Number,
+    "Slab1 - E": Number,
+    "Slab2 - E": Number,
+    "Slab3 - E": Number,
+    "Slab4 - E": Number,
+    "Slab5 - E": Number,
+    "Slab1 - Single": Number,
+    "Slab2 - Single": Number,
+    "Slab3 - Single": Number,
+    "Slab4 - Single": Number,
+    "Slab5 - Single": Number,
+    "Slab1 - Single": Number,
+    Bata: Number,
+    Fuel_Difference: Number,
+    Company_Name: Array,
+    Area: String,
+  },
+  { strict: false, timestamps: true }
+);
 module.exports = {
+  SiteSlabBaseMisUploadModel: mongoose.model(
+    "site_slab_base_table",
+    siteSlabBaseMisSchema
+  ),
   InvoiceNumberModel: mongoose.model("invoice_no_table", invoiceNumberSchema),
   BackDatedInvoice: mongoose.model("invoice_list_table", invoiceSchema),
   Location: mongoose.model("location_table", locationSchema),

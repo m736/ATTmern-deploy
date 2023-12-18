@@ -119,7 +119,7 @@ export const tarrifInputField = {
   position: 1,
 };
 export const onCallMisrequiredFields = [
-  "date",
+  "Date",
   "Vehicle_No",
   "Vehicle_Type",
   "Vehicle_Billed_As",
@@ -135,22 +135,22 @@ export const tarrifExcelUploadrequiredFields = [
   "Segment",
 ];
 export const slabExcelUploadrequiredFields = [
-  "date",
-  "Duty Type",
-  "Company",
-  "Trip ID",
-  "Vehicle Billed as",
+  "Date",
+  "Dutyslip_No",
+  "Company_Name",
+  "Rental",
+  "Vehicle_Billed_As",
   "Segment",
 ];
 export const tripExcelUploadrequiredFields = [
-  "Trip_Id",
-  "Company",
+  "Dutyslip_No",
+  "Company_Name",
   "Vehicle_Billed_As",
   "Segment",
-  "Trip_Type",
+  "Rental",
 ];
 export const dayExcelUploadrequiredFields = [
-  "Company",
+  "Company_Name",
   "Vehicle_Billed_As",
   "Segment",
   "Rental",

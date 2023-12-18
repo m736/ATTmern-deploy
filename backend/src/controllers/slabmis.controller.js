@@ -58,9 +58,10 @@ router.post("/download_slabBase_misdata", async (req, res, next) => {
     // console.log(searchData);
     let singleSlabData = await SlabBaseMisUploadData.find({
       $and: [
-        { Company: searchData.company },
+        { Client: searchData.company },
+        { Location: searchData.location },
         {
-          date: {
+          Date: {
             $gte: searchData.startJourney,
             $lte: searchData.endJourney,
           },

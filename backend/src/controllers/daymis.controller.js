@@ -58,9 +58,10 @@ router.post("/download_dayBase_misdata", async (req, res, next) => {
 
     let findDayData = await DayBaseMisUploadData.find({
       $and: [
-        { Company: searchData.company },
+        { Client: searchData.company },
+        { Location: searchData.location },
         {
-          Usage_Date: {
+          Date: {
             $gte: searchData.startJourney,
             $lte: searchData.endJourney,
           },

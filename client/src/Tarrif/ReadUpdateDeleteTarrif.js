@@ -21,7 +21,7 @@ import { toast } from "react-toastify";
 import {
   clearTarrifDeleted,
   clearTarrifError,
-  clearUpdateTarrifListCreated,
+  clearUpdateTarrifList,
 } from "../slices/TarrifSlice";
 import { getVehicleTypeAction } from "../action/vehicleTypeAction";
 import { getAreaListAction } from "../action/AreaListAction";

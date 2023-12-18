@@ -82,7 +82,7 @@ export const {
   //   deleteTarrifFail,
   //   clearTarrifDeleted,
   //   clearCreateTarrif,
-  //   clearUpdateTarrifListCreated,
+  //   clearUpdateTarrifList,
   //   clearTarrifError,
 } = actions;
 

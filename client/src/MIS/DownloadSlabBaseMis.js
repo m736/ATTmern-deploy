@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { DatePicker, Button, Form, Select } from "antd";
+import { DatePicker, Button, Form, Select, Spin } from "antd";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { getSlabBaseMisData } from "../action/slabBasMisAction";
@@ -10,6 +10,7 @@ import {
   searchSlabBaseMisDataSuccess,
 } from "../slices/SlabBaseMisSlice";
 import ExportToExcel from "./ExportToExcel";
+import { getClientMasterAction } from "../action/clientMasterAction";
 
 const DownloadSlabBaseMis = () => {
   const [form] = Form.useForm();
@@ -17,22 +18,32 @@ const DownloadSlabBaseMis = () => {
   const { Option } = Select;
   const dispatch = useDispatch();
   const [companyList, setCompanyList] = useState([]);
+  const [selectedCompany, setSelectedCompany] = useState("");
+  const [clLocation, setClLocation] = useState([]);
+  const [selectedLocation, setSelectedLocation] = useState(null);
+  const [loading, setLoading] = useState(false);
   const fileName = "slabBaseMisDownloadData";
   // To disable submit button at the beginning.
+  const { client_master_detail } = useSelector(
+    (state) => state.ClientMasterState || []
+  );
+
   useEffect(() => {
+    dispatch(getClientMasterAction);
     forceUpdate({});
   }, []);
-  const { slab_base_mis_uploadlist } = useSelector(
-    (state) => state.SlabBaseMisState
-  );
+
   useEffect(() => {
-    if (slab_base_mis_uploadlist && slab_base_mis_uploadlist.length) {
-      let updatedCompany = slab_base_mis_uploadlist.map((item) => item.Company);
-      setCompanyList([...new Set(updatedCompany)]);
-    } else {
-      dispatch(getSlabBaseMisData);
+    if (client_master_detail && client_master_detail?.length > 0) {
+      let companyList = client_master_detail.map((item) => {
+        return {
+          text: item.Company_Name,
+          value: item.Company_Name,
+        };
+      });
+      setCompanyList(removeDuplicateObjects(companyList, "value"));
     }
-  }, []);
+  }, [client_master_detail]);
   const [searchData, setSearchData] = useState([]);
   const [onFinishValues, setOnFinishValues] = useState([]);
   const onFinish = async (fieldsValue) => {
@@ -50,6 +61,7 @@ const DownloadSlabBaseMis = () => {
     };
     setOnFinishValues(values);
     try {
+      setLoading(true);
       dispatch(searchSlabBaseMisDataRequest());
       const { data } = await axios.post(
         "/slabmis_bulk/download_slabBase_misdata",
@@ -58,24 +70,48 @@ const DownloadSlabBaseMis = () => {
 
       setSearchData(data);
       dispatch(searchSlabBaseMisDataSuccess(data));
+      setLoading(false);
     } catch (error) {
       //handle error
+      setLoading(false);
       dispatch(searchSlabBaseMisDataFail(error.response.data.message));
     }
   };
-
+  function removeDuplicateObjects(array, property) {
+    const uniqueIds = [];
+    const unique = array.filter((element) => {
+      const isDuplicate = uniqueIds.includes(element[property]);
+      if (!isDuplicate) {
+        uniqueIds.push(element[property]);
+        return true;
+      }
+      return false;
+    });
+    return unique;
+  }
+  let durationBody =
+    clLocation?.length &&
+    clLocation?.map((item, i) => {
+      return item?.map((again) => {
+        return (
+          <Option key={again} value={again}>
+            {again}
+          </Option>
+        );
+      });
+    });
   let filteredSearchData = [];
   if (searchData && searchData.length > 0) {
     filteredSearchData = searchData?.map((item) => ({
       Invoice_No: item?.Invoice_No,
-      Id: item?._id,
-      "Duty Slip No": item?.["Trip ID"],
-      Rental: item?.["Duty Type"],
-      Client: item?.Company,
-      "Vehicle billed As": item?.["Vehicle Billed as"],
+      Client: item?.Client,
+      Location: item?.Location,
+      Dutyslip_No: item?.["Dutyslip_No"],
+      Rental: item?.["Rental"],
+      Vehicle_Billed_As: item?.["Vehicle_Billed_As"],
       Segment: item?.Segment,
-      "Vehicle No": item?.["Vehicle No"] ?? "-",
-      "Vehicle Type": item?.["Vehicle TYPE"] ?? "-",
+      Vehicle_No: item?.["Vehicle_No"] ?? "-",
+      Vehicle_Type: item?.["Vehicle_Type"] ?? "-",
       Slab1: item?.["Slab1"] ?? 0,
       Slab2: item?.["Slab2"] ?? 0,
       Slab3: item?.["Slab3"] ?? 0,
@@ -91,11 +127,11 @@ const DownloadSlabBaseMis = () => {
       "Slab3 - Single": item?.["Slab3 - Single"] ?? 0,
       "Slab4 - Single": item?.["Slab4 - Single"] ?? 0,
       "Slab5 - Single": item?.["Slab5 - Single"] ?? 0,
-      Bata: item?.["Bata"] ?? 0,
-      Fuel: item?.["Fuel Difference"] ?? 0,
-      Company: item?.["Company"] ?? "",
-      Area: item?.["AREA"] ?? 0,
-      salesNett: item?.["salesNett"] ?? 0,
+      Fuel_Difference: item?.["Fuel_Difference"] ?? 0,
+      Company_Name: item?.["Company_Name"] ?? "",
+      Area: item?.["Area"] ?? 0,
+      Sales_Nett: item?.["Sales_Nett"] ?? 0,
+      Purchase_Nett: item?.["Purchase_Nett"] ?? 0,
     }));
   }
 
@@ -124,23 +160,57 @@ const DownloadSlabBaseMis = () => {
           >
             <Select
               showSearch
+              style={{
+                width: 120,
+              }}
               allowClear={true}
               optionFilterProp="children"
               filterOption={(input, option) =>
                 option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
               }
               placeholder="company"
+              onChange={(e) => {
+                let updated = client_master_detail?.filter(
+                  (item) => e == item.Company_Name
+                );
+                let updatedLocation = updated.map((item) =>
+                  item?.Location?.map((loc) => loc?.Client_Location)
+                );
+                setSelectedCompany(e);
+                setSelectedLocation(null);
+                form.resetFields(["location"]);
+                setClLocation(updatedLocation);
+              }}
+              value={selectedCompany}
             >
-              {companyList.map((item) => {
+              {companyList?.map((comapny) => {
                 return (
-                  <Option key={item} value={item}>
-                    {item}
+                  <Option key={comapny.value} value={comapny.value}>
+                    {comapny.text}
                   </Option>
                 );
               })}
             </Select>
           </Form.Item>
-
+          <Form.Item
+            name="location"
+            rules={[
+              {
+                required: true,
+                message: "fill",
+              },
+            ]}
+          >
+            <Select
+              placeholder="location"
+              onChange={(e) => {
+                setSelectedLocation(e);
+              }}
+            >
+              <Option>Choose Location</Option>
+              {durationBody ? durationBody : null}
+            </Select>
+          </Form.Item>
           <Form.Item
             name="start_end_date"
             rules={[
@@ -167,10 +237,16 @@ const DownloadSlabBaseMis = () => {
             )}
           </Form.Item>
         </Form>
-        {filteredSearchData && filteredSearchData.length > 0 ? (
-          <ExportToExcel apiData={filteredSearchData} fileName={fileName} />
+        {loading ? (
+          <Spin spinning={loading}></Spin>
         ) : (
-          "No Data"
+          <>
+            {filteredSearchData && filteredSearchData.length > 0 ? (
+              <ExportToExcel apiData={filteredSearchData} fileName={fileName} />
+            ) : (
+              "No Data"
+            )}
+          </>
         )}
       </div>
     </>

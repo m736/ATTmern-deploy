@@ -58,9 +58,10 @@ router.post("/download_tripBase_misdata", async (req, res, next) => {
     console.log(searchData);
     let singleTripData = await TripBaseMisUploadData.find({
       $and: [
-        { Company: searchData.company },
+        { Client: searchData.company },
+        { Location: searchData.location },
         {
-          Usage_Date: {
+          Date: {
             $gte: searchData.startJourney,
             $lte: searchData.endJourney,
           },

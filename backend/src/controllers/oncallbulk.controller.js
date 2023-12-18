@@ -61,9 +61,10 @@ router.post("/download_oncall_misdata", async (req, res, next) => {
     const searchData = req.body;
     let singlePerson = await OnCallMisUploadData.find({
       $and: [
-        { Company_Name: searchData.company },
+        { Client: searchData.company },
+        { Location: searchData.location },
         {
-          date: {
+          Date: {
             $gte: searchData.startJourney,
             $lte: searchData.endJourney,
           },

@@ -45,6 +45,11 @@ import InvoiceNumber from "./Invoice/InvoiceNumber";
 import MergeInvoiceGenerate from "./Invoice/MergeInvoiceGenerate";
 import TarrifListTable from "./Tarrif/TarrifListTable";
 import EditTarrifMaster from "./Tarrif/EditTarrifMaster";
+import BackDatedInvoiceGenerate from "./Invoice/BackDatedInvoiceGenerate";
+import SiteUploadMis from "./SiteMis/SiteUploadMis";
+
+import SiteAllCompanyDownloadMis from "./SiteMis/SiteAllCompanyDownloadMis";
+import DownloadSiteMis from "./SiteMis/DownloadSiteMis";
 
 function App() {
   // const [rows, setRows] = useState([]);
@@ -102,6 +107,10 @@ function App() {
                 <Route path="new_tarrif" element={<CreateNewTarrif />} />
                 {/* <Route path="upload_tarrif" element={<TarrifExcelUpload />} /> */}
                 <Route path="tarrif_list" element={<TarrifListTable />} />
+                {/* <Route
+                  path="tarrif_list"
+                  element={<ReadUpdateDeleteTarrif />}
+                /> */}
                 <Route
                   path="edit_tarrif_list/:id"
                   element={<EditTarrifMaster />}
@@ -141,6 +150,14 @@ function App() {
                   element={<DownloadDayBaseMis />}
                 /> */}
               </Route>
+              <Route path="/site_mis">
+                <Route path="site_upload_mis" element={<SiteUploadMis />} />
+                <Route path="site_download_mis" element={<DownloadSiteMis />} />
+                <Route
+                  path="site_allcompany_download_mis"
+                  element={<SiteAllCompanyDownloadMis />}
+                />
+              </Route>
               <Route path="/invoice">
                 <Route path="manual_invoice" element={<ManualInvoice />} />
 
@@ -151,10 +168,15 @@ function App() {
                 <Route path="invoice_no" element={<InvoiceNumber />} />
                 <Route path="invoice_generate" element={<InvoiceGenerate />} />
 
-                <Route
+                {/* <Route
                   path="merge_invoice_generate"
                   element={<MergeInvoiceGenerate />}
+                /> */}
+                <Route
+                  path="back_dated_invoice_generate"
+                  element={<BackDatedInvoiceGenerate />}
                 />
+
                 <Route path="invoice_list" element={<InvoiceList />} />
               </Route>
             </Routes>

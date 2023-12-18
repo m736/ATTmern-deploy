@@ -1,17 +1,21 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import {
+  clearTarrifError,
+  clearUpdateTarrifList,
   getIndividualTarrifFail,
   getIndividualTarrifRequest,
   getIndividualTarrifSuccess,
 } from "../slices/TarrifSlice";
 import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
-import { Card, Col, Row, Select, Form } from "antd";
+import { Card, Col, Row, Select, Form, Button } from "antd";
 import { tarrifInputField } from "./TarrifInputField";
 import { getClientMasterAction } from "../action/clientMasterAction";
 import { getVehicleTypeAction } from "../action/vehicleTypeAction";
 import { getAreaListAction } from "../action/AreaListAction";
+import { updateSingleTarrif } from "../action/tarrifAction";
+import { toast } from "react-toastify";
 const style = {
   width: "80%",
   padding: "8px 0",
@@ -21,6 +25,7 @@ const EditTarrifMaster = () => {
   const { Option } = Select;
   const [form] = Form.useForm();
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [singleTarrifDetail, setSingleTarrifDetail] = useState({});
   const [tarrifInfield, setTarrifInputField] = useState(tarrifInputField);
   const [companyArr, setCompanyArr] = useState([]);
@@ -159,6 +164,9 @@ const EditTarrifMaster = () => {
   const { client_master_detail } = useSelector(
     (state) => state.ClientMasterState || []
   );
+  const { loading, isTarrifUpdated, error } = useSelector(
+    (state) => state.TarrifState
+  );
   useEffect(() => {
     dispatch(getClientMasterAction);
     dispatch(getVehicleTypeAction);
@@ -243,6 +251,32 @@ const EditTarrifMaster = () => {
     }
   };
   console.log(singleTarrifDetail);
+  const editTarrifMasterDetail = () => {
+    setSingleTarrifDetail(singleTarrifDetail);
+    dispatch(updateSingleTarrif(id, singleTarrifDetail));
+  };
+  useEffect(() => {
+    if (isTarrifUpdated) {
+      toast("Tarrif master Updated Succesfully!", {
+        type: "success",
+        position: toast.POSITION.BOTTOM_CENTER,
+        onOpen: () => dispatch(clearUpdateTarrifList()),
+      });
+      navigate("/tarrif/tarrif_list");
+      return;
+    }
+
+    if (error) {
+      toast(error, {
+        position: toast.POSITION.BOTTOM_CENTER,
+        type: "error",
+        onOpen: () => {
+          dispatch(clearTarrifError());
+        },
+      });
+      return;
+    }
+  }, [isTarrifUpdated, error, dispatch]);
   return (
     <>
       <Card>
@@ -329,7 +363,45 @@ const EditTarrifMaster = () => {
                 valueHandle("selectedArea", value);
               }}
             >
-              {singleTarrifDetail?.areaArr?.map((item) => {
+              {singleTarrifDetail?.areas?.map((item) => {
+                return (
+                  <Option key={item.value} value={item.value}>
+                    {item.text}
+                  </Option>
+                );
+              })}
+            </Select>
+          </Col>
+          <Col span={6}>
+            {" "}
+            <Select
+              style={style}
+              disabled={!enableinput?.includes("slabhrs")}
+              onChange={(value) => {
+                valueHandle("selectedSlabhrs", value);
+              }}
+              value={singleTarrifDetail?.selectedSlabhrs}
+            >
+              {singleTarrifDetail?.slabhrs?.map((item) => {
+                return (
+                  <Option key={item.value} value={item.value}>
+                    {item.text}
+                  </Option>
+                );
+              })}
+            </Select>
+          </Col>
+          <Col span={6}>
+            {" "}
+            <Select
+              style={style}
+              disabled={!enableinput?.includes("slabkms")}
+              onChange={(value) => {
+                valueHandle("selectedSlabkms", value);
+              }}
+              value={singleTarrifDetail?.selectedSlabkms}
+            >
+              {singleTarrifDetail?.slabkms?.map((item) => {
                 return (
                   <Option key={item.value} value={item.value}>
                     {item.text}
@@ -340,6 +412,12 @@ const EditTarrifMaster = () => {
           </Col>
         </Row>
       </Card>
+      <Row className="mt-5">
+        <Col span={6}>
+          {" "}
+          <Button onClick={editTarrifMasterDetail}>Update Tarrif Data</Button>
+        </Col>
+      </Row>
     </>
   );
 };

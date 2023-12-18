@@ -6,8 +6,9 @@ import { getOnCallMisData } from "../action/onCallMisAction";
 import axios from "axios";
 import { getTarrif } from "../action/tarrifAction";
 import { getClientMasterAction } from "../action/clientMasterAction";
+import { Spin } from "antd";
 const OnCallMISUpload = () => {
-  const [loading, setLoading] = useState(false);
+  const [fileLoading, setLoading] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const [excelRows, setExcelRows] = useState([]);
   const [companyList, setCompanyList] = useState([]);
@@ -18,36 +19,10 @@ const OnCallMISUpload = () => {
   const { oncall_mis_uploadlist } = useSelector(
     (state) => state.OnCallMisState
   );
-  const { alltarrifData } = useSelector((state) => state.TarrifState);
+  const { tarrifData } = useSelector((state) => state.TarrifState);
   const { client_master_detail } = useSelector(
     (state) => state.ClientMasterState || []
   );
-  useEffect(() => {
-    if (client_master_detail.length) {
-      let companyList = client_master_detail.map((item) => {
-        return {
-          text: item.Company_Name,
-          value: item.Company_Name,
-        };
-      });
-      setCompanyList(removeDuplicateObjects(companyList, "value"));
-    } else {
-      dispatch(getClientMasterAction);
-    }
-  }, [client_master_detail]);
-
-  function removeDuplicateObjects(array, property) {
-    const uniqueIds = [];
-    const unique = array.filter((element) => {
-      const isDuplicate = uniqueIds.includes(element[property]);
-      if (!isDuplicate) {
-        uniqueIds.push(element[property]);
-        return true;
-      }
-      return false;
-    });
-    return unique;
-  }
   const readUploadFile = (e) => {
     e.preventDefault();
     if (e.target.files[0]) {
@@ -77,100 +52,130 @@ const OnCallMISUpload = () => {
       reader.readAsArrayBuffer(file);
     }
   };
-  console.log(selectedFile);
+
   const fetchOnCallMisUploadData = async () => {
     dispatch(getOnCallMisData);
   };
   useEffect(() => {
     dispatch(getTarrif);
     fetchOnCallMisUploadData();
+    dispatch(getClientMasterAction);
   }, []);
+  useEffect(() => {
+    if (client_master_detail && client_master_detail.length > 0) {
+      let companyList = client_master_detail.map((item) => {
+        return {
+          text: item.Company_Name,
+          value: item.Company_Name,
+        };
+      });
+      setCompanyList(removeDuplicateObjects(companyList, "value"));
+    }
+  }, [client_master_detail]);
+  function removeDuplicateObjects(array, property) {
+    const uniqueIds = [];
+    const unique = array.filter((element) => {
+      const isDuplicate = uniqueIds.includes(element[property]);
+      if (!isDuplicate) {
+        uniqueIds.push(element[property]);
+        return true;
+      }
+      return false;
+    });
+    return unique;
+  }
+  const excelCompanyName = excelRows?.map((obj) => obj?.Company_Name);
   const uploadData = async () => {
     try {
-      setLoading(true);
-      const firstItemKeys = excelRows[0] && Object.keys(excelRows[0]);
-      let requiredValidation = false;
-      if (firstItemKeys.length) {
-        onCallMisrequiredFields.forEach((element) => {
-          if (!firstItemKeys.find((x) => x === element)) {
-            requiredValidation = true;
+      if (selectedCompany == excelCompanyName) {
+        setLoading(true);
+        const firstItemKeys = excelRows[0] && Object.keys(excelRows[0]);
+        let requiredValidation = false;
+        if (firstItemKeys.length) {
+          onCallMisrequiredFields.forEach((element) => {
+            if (!firstItemKeys.find((x) => x === element)) {
+              requiredValidation = true;
+            }
+          });
+        }
+        if (requiredValidation) {
+          alert("Required fields " + JSON.stringify(onCallMisrequiredFields));
+          setLoading(false);
+          return;
+        }
+        const onCallMisUploadList = oncall_mis_uploadlist || [];
+        const listOnCall = excelRows.map((obj) => ({
+          _id: onCallMisUploadList?.find(
+            (x) => x.Dutyslip_No === obj["Dutyslip_No"]
+          )?._id,
+          Date: obj["Date"] || "",
+          Vehicle_No: obj["Vehicle_No"] || "",
+          Vehicle_Type: obj["Vehicle_Type"] || "",
+          Vehicle_Billed_As: obj["Vehicle_Billed_As"] || "",
+          Segment: obj["Segment"] || "",
+          Dutyslip_No: obj["Dutyslip_No"] || "",
+          Used_By: obj["Used_By"] || "",
+          Place: obj["Place"] || "",
+          Rental: obj["Rental"] || "",
+          Total_Kms: obj["Total_Kms"] || 0,
+          Total_Days: obj["Total_Days"] || 0,
+          Total_Hrs: obj["Total_Hrs"] || 0,
+          Toll: obj["Toll"] || 0,
+          Parking: obj["Parking"] || 0,
+          Permit: obj["Permit"] || 0,
+          Driver_Batta: obj["Driver_Batta"] || 0,
+          Day_Bata: obj["Day_Bata"] || 0,
+          Night_Sales_Bata: obj["Night_Sales_Bata"] || 0,
+          Night_Purchase_Bata: obj["Night_Purchase_Bata"] || 0,
+          Others: obj["Others"] || 0,
+          Fuel_Difference: obj["Fuel_Difference"] || 0,
+          Company_Name: obj["Company_Name"] || "",
+          Area: obj["Area"] || "",
+        }));
+
+        const updatedlistOnCall = listOnCall.filter((x) => x._id);
+        const newlistOnCall = listOnCall.filter((x) => !x._id);
+        // console.log(updatedlistOnCall, getFinalFilteredArray(updatedlistOnCall));
+        // console.log(newlistOnCall, getFinalFilteredArray(newlistOnCall));
+        const updateFinalListOnCall = getFinalFilteredArray(updatedlistOnCall);
+        const newFinalListOnCall = getFinalFilteredArray(newlistOnCall);
+
+        if (updatedlistOnCall.length) {
+          const result = (
+            await axios.post(
+              "/oncall_bulk/oncallmis_bulk_update",
+              updateFinalListOnCall
+            )
+          ).data;
+          if (result) {
+            alert(
+              "Successfully updated " +
+                updateFinalListOnCall.length +
+                " documents"
+            );
           }
-        });
-      }
-      if (requiredValidation) {
-        alert("Required fields " + JSON.stringify(onCallMisrequiredFields));
+        }
+        if (newlistOnCall.length) {
+          const result = (
+            await axios.post(
+              "/oncall_bulk/oncallmis_bulk_insert",
+              newFinalListOnCall
+            )
+          ).data;
+          if (result) {
+            alert(
+              "Successfully added " + newFinalListOnCall.length + " documents"
+            );
+          }
+        }
+
+        fetchOnCallMisUploadData();
         setLoading(false);
-        return;
+      } else {
+        alert(
+          "selected company and excel Upload company Not same please check"
+        );
       }
-      const onCallMisUploadList = oncall_mis_uploadlist || [];
-      const listOnCall = excelRows.map((obj) => ({
-        _id: onCallMisUploadList?.find(
-          (x) => x.Dutyslip_No === obj["Dutyslip_No"]
-        )?._id,
-
-        date: obj["date"] || "",
-        Vehicle_No: obj["Vehicle_No"] || "",
-        Vehicle_Type: obj["Vehicle_Type"] || "",
-        Vehicle_Billed_As: obj["Vehicle_Billed_As"] || "",
-        Segment: obj["Segment"] || "",
-        Dutyslip_No: obj["Dutyslip_No"] || "",
-        Used_By: obj["Used_By"] || "",
-        Place: obj["Place"] || "",
-        Rental: obj["Rental"] || "",
-        Total_Kms: obj["Total_Kms"] || 0,
-        Total_Days: obj["Total_Days"] || 0,
-        Total_Hrs: obj["Total_Hrs"] || 0,
-        Toll: obj["Toll"] || 0,
-        Parking: obj["Parking"] || 0,
-        Permit: obj["Permit"] || 0,
-        Driver_Batta: obj["Driver_Batta"] || 0,
-        Day_Bata: obj["Day_Bata"] || 0,
-        Night_Sales_Bata: obj["Night_Sales_Bata"] || 0,
-        Night_Purchase_Bata: obj["Night_Purchase_Bata"] || 0,
-        Others: obj["Others"] || 0,
-        Fuel_Difference: obj["Fuel_Difference"] || 0,
-        Company_Name: obj["Company_Name"] || "",
-        Area: obj["Area"] || "",
-      }));
-
-      const updatedlistOnCall = listOnCall.filter((x) => x._id);
-      const newlistOnCall = listOnCall.filter((x) => !x._id);
-      // console.log(updatedlistOnCall, getFinalFilteredArray(updatedlistOnCall));
-      // console.log(newlistOnCall, getFinalFilteredArray(newlistOnCall));
-      const updateFinalListOnCall = getFinalFilteredArray(updatedlistOnCall);
-      const newFinalListOnCall = getFinalFilteredArray(newlistOnCall);
-
-      if (updatedlistOnCall.length) {
-        const result = (
-          await axios.post(
-            "/oncall_bulk/oncallmis_bulk_update",
-            updateFinalListOnCall
-          )
-        ).data;
-        if (result) {
-          alert(
-            "Successfully updated " +
-              updateFinalListOnCall.length +
-              " documents"
-          );
-        }
-      }
-      if (newlistOnCall.length) {
-        const result = (
-          await axios.post(
-            "/oncall_bulk/oncallmis_bulk_insert",
-            newFinalListOnCall
-          )
-        ).data;
-        if (result) {
-          alert(
-            "Successfully added " + newFinalListOnCall.length + " documents"
-          );
-        }
-      }
-
-      fetchOnCallMisUploadData();
-      setLoading(false);
     } catch (error) {
       setLoading(false);
       console.log("uploadData error: ", error);
@@ -180,14 +185,18 @@ const OnCallMISUpload = () => {
   const getFinalFilteredArray = (parentList) => {
     let finalList = parentList.map((singleOnCallData) => {
       function convertH2M(timeInHour) {
-        let timeParts = timeInHour.split(":");
+        let timeParts;
+        if (timeInHour) {
+          timeParts = timeInHour.split(":");
+        } else {
+          timeParts = timeInHour.split(".");
+        }
         return Number(timeParts[0]) * 60 + Number(timeParts[1]);
       }
       let OurTotalHrs = singleOnCallData?.Total_Hrs ?? 0;
-
       let timeInMinutesOurTotalHrs = convertH2M(OurTotalHrs);
-      if (alltarrifData?.length) {
-        let filterData = alltarrifData.filter(
+      if (tarrifData?.length > 0) {
+        let filterData = tarrifData.filter(
           (item) =>
             singleOnCallData?.Company_Name.toUpperCase() ==
               item?.company.toUpperCase() &&
@@ -346,11 +355,11 @@ const OnCallMISUpload = () => {
           exHrs: exHrs,
           exKms: exKms,
           salesGross: salesGross,
-          salesNett: Math.round(salesNett),
           purchaseGross: purchaseGross,
-          purchaseNett: Math.round(purchaseNett),
-          client: selectedCompany,
-          location: selectedLocation,
+          Sales_Nett: Math.round(salesNett),
+          Purchase_Nett: Math.round(purchaseNett),
+          Client: selectedCompany,
+          Location: selectedLocation,
         };
       } else {
         return singleOnCallData;
@@ -435,24 +444,26 @@ const OnCallMISUpload = () => {
         </div>
         <div>
           <div className="inline-flex ml-24">
-            {selectedFile ? (
-              <button
-                class="bg-blue-500 hover:bg-blue-900 text-white py-3 px-4 rounded"
-                disabled={loading}
-                onClick={uploadData}
-              >
-                UploadMISData
-              </button>
+            {fileLoading ? (
+              <Spin spinning={fileLoading} tip="fileLoading">
+                {" "}
+              </Spin>
+            ) : selectedFile?.name && excelRows.length > 0 ? (
+              <>
+                <button
+                  className="bg-blue-500 hover:bg-blue-900 text-white py-3 px-4 rounded"
+                  onClick={uploadData}
+                >
+                  UploadMISData
+                </button>
+                <button
+                  className="bg-red-500 hover:bg-red-900 text-white py-3 px-4 ml-3 rounded"
+                  onClick={removeFile}
+                >
+                  Remove
+                </button>
+              </>
             ) : null}{" "}
-            {selectedFile?.name && excelRows.length ? (
-              <button
-                class="bg-red-500 hover:bg-red-900 text-white py-3 px-4 ml-3 rounded"
-                disabled={loading}
-                onClick={removeFile}
-              >
-                Remove
-              </button>
-            ) : null}
           </div>
         </div>
       </div>

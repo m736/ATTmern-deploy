@@ -4,13 +4,14 @@ const TarrifSlice = createSlice({
   name: "BackDatedInvoice",
   initialState: {
     invoiceLoading: false,
-    isBackDatedInvoiceCreated: false,
+    isInvoiceCreated: false,
     isInvoiceDeleted: false,
     isExcelDataDeleted: false,
     isMergeInvoiceCreated: false,
     invoice_list: [],
-    invoice_no: [],
+    invoice_no: {},
     isInvoiceNoUpdated: false,
+    single_invoice: {},
   },
   reducers: {
     invoiceListRequest(state, action) {
@@ -43,21 +44,22 @@ const TarrifSlice = createSlice({
         ...state,
         invoiceLoading: false,
         invoice_list: action.payload,
-        isBackDatedInvoiceCreated: true,
+        isInvoiceCreated: true,
       };
     },
     BackDatedInvoiceGenerateFail(state, action) {
+      console.log(action.payload);
       return {
         ...state,
         invoiceLoading: false,
         error: action.payload,
-        isBackDatedInvoiceCreated: false,
+        isInvoiceCreated: false,
       };
     },
     clearBackDatedInvoiceGenerateInput(state, action) {
       return {
         ...state,
-        isBackDatedInvoiceCreated: false,
+        isInvoiceCreated: false,
       };
     },
     MergeInvoiceGenerateRequest(state, action) {
@@ -85,7 +87,7 @@ const TarrifSlice = createSlice({
     clearMergeInvoiceGenerateInput(state, action) {
       return {
         ...state,
-        isBackDatedInvoiceCreated: false,
+        isInvoiceCreated: false,
       };
     },
     deleteInvoiceListRequest(state, action) {
@@ -159,6 +161,25 @@ const TarrifSlice = createSlice({
         error: action.payload,
       };
     },
+    getSingleInvoiceRequest(state, action) {
+      return {
+        ...state,
+        invoiceLoading: true,
+      };
+    },
+    getSingleInvoiceSuccess(state, action) {
+      return {
+        ...state,
+        invoiceLoading: false,
+        single_invoice: action.payload.singleInvoice,
+      };
+    },
+    getSingleInvoiceFail(state, action) {
+      return {
+        invoiceLoading: false,
+        error: action.payload,
+      };
+    },
     updateInvoiceNoRequest(state, action) {
       return {
         ...state,
@@ -185,7 +206,7 @@ const TarrifSlice = createSlice({
         isInvoiceNoUpdated: false,
       };
     },
-    clearBackDatedInvoiceError(state, action) {
+    clearInvoiceError(state, action) {
       return { ...state, error: null };
     },
   },
@@ -197,7 +218,7 @@ export const {
   BackDatedInvoiceGenerateRequest,
   BackDatedInvoiceGenerateSuccess,
   BackDatedInvoiceGenerateFail,
-  clearBackDatedInvoiceError,
+  clearInvoiceError,
   clearBackDatedInvoiceGenerateInput,
   invoiceListRequest,
   invoiceListSuccess,
@@ -221,6 +242,9 @@ export const {
   MergeInvoiceGenerateSuccess,
   MergeInvoiceGenerateFail,
   clearMergeInvoiceGenerateInput,
+  getSingleInvoiceRequest,
+  getSingleInvoiceSuccess,
+  getSingleInvoiceFail,
 } = actions;
 
 export default reducer;

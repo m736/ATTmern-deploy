@@ -111,7 +111,7 @@ const NavBar = () => {
     //   ],
     // },
     {
-      title: "MIS",
+      title: "Client MIS",
       // icon: <BsChatRightDots />,
       submenu: true,
       name: "mis",
@@ -123,12 +123,12 @@ const NavBar = () => {
         //   href: "/mis/oncall_mis_upload",
         // },
         {
-          title: "MIS Upload",
+          title: "Client MIS Upload",
 
           href: "/mis/upload_mis",
         },
         {
-          title: "MIS Download",
+          title: "Client MIS Download",
 
           href: "/mis/download_mis",
         },
@@ -165,6 +165,30 @@ const NavBar = () => {
       ],
     },
     {
+      title: "Site MIS",
+      // icon: <BsChatRightDots />,
+      submenu: true,
+      name: "site_mis",
+      spacing: "true",
+      submenuItems: [
+        {
+          title: "Site MIS Upload",
+
+          href: "/site_mis/site_upload_mis",
+        },
+        {
+          title: "Site MIS Download",
+
+          href: "/site_mis/site_download_mis",
+        },
+        {
+          title: "All Company MIS Download",
+
+          href: "/site_mis/site_allcompany_download_mis",
+        },
+      ],
+    },
+    {
       title: "Invoice",
       submenu: true,
       name: "invoice",
@@ -182,11 +206,14 @@ const NavBar = () => {
           title: "Invoice Generate",
           href: "/invoice/invoice_generate",
         },
-
-        {
-          title: "Merge Invoice Generate",
-          href: "/invoice/merge_invoice_generate",
-        },
+        // {
+        //   title: "Backdated Invoice Generate",
+        //   href: "/invoice/back_dated_invoice_generate",
+        // },
+        // {
+        //   title: "Merge Invoice Generate",
+        //   href: "/invoice/merge_invoice_generate",
+        // },
         {
           title: "Invoice List",
           href: "/invoice/invoice_list",

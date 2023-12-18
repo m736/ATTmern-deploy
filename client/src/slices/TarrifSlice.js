@@ -20,9 +20,9 @@ const TarrifSlice = createSlice({
       return {
         loading: false,
         tarrifData: action.payload.getTarrifData,
-        alltarrifData: action.payload.getAllTarrifData,
-        page_count: action.payload.count,
-        resPerPage: action.payload.resPerPage,
+        // alltarrifData: action.payload.getAllTarrifData,
+        // page_count: action.payload.count,
+        // resPerPage: action.payload.resPerPage,
       };
     },
     getTarrifListFail(state, action) {
@@ -103,7 +103,7 @@ const TarrifSlice = createSlice({
         error: action.payload,
       };
     },
-    clearUpdateTarrifListCreated(state, action) {
+    clearUpdateTarrifList(state, action) {
       return {
         ...state,
         isTarrifUpdated: false,
@@ -200,7 +200,7 @@ export const {
   deleteTarrifFail,
   clearTarrifDeleted,
   clearCreateTarrif,
-  clearUpdateTarrifListCreated,
+  clearUpdateTarrifList,
   clearTarrifError,
   searchTarrifDataRequest,
   searchTarrifDataSuccess,
