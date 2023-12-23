@@ -343,6 +343,7 @@ const invoiceNumberSchema = new Schema(
   },
   { strict: false, timestamps: true }
 );
+const myModelSchema = new Schema();
 const siteSlabBaseMisSchema = new Schema(
   {
     Date: {
@@ -384,6 +385,7 @@ const siteSlabBaseMisSchema = new Schema(
   { strict: false, timestamps: true }
 );
 module.exports = {
+  MyModel: mongoose.model("my_table", myModelSchema),
   SiteSlabBaseMisUploadModel: mongoose.model(
     "site_slab_base_table",
     siteSlabBaseMisSchema

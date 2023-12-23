@@ -168,14 +168,14 @@ function App() {
                 <Route path="invoice_no" element={<InvoiceNumber />} />
                 <Route path="invoice_generate" element={<InvoiceGenerate />} />
 
-                {/* <Route
+                <Route
                   path="merge_invoice_generate"
                   element={<MergeInvoiceGenerate />}
-                /> */}
-                <Route
+                />
+                {/* <Route
                   path="back_dated_invoice_generate"
                   element={<BackDatedInvoiceGenerate />}
-                />
+                /> */}
 
                 <Route path="invoice_list" element={<InvoiceList />} />
               </Route>

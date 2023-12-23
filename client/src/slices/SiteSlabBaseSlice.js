@@ -3,6 +3,7 @@ const SiteSlabBaseSlice = createSlice({
   name: "mis_vehicle",
   initialState: {
     siteMisloading: false,
+    downloadMis: false,
     site_slab_base_mis_uploadlist: [],
     download_site_slab_base_mis: [],
   },
@@ -16,8 +17,8 @@ const SiteSlabBaseSlice = createSlice({
     siteSlabBaseMisUploadSuccess(state, action) {
       return {
         ...state,
-        siteMisloading: false,
         site_slab_base_mis_uploadlist: action.payload,
+        siteMisloading: false,
       };
     },
     siteSlabBaseMisUploadFail(state, action) {
@@ -29,19 +30,19 @@ const SiteSlabBaseSlice = createSlice({
     downloadSiteSlabBaseMisUploadRequest(state, action) {
       return {
         ...state,
-        siteMisloading: true,
+        downloadMis: true,
       };
     },
     downloadSiteSlabBaseMisUploadSuccess(state, action) {
       return {
         ...state,
-        siteMisloading: false,
+        downloadMis: false,
         download_site_slab_base_mis: action.payload,
       };
     },
     downloadSiteSlabBaseMisUploadFail(state, action) {
       return {
-        siteMisloading: false,
+        downloadMis: false,
         error: action.payload,
       };
     },

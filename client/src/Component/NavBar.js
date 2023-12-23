@@ -210,10 +210,10 @@ const NavBar = () => {
         //   title: "Backdated Invoice Generate",
         //   href: "/invoice/back_dated_invoice_generate",
         // },
-        // {
-        //   title: "Merge Invoice Generate",
-        //   href: "/invoice/merge_invoice_generate",
-        // },
+        {
+          title: "Merge Invoice Generate",
+          href: "/invoice/merge_invoice_generate",
+        },
         {
           title: "Invoice List",
           href: "/invoice/invoice_list",

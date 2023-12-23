@@ -84,27 +84,29 @@ const OnCallMISUpload = () => {
     });
     return unique;
   }
-  const excelCompanyName = excelRows?.map((obj) => obj?.Company_Name);
+
   const uploadData = async () => {
     try {
-      if (selectedCompany == excelCompanyName) {
-        setLoading(true);
-        const firstItemKeys = excelRows[0] && Object.keys(excelRows[0]);
-        let requiredValidation = false;
-        if (firstItemKeys.length) {
-          onCallMisrequiredFields.forEach((element) => {
-            if (!firstItemKeys.find((x) => x === element)) {
-              requiredValidation = true;
-            }
-          });
-        }
-        if (requiredValidation) {
-          alert("Required fields " + JSON.stringify(onCallMisrequiredFields));
-          setLoading(false);
-          return;
-        }
-        const onCallMisUploadList = oncall_mis_uploadlist || [];
-        const listOnCall = excelRows.map((obj) => ({
+      // if (selectedCompany.toUpperCase() == excelCompanyName) {
+      setLoading(true);
+      const firstItemKeys = excelRows[0] && Object.keys(excelRows[0]);
+      let requiredValidation = false;
+      if (firstItemKeys.length) {
+        onCallMisrequiredFields.forEach((element) => {
+          if (!firstItemKeys.find((x) => x === element)) {
+            requiredValidation = true;
+          }
+        });
+      }
+      if (requiredValidation) {
+        alert("Required fields " + JSON.stringify(onCallMisrequiredFields));
+        setLoading(false);
+        return;
+      }
+      const onCallMisUploadList = oncall_mis_uploadlist || [];
+      const listOnCall = excelRows?.map((obj) => {
+        const cmpny = obj["Company_Name"];
+        return {
           _id: onCallMisUploadList?.find(
             (x) => x.Dutyslip_No === obj["Dutyslip_No"]
           )?._id,
@@ -129,53 +131,54 @@ const OnCallMISUpload = () => {
           Night_Purchase_Bata: obj["Night_Purchase_Bata"] || 0,
           Others: obj["Others"] || 0,
           Fuel_Difference: obj["Fuel_Difference"] || 0,
-          Company_Name: obj["Company_Name"] || "",
+          Company_Name: cmpny || "",
           Area: obj["Area"] || "",
-        }));
+        };
+      });
 
-        const updatedlistOnCall = listOnCall.filter((x) => x._id);
-        const newlistOnCall = listOnCall.filter((x) => !x._id);
-        // console.log(updatedlistOnCall, getFinalFilteredArray(updatedlistOnCall));
-        // console.log(newlistOnCall, getFinalFilteredArray(newlistOnCall));
-        const updateFinalListOnCall = getFinalFilteredArray(updatedlistOnCall);
-        const newFinalListOnCall = getFinalFilteredArray(newlistOnCall);
+      const updatedlistOnCall = listOnCall.filter((x) => x._id);
+      const newlistOnCall = listOnCall.filter((x) => !x._id);
+      // console.log(updatedlistOnCall, getFinalFilteredArray(updatedlistOnCall));
+      // console.log(newlistOnCall, getFinalFilteredArray(newlistOnCall));
+      const updateFinalListOnCall = getFinalFilteredArray(updatedlistOnCall);
+      const newFinalListOnCall = getFinalFilteredArray(newlistOnCall);
 
-        if (updatedlistOnCall.length) {
-          const result = (
-            await axios.post(
-              "/oncall_bulk/oncallmis_bulk_update",
-              updateFinalListOnCall
-            )
-          ).data;
-          if (result) {
-            alert(
-              "Successfully updated " +
-                updateFinalListOnCall.length +
-                " documents"
-            );
-          }
+      if (updatedlistOnCall.length) {
+        const result = (
+          await axios.post(
+            "/oncall_bulk/oncallmis_bulk_update",
+            updateFinalListOnCall
+          )
+        ).data;
+        if (result) {
+          alert(
+            "Successfully updated " +
+              updateFinalListOnCall.length +
+              " documents"
+          );
         }
-        if (newlistOnCall.length) {
-          const result = (
-            await axios.post(
-              "/oncall_bulk/oncallmis_bulk_insert",
-              newFinalListOnCall
-            )
-          ).data;
-          if (result) {
-            alert(
-              "Successfully added " + newFinalListOnCall.length + " documents"
-            );
-          }
-        }
-
-        fetchOnCallMisUploadData();
-        setLoading(false);
-      } else {
-        alert(
-          "selected company and excel Upload company Not same please check"
-        );
       }
+      if (newlistOnCall.length) {
+        const result = (
+          await axios.post(
+            "/oncall_bulk/oncallmis_bulk_insert",
+            newFinalListOnCall
+          )
+        ).data;
+        if (result) {
+          alert(
+            "Successfully added " + newFinalListOnCall.length + " documents"
+          );
+        }
+      }
+
+      fetchOnCallMisUploadData();
+      setLoading(false);
+      // } else {
+      //   alert(
+      //     "selected company and excel Upload company Not same please check"
+      //   );
+      // }
     } catch (error) {
       setLoading(false);
       console.log("uploadData error: ", error);

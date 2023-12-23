@@ -142,6 +142,7 @@ const TarrifListTable = () => {
   useEffect(() => {
     dispatch(getTarrif);
   }, []);
+  console.log(tarrifData);
 
   useEffect(() => {
     if (tarrifData && tarrifData.length > 0) {

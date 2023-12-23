@@ -446,5 +446,50 @@ router.put(
     });
   })
 );
+router.delete(
+  "/delete_trips_exceldata",
+  catchAsyncError(async (req, res, next) => {
+    const results = await SlabBaseMisUploadData.aggregate([
+      {
+        $unionWith: {
+          coll: "on_call_mis_tables",
+          coll: "trip_base_mis_tables",
+          coll: "day_base_mis_tables",
+        },
+      },
+    ]);
+    console.log(results.length);
+    if (results.length > 0) {
+      ids = results.map(function (doc) {
+        return doc._id;
+      });
+      if (ids.length) {
+        await SlabBaseMisUploadData.deleteMany({
+          _id: { $in: ids },
+        });
+        await OnCallMisUploadData.deleteMany({
+          _id: { $in: ids },
+        });
+        await TripBaseMisUploadData.deleteMany({
+          _id: { $in: ids },
+        });
+        await DayBaseMisUploadData.deleteMany({
+          _id: { $in: ids },
+        });
+      }
+
+      res.status(201).json({
+        success: true,
+        message: "deleted successfully",
+      });
+    } else {
+      res.status(404).json({
+        success: true,
+        message:
+          "We cann't delete because Invoice is raised for this Date or No data found on selected date",
+      });
+    }
+  })
+);
 
 module.exports = router;

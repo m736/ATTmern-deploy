@@ -42,7 +42,8 @@ export const MergeInvoiceInputGenerateAction =
       const { data } = await axios.post(`/invoice/merge_invoice_api`, formData);
       dispatch(MergeInvoiceGenerateSuccess(data));
     } catch (error) {
-      dispatch(MergeInvoiceGenerateFail(error));
+      console.log(error);
+      dispatch(MergeInvoiceGenerateFail(error?.response?.data?.message));
     }
   };
 export const getInvoiceListAction = async (dispatch) => {

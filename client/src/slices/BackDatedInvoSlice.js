@@ -87,7 +87,7 @@ const TarrifSlice = createSlice({
     clearMergeInvoiceGenerateInput(state, action) {
       return {
         ...state,
-        isInvoiceCreated: false,
+        isMergeInvoiceCreated: false,
       };
     },
     deleteInvoiceListRequest(state, action) {

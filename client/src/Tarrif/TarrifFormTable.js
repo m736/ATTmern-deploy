@@ -63,6 +63,7 @@ const TarrifFormTable = (props) => {
     ],
     "Flat Rate": [
       "segment",
+      "areas",
       "slabhrs",
       "slabkms",
       "salesRate",

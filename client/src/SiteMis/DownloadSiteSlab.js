@@ -9,6 +9,7 @@ import {
   downloadSiteSlabBaseMisUploadSuccess,
 } from "../slices/SiteSlabBaseSlice";
 import axios from "axios";
+import { getSiteSlabBaseMisAction } from "../action/SiteMisAction";
 const DownloadSiteSlab = () => {
   const [form] = Form.useForm();
   const [, forceUpdate] = useState({});
@@ -21,9 +22,13 @@ const DownloadSiteSlab = () => {
   const { client_master_detail } = useSelector(
     (state) => state.ClientMasterState || []
   );
+  const { download_site_slab_base_mis, downloadMis, error } = useSelector(
+    (state) => state.ClientMasterState || []
+  );
 
   useEffect(() => {
     dispatch(getClientMasterAction);
+    dispatch(getSiteSlabBaseMisAction);
     forceUpdate({});
   }, []);
 
@@ -151,7 +156,7 @@ const DownloadSiteSlab = () => {
         values
       );
 
-      setDownloadData(data);
+      setDownloadData(data?.siteSlabBaseMIsArray);
       dispatch(downloadSiteSlabBaseMisUploadSuccess(data));
     } catch (error) {
       dispatch(downloadSiteSlabBaseMisUploadFail(error.response.data.message));

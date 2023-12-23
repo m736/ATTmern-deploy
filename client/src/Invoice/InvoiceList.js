@@ -120,7 +120,7 @@ const ListArea = () => {
               content: pdf?.Client,
               styles: {
                 halign: "left",
-                fontSize: 20,
+                fontSize: 13,
                 textColor: "#ffffff",
               },
             },
@@ -128,7 +128,7 @@ const ListArea = () => {
               content: "Invoice",
               styles: {
                 halign: "right",
-                fontSize: 20,
+                fontSize: 13,
                 textColor: "#ffffff",
               },
             },
@@ -140,50 +140,37 @@ const ListArea = () => {
         },
       });
 
-      autoTable(doc, {
-        body: [
-          [
-            {
-              content:
-                "Reference: #INV0001" +
-                "\nDate: 2022-01-27" +
-                `\nInvoice number: ${pdf?.Invoice_No}`,
-              styles: {
-                halign: "right",
-              },
-            },
-          ],
-        ],
-        theme: "plain",
-      });
+      // autoTable(doc, {
+      //   body: [
+      //     [
+      //       {
+      //         content:
+      //           "Reference: #INV0001" +
+      //           "\nDate: 2022-01-27" +
+      //           `\nInvoice number: ${pdf?.Invoice_No}`,
+      //         styles: {
+      //           halign: "right",
+      //         },
+      //       },
+      //     ],
+      //   ],
+      //   theme: "plain",
+      // });
 
       autoTable(doc, {
         body: [
           [
             {
               content:
-                "Billed to:" +
-                "\nJohn Doe" +
-                "\nBilling Address line 1" +
-                "\nBilling Address line 2" +
-                "\nZip code - City" +
-                "\nCountry",
+                "To:" +
+                `\nCompany: ${pdf?.Client}` +
+                `\n${pdf?.Address}` +
+                `\nCompany: ${pdf?.Client}`,
               styles: {
                 halign: "left",
               },
             },
-            {
-              content:
-                "Shipping address:" +
-                "\nJohn Doe" +
-                "\nShipping Address line 1" +
-                "\nShipping Address line 2" +
-                "\nZip code - City" +
-                "\nCountry",
-              styles: {
-                halign: "left",
-              },
-            },
+
             {
               content:
                 "From:" +
@@ -252,9 +239,6 @@ const ListArea = () => {
       autoTable(doc, {
         head: [["Items", "Category", "Quantity", "Price", "Tax", "Amount"]],
         body: [
-          ["Product or service name", "Category", "2", "$450", "$50", "$1000"],
-          ["Product or service name", "Category", "2", "$450", "$50", "$1000"],
-          ["Product or service name", "Category", "2", "$450", "$50", "$1000"],
           ["Product or service name", "Category", "2", "$450", "$50", "$1000"],
         ],
         theme: "striped",

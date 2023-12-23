@@ -10,7 +10,7 @@ export const getSiteSlabBaseMisAction = async (dispatch) => {
     dispatch(siteSlabBaseMisUploadRequest());
     const { data } = await axios.get("/api/v1/get_site_slabbase_mis_data_api");
 
-    dispatch(siteSlabBaseMisUploadSuccess(data));
+    dispatch(siteSlabBaseMisUploadSuccess(data?.siteSlabBaseMIsArray));
   } catch (error) {
     //handle error
     dispatch(siteSlabBaseMisUploadFail(error));

@@ -19,6 +19,5 @@ export const MIGInputField = {
   selectedClient: "",
   selectedClientLocation: "",
   selectedFromAndToDate: [],
-
   position: 1,
 };
