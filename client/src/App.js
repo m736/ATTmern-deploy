@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Routes, Route, HashRouter, BrowserRouter } from "react-router-dom";
 import "./App.css";
 // import ExcelUpload from "./Component/ExcelUpload";
@@ -47,137 +47,197 @@ import TarrifListTable from "./Tarrif/TarrifListTable";
 import EditTarrifMaster from "./Tarrif/EditTarrifMaster";
 import BackDatedInvoiceGenerate from "./Invoice/BackDatedInvoiceGenerate";
 import SiteUploadMis from "./SiteMis/SiteUploadMis";
-
+import { toast } from "react-toastify";
 import SiteAllCompanyDownloadMis from "./SiteMis/SiteAllCompanyDownloadMis";
 import DownloadSiteMis from "./SiteMis/DownloadSiteMis";
-
+import ProtectedRoute from "./route/ProtectedRoute";
+import LoginPage from "./authPages/LoginPage";
+import { useDispatch, useSelector } from "react-redux";
+import { clearAuthError, loadUser } from "./action/userAction";
+import { Layout, Flex, Dropdown } from "antd";
+import HomePageHeader from "./Component/HomePageHeader";
+import axios from "axios";
+import moment from "moment";
+import { clearError } from "./slices/authSlice";
 function App() {
-  // const [rows, setRows] = useState([]);
-  // const dispatch = useDispatch();
+  const { Header, Footer, Sider, Content } = Layout;
+  const headerStyle = {
+    textAlign: "center",
+    color: "#fff",
+    height: 64,
+    paddingInline: 48,
+    lineHeight: "64px",
+    backgroundColor: "#4096ff",
+  };
+  const [stripeApiKey, setStripeApiKey] = useState([]);
+  const dispatch = useDispatch();
+  const { loading, error, isAuthenticated, user } = useSelector(
+    (state) => state.authState
+  );
+  useEffect(() => {
+    dispatch(loadUser);
+    // async function getStripeApiKey() {
+    //   const { data } = await axios.get(
+    //     "/api/v1/site_mis/sitemis_missing_upload_date"
+    //   );
 
-  // const fetchData = useCallback(async () => {
-  //   try {
-  //     dispatch(vechicleRequest());
-  //     const { data } = await axios.get("/api/v1/jokes");
-  //     setRows(data);
+    //   setStripeApiKey(data);
+    // }
+    // getStripeApiKey();
+  }, []);
 
-  //     dispatch(vechicleSuccess(data));
-  //   } catch (error) {
-  //     dispatch(vechicleFail());
-  //   }
-  // }, [dispatch]);
-
-  // useEffect(() => {
-  //   fetchData();
-  // }, []);
-
+  useEffect(() => {
+    // if (isAuthenticated && user.role == "sitemanager") {
+    //   stripeApiKey?.outputValue?.forEach((comapny) => {
+    //     if (comapny.remainingDates?.length) {
+    //       if (comapny.remainingDates?.length > 2) {
+    //         toast.warning(
+    //           `${comapny._id}-${comapny.remainingDates?.length} days missing`
+    //         );
+    //       } else {
+    //         let dateString = comapny.remainingDates.map((item) =>
+    //           moment(item).format("MMM DD YYYY")
+    //         );
+    //         toast.warning(`${comapny._id}-${dateString.join(",")}  missing`);
+    //       }
+    //     }
+    //   });
+    // }
+    if (error) {
+      toast(error, {
+        position: toast.POSITION.BOTTOM_CENTER,
+        type: "error",
+        onOpen: () => {
+          dispatch(clearAuthError);
+        },
+      });
+      return;
+    }
+  }, [error, dispatch]);
+  console.log(error);
   return (
     <BrowserRouter>
       <div className="flex">
-        <aside className="w-2/12">
-          <NavBar />
-        </aside>
-        <main className="px-3 py-10 w-10/12">
-          <div>
-            <ToastContainer theme="dark" />
-            <Routes>
-              <Route exact path="/" element="Welcome Our ATT" />
-              {/* <Route path="/tabledata" element={<FormSelect />} /> */}
-              <Route path="/add_vechicle" element={<AddVehicleList />} />
-              <Route path="/vehicle_list" element={<VehicleList />} />
-              <Route path="/client_master">
-                <Route path="new_client_master" element={<NewClientMaster />} />
+        <aside className="w-2/12">{isAuthenticated && <NavBar />}</aside>
+        <main className="w-10/12">
+          {isAuthenticated && (
+            <Layout>
+              <Header style={headerStyle}>
+                <HomePageHeader />
+              </Header>
+            </Layout>
+          )}
+          <div className="px-3">
+            <div>
+              <ToastContainer theme="dark" />
+              <Routes>
+                <Route path="/login" element={<LoginPage />} />
                 <Route
-                  path="list_client_master"
-                  element={<ListClientMaster />}
+                  exact
+                  path="/"
+                  element={<ProtectedRoute>{"Welcome our Att"}</ProtectedRoute>}
                 />
-                <Route
-                  path="edit_client_master/:id"
-                  element={<EditClientMaster />}
-                />
-                <Route path="create_area" element={<CreateAreaList />} />
-                <Route path="list_area" element={<ListArea />} />
-                <Route
-                  path="create_vehicle_type"
-                  element={<CreateVehicleType />}
-                />
-                <Route path="vehicle_type_list" element={<ListVehicleType />} />
-              </Route>
-              <Route path="/tarrif">
-                <Route path="new_tarrif" element={<CreateNewTarrif />} />
-                {/* <Route path="upload_tarrif" element={<TarrifExcelUpload />} /> */}
-                <Route path="tarrif_list" element={<TarrifListTable />} />
-                {/* <Route
-                  path="tarrif_list"
-                  element={<ReadUpdateDeleteTarrif />}
-                /> */}
-                <Route
-                  path="edit_tarrif_list/:id"
-                  element={<EditTarrifMaster />}
-                />
-              </Route>
-              {/* <Route path="/tripsheet">
-                <Route
-                  path="new_tripsheet_entry"
-                  element={<NewTripSheetEntry />}
-                />
-                <Route
-                  path="tripsheet_calculation"
-                  element={<SalesAndPurchaseCalculation />}
-                />
-              </Route> */}
-              <Route path="/mis">
-                <Route path="upload_mis" element={<UploadMis />} />
-                <Route path="download_mis" element={<DownloadMis />} />
-                {/* <Route path="oncall_mis_upload" element={<OnCallMISUpload />} />
-                <Route path="slab_mis_upload" element={<SlabBaseMisUpload />} />
-                <Route path="trip_mis_upload" element={<TripBaseMisUpload />} />
-                <Route path="day_mis_upload" element={<DayBaseMisUpload />} />
-                <Route
-                  path="download_onCall_mis"
-                  element={<DownloadOnCallMisData />}
-                />
-                <Route
-                  path="download_slabBase_mis"
-                  element={<DownloadSlabBaseMis />}
-                />
-                <Route
-                  path="download_tripBase_mis"
-                  element={<DownloadTripBaseMis />}
-                />
-                <Route
-                  path="download_dayBase_mis"
-                  element={<DownloadDayBaseMis />}
-                /> */}
-              </Route>
-              <Route path="/site_mis">
-                <Route path="site_upload_mis" element={<SiteUploadMis />} />
-                <Route path="site_download_mis" element={<DownloadSiteMis />} />
-                <Route
-                  path="site_allcompany_download_mis"
-                  element={<SiteAllCompanyDownloadMis />}
-                />
-              </Route>
-              <Route path="/invoice">
-                <Route path="manual_invoice" element={<ManualInvoice />} />
+                <Route path="/add_vechicle" element={<AddVehicleList />} />
+                <Route path="/vehicle_list" element={<VehicleList />} />
+                <Route path="/client_master">
+                  <Route
+                    path="new_client_master"
+                    element={<NewClientMaster />}
+                  />
+                  <Route
+                    path="list_client_master"
+                    element={<ListClientMaster />}
+                  />
+                  <Route
+                    path="edit_client_master/:id"
+                    element={<EditClientMaster />}
+                  />
+                  <Route path="create_area" element={<CreateAreaList />} />
+                  <Route
+                    path="list_area"
+                    element={
+                      <ProtectedRoute isUser={true}>
+                        <ListArea />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="create_vehicle_type"
+                    element={<CreateVehicleType />}
+                  />
+                  <Route
+                    path="vehicle_type_list"
+                    element={<ListVehicleType />}
+                  />
+                </Route>
+                <Route path="/tarrif">
+                  <Route path="new_tarrif" element={<CreateNewTarrif />} />
 
-                <Route
-                  path="delete_excel_data"
-                  element={<DeleteTripsExcelData />}
-                />
-                <Route path="invoice_no" element={<InvoiceNumber />} />
-                <Route path="invoice_generate" element={<InvoiceGenerate />} />
+                  <Route path="tarrif_list" element={<TarrifListTable />} />
 
-                <Route
-                  path="merge_invoice_generate"
-                  element={<MergeInvoiceGenerate />}
-                />
-                {/* <Route
+                  <Route
+                    path="edit_tarrif_list/:id"
+                    element={<EditTarrifMaster />}
+                  />
+                </Route>
+
+                <Route path="/mis">
+                  <Route path="upload_mis" element={<UploadMis />} />
+                  <Route path="download_mis" element={<DownloadMis />} />
+                </Route>
+
+                <Route path="/invoice">
+                  <Route path="manual_invoice" element={<ManualInvoice />} />
+
+                  <Route
+                    path="delete_excel_data"
+                    element={<DeleteTripsExcelData />}
+                  />
+                  <Route path="invoice_no" element={<InvoiceNumber />} />
+                  <Route
+                    path="invoice_generate"
+                    element={<InvoiceGenerate />}
+                  />
+
+                  <Route
+                    path="merge_invoice_generate"
+                    element={<MergeInvoiceGenerate />}
+                  />
+                  {/* <Route
                   path="back_dated_invoice_generate"
                   element={<BackDatedInvoiceGenerate />}
                 /> */}
 
-                <Route path="invoice_list" element={<InvoiceList />} />
+                  <Route path="invoice_list" element={<InvoiceList />} />
+                </Route>
+              </Routes>
+            </div>
+            <Routes>
+              <Route path="/site_data_mis">
+                <Route
+                  path="site_upload_mis"
+                  element={
+                    <ProtectedRoute isSiteManager={true}>
+                      <SiteUploadMis />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="site_download_mis"
+                  element={
+                    <ProtectedRoute isSiteManager={true}>
+                      <DownloadSiteMis />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="site_allcompany_download_mis"
+                  element={
+                    <ProtectedRoute isSiteManager={true}>
+                      <SiteAllCompanyDownloadMis />
+                    </ProtectedRoute>
+                  }
+                />
               </Route>
             </Routes>
           </div>

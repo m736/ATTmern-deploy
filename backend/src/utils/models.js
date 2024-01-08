@@ -379,7 +379,7 @@ const siteSlabBaseMisSchema = new Schema(
     "Slab1 - Single": Number,
     Bata: Number,
     Fuel_Difference: Number,
-    Company_Name: Array,
+    Company_Name: String,
     Area: String,
   },
   { strict: false, timestamps: true }

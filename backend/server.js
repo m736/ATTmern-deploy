@@ -42,6 +42,7 @@ app.use(
   "/api/v1/client",
   require("src/clientcontrollers/client.basecrud.controller")
 );
+app.use("/auth", require("src/controllers/auth.controller"));
 app.use(
   "/api/v1/site_mis",
   require("src/sitemiscontrollers/site.mis.controller")

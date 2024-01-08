@@ -13,7 +13,9 @@ import DayBaseMisSliceReducer from "./slices/DayBaseMisSlice";
 import AreaListReducer from "./slices/AreaListSlice";
 import VehicleTypeReducer from "./slices/VehicleTypeSlice";
 import BackDatedInvoSliceReducer from "./slices/BackDatedInvoSlice";
+import authReducer from "./slices/authSlice";
 const reducer = combineReducers({
+  authState: authReducer,
   VechicleDetailState: VechicleDetailSliceReducer,
   VechicleInductionState: VehicleInductionSliceReducer,
   TarrifState: TarrifSliceReducer,

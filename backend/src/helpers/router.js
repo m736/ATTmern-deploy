@@ -1,7 +1,10 @@
 const express = require("express");
 const router = express.Router();
 const models = require("./../utils/models");
-
+const {
+  isAuthenticatedUser,
+  authorizeRoles,
+} = require("../middleware/authenticate");
 // Api Routes
 router.use("/jokes", require("src/helpers/base.crud")(models.Vehicle));
 router.use(
@@ -14,6 +17,8 @@ router.use(
 // );
 router.use(
   "/area_list_api",
+  isAuthenticatedUser,
+  authorizeRoles("user"),
   require("src/helpers/base.crud")(models.AreaListModel)
 );
 router.use(
