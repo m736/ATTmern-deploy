@@ -132,6 +132,18 @@ const NewOwner = () => {
           <Input />
         </Form.Item>
         <Form.Item
+          label="Sample"
+          name="Sample"
+          rules={[
+            {
+              required: true,
+              message: "Please Enter Your Pancard No!",
+            },
+          ]}
+        >
+          <Input />
+        </Form.Item>
+        <Form.Item
           label="Bank Account No"
           name="bank_ccount_no"
           rules={[
