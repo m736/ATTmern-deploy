@@ -3,50 +3,71 @@ import { createSlice } from "@reduxjs/toolkit";
 const authSlice = createSlice({
   name: "vehicleInduction",
   initialState: {
-    loading: false,
+    vehicleListLoading: false,
     isVehicleListCreated: false,
     isVehicleListDeleted: false,
     isVehicleListUpdated: false,
-    vehiclelist: [],
+    vehicle_list: [],
+    single_vehicle_list: {},
+    update_vehicle_list: {},
   },
   reducers: {
     getVehicleListRequest(state, action) {
       return {
         ...state,
-        loading: true,
+        vehicleListLoading: true,
       };
     },
     getVehicleListSuccess(state, action) {
       return {
-        loading: false,
-        vehiclelist: action.payload,
+        vehicleListLoading: false,
+        vehicle_list: action.payload.getVehicleList,
       };
     },
     getVehicleListFail(state, action) {
       return {
         ...state,
-        loading: false,
+        vehicleListLoading: false,
+        error: action.payload,
+      };
+    },
+    getIndividualVehicleListRequest(state, action) {
+      return {
+        ...state,
+        vehicleListLoading: true,
+      };
+    },
+    getIndividualVehicleListSuccess(state, action) {
+      return {
+        vehicleListLoading: false,
+        single_vehicle_list: action.payload.getIndividualVehicleList,
+      };
+    },
+    geIndividualVehicleListFail(state, action) {
+      return {
+        ...state,
+        vehicleListLoading: false,
         error: action.payload,
       };
     },
     addVehicleRequest(state, action) {
       return {
         ...state,
-        loading: true,
+        vehicleListLoading: true,
       };
     },
     addVehicleSuccess(state, action) {
       return {
         ...state,
-        loading: false,
-        vehiclelist: action.payload.addvehicle,
+        vehicleListLoading: false,
+        vehicle_list: action.payload.addvehicle,
         isVehicleListCreated: true,
       };
     },
     addVehicleFail(state, action) {
       return {
         ...state,
-        loading: false,
+        vehicleListLoading: false,
         error: action.payload,
         isVehicleListCreated: false,
       };
@@ -61,20 +82,20 @@ const authSlice = createSlice({
     updateVehicleListRequest(state, action) {
       return {
         ...state,
-        loading: true,
+        vehicleListLoading: true,
       };
     },
     updateVehicleListSuccess(state, action) {
       return {
-        loading: false,
-        vehiclelist: action.payload.vehicleList,
+        vehicleListLoading: false,
+        update_vehicle_list: action.payload.updateVehicleData,
         isVehicleListUpdated: true,
       };
     },
     updateVehicleListFail(state, action) {
       return {
         ...state,
-        loading: false,
+        vehicleListLoading: false,
         error: action.payload,
       };
     },
@@ -82,6 +103,32 @@ const authSlice = createSlice({
       return {
         ...state,
         isVehicleListUpdated: false,
+      };
+    },
+    deleteVehicleListRequest(state, action) {
+      return {
+        ...state,
+        ownerListLoading: true,
+      };
+    },
+    deleteVehicleListSuccess(state, action) {
+      return {
+        ...state,
+        ownerListLoading: false,
+        isOwnerListDeleted: true,
+      };
+    },
+    deleteVehicleListFail(state, action) {
+      return {
+        ...state,
+        ownerListLoading: false,
+        error: action.payload,
+      };
+    },
+    clearVehicleListDeleted(state, action) {
+      return {
+        ...state,
+        isOwnerListDeleted: false,
       };
     },
     clearError(state, action) {
@@ -105,6 +152,13 @@ export const {
   clearAddVehicleCreated,
   clearUpdateVehicleListCreated,
   clearError,
+  getIndividualVehicleListRequest,
+  getIndividualVehicleListSuccess,
+  geIndividualVehicleListFail,
+  deleteVehicleListRequest,
+  deleteVehicleListSuccess,
+  deleteVehicleListFail,
+  clearVehicleListDeleted,
 } = actions;
 
 export default reducer;

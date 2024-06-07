@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { read, utils } from "xlsx";
 import { tripExcelUploadrequiredFields } from "../Tarrif/TarrifInputField";
 import { useDispatch, useSelector } from "react-redux";
@@ -14,8 +14,9 @@ const TripBaseMisUpload = () => {
   const [companyList, setCompanyList] = useState([]);
   const [selectedCompany, setSelectedCompany] = useState("");
   const [clLocation, setClLocation] = useState([]);
-  const [selectedLocation, setSelectedLocation] = useState([]);
+  const [selectedLocation, setSelectedLocation] = useState("");
   const dispatch = useDispatch();
+  const inputRef = useRef(null);
   const { trip_base_mis_uploadlist } = useSelector(
     (state) => state.TripBaseMisState || []
   );
@@ -45,14 +46,23 @@ const TripBaseMisUpload = () => {
           raw: false,
           dateNF: "YYYY-MM-DD",
         });
-
+        const vehicleNumberValidation = json?.filter(
+          (row) => !/^[0-9]/i.test(row?.Vehicle_No)
+        );
+        if (vehicleNumberValidation.length > 0) {
+          alert("some vehicle number started as alphabet please check");
+          inputRef.current.value = null;
+          setSelectedFile(null);
+          setExcelRows([]);
+        } else {
+          setExcelRows(json);
+        }
         setLoading(false);
-        setExcelRows(json);
       };
       reader.readAsArrayBuffer(file);
     }
   };
-  console.log(excelRows);
+
   const fetchTripBaseMisUploadData = async () => {
     dispatch(getTripBaseMisData);
   };
@@ -86,90 +96,127 @@ const TripBaseMisUpload = () => {
   }
   const uploadData = async (e) => {
     e.preventDefault();
-    setLoading(true);
+    const sameCompany = [];
+    const differentCompany = [];
+    excelRows.forEach((row) => {
+      if (row.Company_Name == selectedCompany) {
+        sameCompany.push(row);
+      } else {
+        differentCompany.push(row);
+      }
+    });
+    console.log(selectedCompany);
     try {
-      const firstItemKeys = excelRows[0] && Object.keys(excelRows[0]);
-      let requiredValidation = false;
-      if (firstItemKeys.length) {
-        tripExcelUploadrequiredFields.forEach((element) => {
-          if (!firstItemKeys.find((x) => x === element)) {
-            requiredValidation = true;
+      if (selectedCompany == "") {
+        alert("please select company name ");
+        setLoading(false);
+      } else if (differentCompany.length) {
+        setLoading(false);
+        alert("different company records found");
+      } else if (sameCompany.length) {
+        setLoading(true);
+        const firstItemKeys = excelRows[0] && Object.keys(excelRows[0]);
+        let requiredValidation = false;
+        if (firstItemKeys.length) {
+          tripExcelUploadrequiredFields.forEach((element) => {
+            if (!firstItemKeys.find((x) => x === element)) {
+              requiredValidation = true;
+            }
+          });
+        }
+        if (requiredValidation) {
+          alert(
+            "Required fields " + JSON.stringify(tripExcelUploadrequiredFields)
+          );
+          setLoading(false);
+          return;
+        }
+        const tripBaseMisUploadList = trip_base_mis_uploadlist || [];
+        const listTripBase = excelRows.map((obj) => {
+          Object.keys(obj).forEach((k) => (obj[k] = obj[k]?.trim()));
+          console.log(obj);
+          if (obj) {
+            return {
+              id: tripBaseMisUploadList?.find(
+                (x) => x["Dutyslip_No"] === obj["Dutyslip_No"]
+              )?._id,
+              Date: obj["Date"] || "",
+              Dutyslip_No: obj["Dutyslip_No"] || "",
+              Vehicle_No: obj["Vehicle_No"] || "",
+              Vehicle_Type: obj["Vehicle_Type"] || "",
+              Vehicle_Billed_As: obj["Vehicle_Billed_As"] || "",
+              Segment: obj["Segment"] || "",
+              Total_Kms: obj["Total_Kms"] || 0,
+              Trip_Type: obj["Trip_Type"] || "",
+              Rental: obj["Trip_Rental"] || "",
+              Trip: obj["Trip"] || 0,
+              Trip_Escort: obj["Trip_Escort"] || 0,
+              Trip_Single: obj["Trip_Single"] || 0,
+              Trip_Back_to_Back: obj["Trip_Back_to_Back"] || 0,
+              Trip_Single_Long: obj["Trip_Single_Long"] || 0,
+              Toll: obj["Toll"]?.replace(/(?=,(?!"))(,(?!{))/g, "") || 0,
+              Fuel_Difference:
+                obj["Fuel_Difference"]?.replace(/(?=,(?!"))(,(?!{))/g, "") || 0,
+              Company_Name: obj["Company_Name"] || "",
+              Area: obj["Area"] || "",
+              Sales_Bata:
+                obj["Sales_Bata"]?.replace(/(?=,(?!"))(,(?!{))/g, "") || 0,
+              Purchase_Bata:
+                obj["Purchase_Bata"]?.replace(/(?=,(?!"))(,(?!{))/g, "") || 0,
+            };
           }
         });
-      }
-      if (requiredValidation) {
-        alert(
-          "Required fields " + JSON.stringify(tripExcelUploadrequiredFields)
-        );
+
+        const updatedlistTripBase = listTripBase.filter((x) => x._id);
+        const newlistTripBase = listTripBase.filter((x) => !x._id);
+
+        const updateFinalTripBase = getFinalFilteredArray(updatedlistTripBase);
+        const newFinalListTripBase = getFinalFilteredArray(newlistTripBase);
+        console.log(updateFinalTripBase);
+        console.log(newFinalListTripBase);
+
+        if (updateFinalTripBase.length) {
+          const result = (
+            await axios.post(
+              "/tripmis_bulk/tripbase_mis_bulk_update",
+              updateFinalTripBase
+            )
+          ).data;
+
+          if (result) {
+            alert(
+              "Successfully updated " +
+                updateFinalTripBase.length +
+                " documents"
+            );
+            inputRef.current.value = null;
+            setSelectedFile(null);
+            setExcelRows([]);
+          }
+        }
+        if (newFinalListTripBase.length) {
+          const result = (
+            await axios.post(
+              "/tripmis_bulk/tripbase_mis_bulk_insert",
+              newFinalListTripBase
+            )
+          ).data;
+          if (result) {
+            alert(
+              "Successfully added " + newFinalListTripBase.length + " documents"
+            );
+            inputRef.current.value = null;
+            setSelectedFile(null);
+            setExcelRows([]);
+          }
+        }
+        fetchTripBaseMisUploadData();
         setLoading(false);
-        return;
       }
-      const tripBaseMisUploadList = trip_base_mis_uploadlist || [];
-      const listTripBase = excelRows.map((obj) => ({
-        _id: tripBaseMisUploadList?.find(
-          (x) => x["Dutyslip_No"] === obj["Dutyslip_No"]
-        )?._id,
-        Date: obj["Date"] || "",
-        Dutyslip_No: obj["Dutyslip_No"] || "",
-        Vehicle_No: obj["Vehicle_No"] || "",
-        Vehicle_Type: obj["Vehicle_Type"] || "",
-        Vehicle_Billed_As: obj["Vehicle_Billed_As"] || "",
-        Segment: obj["Segment"] || "",
-        Total_Kms: obj["Total_Kms"] || 0,
-        Trip_Type: obj["Trip_Type"] || "",
-        Rental: obj["Rental"] || "",
-        Trip: obj["Trip"] || 0,
-        Trip_Escort: obj["Trip_Escort"] || 0,
-        Trip_Single: obj["Trip_Single"] || 0,
-        Trip_Back_to_Back: obj["Trip_Back_to_Back"] || 0,
-        Trip_Single_Long: obj["Trip_Single_Long"] || 0,
-        Toll: obj["Toll"] || 0,
-        Fuel_Difference: obj["Fuel_Difference"] || 0,
-        Company_Name: obj["Company_Name"] || "",
-        Area: obj["Area"] || "",
-        Sales_Bata: obj["Sales_Bata"] || 0,
-        Purchase_Bata: obj["Purchase_Bata"] || 0,
-      }));
-
-      const updatedlistTripBase = listTripBase.filter((x) => x._id);
-      const newlistTripBase = listTripBase.filter((x) => !x._id);
-
-      const updateFinalTripBase = getFinalFilteredArray(updatedlistTripBase);
-      const newFinalListTripBase = getFinalFilteredArray(newlistTripBase);
-      // console.log(updateFinalTripBase);
-      // console.log(newFinalListTripBase);
-
-      if (updateFinalTripBase.length) {
-        const result = (
-          await axios.post(
-            "/tripmis_bulk/tripbase_mis_bulk_update",
-            updateFinalTripBase
-          )
-        ).data;
-        if (result) {
-          alert(
-            "Successfully updated " + updateFinalTripBase.length + " documents"
-          );
-        }
-      }
-      if (newFinalListTripBase.length) {
-        const result = (
-          await axios.post(
-            "/tripmis_bulk/tripbase_mis_bulk_insert",
-            newFinalListTripBase
-          )
-        ).data;
-        if (result) {
-          alert(
-            "Successfully added " + newFinalListTripBase.length + " documents"
-          );
-        }
-      }
-      fetchTripBaseMisUploadData();
-      setLoading(false);
     } catch (error) {
+      console.log(error);
       setLoading(false);
-      console.log("uploadData error: ", error);
+      alert("uploadData error: ", error);
     }
   };
 
@@ -309,11 +356,11 @@ const TripBaseMisUpload = () => {
               Number(singleTripBaseData?.Trip_Back_to_Back ?? 0)
         );
 
-        console.log({
-          salesTotal: salesTotal,
-          purchaseTotal: purchaseTotal,
-          ...singleTripBaseData,
-        });
+        // console.log({
+        //   salesTotal: salesTotal,
+        //   purchaseTotal: purchaseTotal,
+        //   ...singleTripBaseData,
+        // });
         // console.log(`${salesTotal}-${purchaseTotal}`);
         return {
           Purchase_Nett: purchaseTotal,
@@ -329,9 +376,9 @@ const TripBaseMisUpload = () => {
     return finalList;
   };
   const removeFile = () => {
+    inputRef.current.value = null;
     setSelectedFile(null);
     setExcelRows([]);
-    window.location.reload();
   };
   let durationBody =
     clLocation.length &&
@@ -368,7 +415,9 @@ const TripBaseMisUpload = () => {
               }}
               value={selectedCompany}
             >
-              <option selected>Choose a company</option>
+              <option value="" selected>
+                Choose a company
+              </option>
               {companyList.map((comapny) => (
                 <option value={comapny.value}>{comapny.text}</option>
               ))}
@@ -378,17 +427,19 @@ const TripBaseMisUpload = () => {
               id="location"
               class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-6"
               onChange={(e) => {
-                console.log(e.target.value);
                 setSelectedLocation(e.target.value);
               }}
               value={selectedLocation}
             >
-              <option selected>Choose Location</option>
+              <option value="" selected>
+                Choose Location
+              </option>
               {durationBody ? durationBody : null}
             </select>
             <input
               type="file"
               name="oncall_mis"
+              ref={inputRef}
               onChange={readUploadFile}
               accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel"
               className={`file:bg-gradient-to-b file:from-blue-500 file:to-blue-600

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { read, utils } from "xlsx";
 import { dayExcelUploadrequiredFields } from "../Tarrif/TarrifInputField";
 import { useDispatch, useSelector } from "react-redux";
@@ -15,8 +15,9 @@ const DayBaseMisUpload = () => {
   const [companyList, setCompanyList] = useState([]);
   const [selectedCompany, setSelectedCompany] = useState("");
   const [clLocation, setClLocation] = useState([]);
-  const [selectedLocation, setSelectedLocation] = useState([]);
+  const [selectedLocation, setSelectedLocation] = useState("");
   const dispatch = useDispatch();
+  const inputRef = useRef(null);
   const { day_base_mis_uploadlist } = useSelector(
     (state) => state.DayBaseMisState || []
   );
@@ -48,8 +49,18 @@ const DayBaseMisUpload = () => {
           raw: false,
         });
 
+        const vehicleNumberValidation = json?.filter(
+          (row) => !/^[0-9]/i.test(row?.Vehicle_No)
+        );
+        if (vehicleNumberValidation.length > 0) {
+          alert("some vehicle number started as alphabet please check");
+          inputRef.current.value = null;
+          setSelectedFile(null);
+          setExcelRows([]);
+        } else {
+          setExcelRows(json);
+        }
         setLoading(false);
-        setExcelRows(json);
       };
       reader.readAsArrayBuffer(file);
     }
@@ -88,91 +99,118 @@ const DayBaseMisUpload = () => {
   }
   const uploadData = async (e) => {
     e.preventDefault();
+    const sameCompany = [];
+    const differentCompany = [];
+    excelRows.forEach((row) => {
+      if (row.Company_Name == selectedCompany) {
+        sameCompany.push(row);
+      } else {
+        differentCompany.push(row);
+      }
+    });
     try {
-      setLoading(true);
-      const firstItemKeys = excelRows[0] && Object.keys(excelRows[0]);
-      let requiredValidation = false;
-      if (firstItemKeys.length) {
-        dayExcelUploadrequiredFields.forEach((element) => {
-          if (!firstItemKeys.find((x) => x === element)) {
-            requiredValidation = true;
-          }
-        });
-      }
-      if (requiredValidation) {
-        alert(
-          "Required fields " + JSON.stringify(dayExcelUploadrequiredFields)
-        );
+      // if (selectedCompany.toUpperCase() == excelCompanyName) {
+      if (selectedCompany == "") {
+        alert("please select company name ");
         setLoading(false);
-        return;
-      }
-      const dayBaseMisUploadList = day_base_mis_uploadlist || [];
-      const listDayBase = excelRows.map((obj) => ({
-        _id: dayBaseMisUploadList?.find(
-          (x) => x["Dutyslip_No"] === obj["Dutyslip_No"]
-        )?._id,
-        Date: obj["Date"] || "",
-        Dutyslip_No: obj["Dutyslip_No"] || "",
-        Vehicle_No: obj["Vehicle_No"] || "",
-        Vehicle_Type: obj["Vehicle_Type"] || "",
-        Vehicle_Billed_As: obj["Vehicle_Billed_As"] || "",
-        Segment: obj["Segment"] || "",
-        Rental: obj["Rental"] || "",
-        Total_Days: obj["Total_Days"] || 0,
-        No_Of_Months: obj["No_Of_Months"] || 0,
-        Total_Kms: obj["Total_Kms"] || 0,
-        Total_Hrs: obj["Total_Hrs"] || 0,
-        Toll: obj["Toll"] || 0,
-        Parking: obj["Parking"] || 0,
-        Permit: obj["Permit"] || 0,
-        Driver_Batta: obj["Driver_Batta"] || 0,
-        Day_Bata: obj["Day_Bata"] || 0,
-        Night_Sales_Bata: obj["Night_Sales_Bata"] || 0,
-        Night_Purchase_Bata: obj["Night_Purchase_Bata"] || 0,
-        Fuel_Difference: obj["Fuel_Difference"] || 0,
-        Company_Name: obj["Company_Name"] || "",
-        Area: obj["Area"] || "",
-      }));
-
-      const updatedlistDayBase = listDayBase.filter((x) => x._id);
-      const newlistDayBase = listDayBase.filter((x) => !x._id);
-
-      const updateFinalDayBase = getFinalFilteredArray(updatedlistDayBase);
-      const newFinalListDayBase = getFinalFilteredArray(newlistDayBase);
-      console.log(updateFinalDayBase);
-      console.log(newFinalListDayBase);
-
-      if (updateFinalDayBase.length) {
-        const result = (
-          await axios.post(
-            "/daymis_bulk/daybase_mis_bulk_update",
-            updateFinalDayBase
-          )
-        ).data;
-        if (result) {
-          alert(
-            "Successfully updated " + updateFinalDayBase.length + " documents"
-          );
+      } else if (differentCompany.length) {
+        setLoading(false);
+        alert("different company records found");
+      } else if (sameCompany.length) {
+        setLoading(true);
+        const firstItemKeys = excelRows[0] && Object.keys(excelRows[0]);
+        let requiredValidation = false;
+        if (firstItemKeys.length) {
+          dayExcelUploadrequiredFields.forEach((element) => {
+            if (!firstItemKeys.find((x) => x === element)) {
+              requiredValidation = true;
+            }
+          });
         }
-      }
-      if (newFinalListDayBase.length) {
-        const result = (
-          await axios.post(
-            "/daymis_bulk/daybase_mis_bulk_insert",
-            newFinalListDayBase
-          )
-        ).data;
-        if (result) {
+        if (requiredValidation) {
           alert(
-            "Successfully added " + newFinalListDayBase.length + " documents"
+            "Required fields " + JSON.stringify(dayExcelUploadrequiredFields)
           );
+          setLoading(false);
+          return;
         }
+        const dayBaseMisUploadList = day_base_mis_uploadlist || [];
+        const listDayBase = excelRows.map((obj) => {
+          Object.keys(obj).forEach((k) => (obj[k] = obj[k]?.trim()));
+          return {
+            _id: dayBaseMisUploadList?.find(
+              (x) => x["Dutyslip_No"] === obj["Dutyslip_No"]
+            )?._id,
+            Date: obj["Date"] || "",
+            Dutyslip_No: obj["Dutyslip_No"] || "",
+            Vehicle_No: obj["Vehicle_No"] || "",
+            Vehicle_Type: obj["Vehicle_Type"] || "",
+            Vehicle_Billed_As: obj["Vehicle_Billed_As"] || "",
+            Segment: obj["Segment"] || "",
+            Rental: obj["Day_Rental"] || "",
+            Total_Days: obj["Total_Days"] || 0,
+            No_Of_Months: obj["No_Of_Months"] || 0,
+            Total_Kms: obj["Total_Kms"] || 0,
+            Total_Hrs: obj["Total_Hrs"] || 0,
+            Toll: obj["Toll"] || 0,
+            Parking: obj["Parking"] || 0,
+            Permit: obj["Permit"] || 0,
+            Driver_Batta: obj["Driver_Batta"] || 0,
+            Day_Bata: obj["Day_Bata"] || 0,
+            Night_Sales_Bata: obj["Night_Sales_Bata"] || 0,
+            Night_Purchase_Bata: obj["Night_Purchase_Bata"] || 0,
+            Fuel_Difference: obj["Fuel_Difference"] || 0,
+            Company_Name: obj["Company_Name"] || "",
+            Area: obj["Area"] || "",
+          };
+        });
+
+        const updatedlistDayBase = listDayBase.filter((x) => x._id);
+        const newlistDayBase = listDayBase.filter((x) => !x._id);
+
+        const updateFinalDayBase = getFinalFilteredArray(updatedlistDayBase);
+        const newFinalListDayBase = getFinalFilteredArray(newlistDayBase);
+        console.log(updateFinalDayBase);
+        console.log(newFinalListDayBase);
+
+        if (updateFinalDayBase.length) {
+          const result = (
+            await axios.post(
+              "/daymis_bulk/daybase_mis_bulk_update",
+              updateFinalDayBase
+            )
+          ).data;
+          if (result) {
+            alert(
+              "Successfully updated " + updateFinalDayBase.length + " documents"
+            );
+            inputRef.current.value = null;
+            setSelectedFile(null);
+            setExcelRows([]);
+          }
+        }
+        if (newFinalListDayBase.length) {
+          const result = (
+            await axios.post(
+              "/daymis_bulk/daybase_mis_bulk_insert",
+              newFinalListDayBase
+            )
+          ).data;
+          if (result) {
+            alert(
+              "Successfully added " + newFinalListDayBase.length + " documents"
+            );
+            inputRef.current.value = null;
+            setSelectedFile(null);
+            setExcelRows([]);
+          }
+        }
+        fetchDayBaseMisUploadData();
+        setLoading(false);
       }
-      fetchDayBaseMisUploadData();
-      setLoading(false);
     } catch (error) {
       setLoading(false);
-      console.log("uploadData error: ", error);
+      alert("uploadData error: ", error);
     }
   };
 

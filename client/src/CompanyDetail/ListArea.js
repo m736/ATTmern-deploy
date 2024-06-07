@@ -244,10 +244,14 @@ const ListArea = () => {
   const AddClientMaster = () => {
     navigate("/client_master/create_area");
   };
+  const { Title } = Typography;
   return (
     <>
       <Spin spinning={areaListLoading} tip="loading">
-        <div class="flex flex-row items-center justify-end">
+        <div class="flex flex-row items-center justify-between mt-5">
+          <Title className="font-bold" level={4}>
+            Area List
+          </Title>
           <Button
             className="text-white border-green-500 bg-green-500 hover:bg-white mb-7"
             onClick={AddClientMaster}

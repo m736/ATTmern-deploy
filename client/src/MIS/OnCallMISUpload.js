@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { read, utils } from "xlsx";
 import { onCallMisrequiredFields } from "../Tarrif/TarrifInputField";
 import { useDispatch, useSelector } from "react-redux";
@@ -14,8 +14,9 @@ const OnCallMISUpload = () => {
   const [companyList, setCompanyList] = useState([]);
   const [selectedCompany, setSelectedCompany] = useState("");
   const [clLocation, setClLocation] = useState([]);
-  const [selectedLocation, setSelectedLocation] = useState([]);
+  const [selectedLocation, setSelectedLocation] = useState("");
   const dispatch = useDispatch();
+  const inputRef = useRef(null);
   const { oncall_mis_uploadlist } = useSelector(
     (state) => state.OnCallMisState
   );
@@ -45,9 +46,19 @@ const OnCallMISUpload = () => {
           cellDates: true,
           raw: false,
         });
-
+        console.log(json);
+        const vehicleNumberValidation = json?.filter(
+          (row) => !/^[0-9]/i.test(row?.Vehicle_No)
+        );
+        if (vehicleNumberValidation.length > 0) {
+          alert("some vehicle number started as alphabet please check");
+          inputRef.current.value = null;
+          setSelectedFile(null);
+          setExcelRows([]);
+        } else {
+          setExcelRows(json);
+        }
         setLoading(false);
-        setExcelRows(json);
       };
       reader.readAsArrayBuffer(file);
     }
@@ -86,102 +97,126 @@ const OnCallMISUpload = () => {
   }
 
   const uploadData = async () => {
+    const sameCompany = [];
+    const differentCompany = [];
+    excelRows.forEach((row) => {
+      if (row.Company_Name == selectedCompany) {
+        sameCompany.push(row);
+      } else {
+        differentCompany.push(row);
+      }
+    });
     try {
       // if (selectedCompany.toUpperCase() == excelCompanyName) {
-      setLoading(true);
-      const firstItemKeys = excelRows[0] && Object.keys(excelRows[0]);
-      let requiredValidation = false;
-      if (firstItemKeys.length) {
-        onCallMisrequiredFields.forEach((element) => {
-          if (!firstItemKeys.find((x) => x === element)) {
-            requiredValidation = true;
-          }
-        });
-      }
-      if (requiredValidation) {
-        alert("Required fields " + JSON.stringify(onCallMisrequiredFields));
+      if (selectedCompany == "") {
+        alert("please select company name ");
         setLoading(false);
-        return;
-      }
-      const onCallMisUploadList = oncall_mis_uploadlist || [];
-      const listOnCall = excelRows?.map((obj) => {
-        const cmpny = obj["Company_Name"];
-        return {
-          _id: onCallMisUploadList?.find(
-            (x) => x.Dutyslip_No === obj["Dutyslip_No"]
-          )?._id,
-          Date: obj["Date"] || "",
-          Vehicle_No: obj["Vehicle_No"] || "",
-          Vehicle_Type: obj["Vehicle_Type"] || "",
-          Vehicle_Billed_As: obj["Vehicle_Billed_As"] || "",
-          Segment: obj["Segment"] || "",
-          Dutyslip_No: obj["Dutyslip_No"] || "",
-          Used_By: obj["Used_By"] || "",
-          Place: obj["Place"] || "",
-          Rental: obj["Rental"] || "",
-          Total_Kms: obj["Total_Kms"] || 0,
-          Total_Days: obj["Total_Days"] || 0,
-          Total_Hrs: obj["Total_Hrs"] || 0,
-          Toll: obj["Toll"] || 0,
-          Parking: obj["Parking"] || 0,
-          Permit: obj["Permit"] || 0,
-          Driver_Batta: obj["Driver_Batta"] || 0,
-          Day_Bata: obj["Day_Bata"] || 0,
-          Night_Sales_Bata: obj["Night_Sales_Bata"] || 0,
-          Night_Purchase_Bata: obj["Night_Purchase_Bata"] || 0,
-          Others: obj["Others"] || 0,
-          Fuel_Difference: obj["Fuel_Difference"] || 0,
-          Company_Name: cmpny || "",
-          Area: obj["Area"] || "",
-        };
-      });
-
-      const updatedlistOnCall = listOnCall.filter((x) => x._id);
-      const newlistOnCall = listOnCall.filter((x) => !x._id);
-      // console.log(updatedlistOnCall, getFinalFilteredArray(updatedlistOnCall));
-      // console.log(newlistOnCall, getFinalFilteredArray(newlistOnCall));
-      const updateFinalListOnCall = getFinalFilteredArray(updatedlistOnCall);
-      const newFinalListOnCall = getFinalFilteredArray(newlistOnCall);
-
-      if (updatedlistOnCall.length) {
-        const result = (
-          await axios.post(
-            "/oncall_bulk/oncallmis_bulk_update",
-            updateFinalListOnCall
-          )
-        ).data;
-        if (result) {
-          alert(
-            "Successfully updated " +
-              updateFinalListOnCall.length +
-              " documents"
-          );
+      } else if (differentCompany.length) {
+        setLoading(false);
+        alert("different company records found");
+      } else if (sameCompany.length) {
+        setLoading(true);
+        const firstItemKeys = excelRows[0] && Object.keys(excelRows[0]);
+        let requiredValidation = false;
+        if (firstItemKeys.length) {
+          onCallMisrequiredFields.forEach((element) => {
+            if (!firstItemKeys.find((x) => x === element)) {
+              requiredValidation = true;
+            }
+          });
         }
-      }
-      if (newlistOnCall.length) {
-        const result = (
-          await axios.post(
-            "/oncall_bulk/oncallmis_bulk_insert",
-            newFinalListOnCall
-          )
-        ).data;
-        if (result) {
-          alert(
-            "Successfully added " + newFinalListOnCall.length + " documents"
-          );
+        if (requiredValidation) {
+          alert("Required fields " + JSON.stringify(onCallMisrequiredFields));
+          setLoading(false);
+          return;
         }
-      }
+        const onCallMisUploadList = oncall_mis_uploadlist || [];
+        const listOnCall = excelRows?.map((obj) => {
+          Object.keys(obj).forEach((k) => (obj[k] = obj[k]?.trim()));
 
-      fetchOnCallMisUploadData();
-      setLoading(false);
-      // } else {
-      //   alert(
-      //     "selected company and excel Upload company Not same please check"
-      //   );
-      // }
+          return {
+            _id: onCallMisUploadList?.find(
+              (x) => x.Dutyslip_No === obj["Dutyslip_No"]
+            )?._id,
+            Date: obj["Date"] || "",
+            Vehicle_No: obj["Vehicle_No"] || "",
+            Vehicle_Type: obj["Vehicle_Type"] || "",
+            Vehicle_Billed_As: obj["Vehicle_Billed_As"] || "",
+            Segment: obj["Segment"] || "",
+            Dutyslip_No: obj["Dutyslip_No"] || "",
+            Used_By: obj["Used_By"] || "",
+            Place: obj["Place"] || "",
+            Rental: obj["OnCall_Rental"] || "",
+            Total_Kms: obj["Total_Kms"] || 0,
+            Total_Days: obj["Total_Days"] || 0,
+            Total_Hrs: obj["Total_Hrs"] || 0,
+            Toll: obj["Toll"]?.replace(/(?=,(?!"))(,(?!{))/g, "") || 0,
+            Parking: obj["Parking"]?.replace(/(?=,(?!"))(,(?!{))/g, "") || 0,
+            Permit: obj["Permit"]?.replace(/(?=,(?!"))(,(?!{))/g, "") || 0,
+            Driver_Batta:
+              obj["Driver_Batta"]?.replace(/(?=,(?!"))(,(?!{))/g, "") || 0,
+            Day_Bata: obj["Day_Bata"]?.replace(/(?=,(?!"))(,(?!{))/g, "") || 0,
+            Night_Sales_Bata:
+              obj["Night_Sales_Bata"]?.replace(/(?=,(?!"))(,(?!{))/g, "") || 0,
+            Night_Purchase_Bata:
+              obj["Night_Purchase_Bata"]?.replace(/(?=,(?!"))(,(?!{))/g, "") ||
+              0,
+            Others: obj["Others"]?.replace(/(?=,(?!"))(,(?!{))/g, "") || 0,
+            Fuel_Difference:
+              obj["Fuel_Difference"]?.replace(/(?=,(?!"))(,(?!{))/g, "") || 0,
+            Company_Name: obj["Company_Name"] || "",
+            Area: obj["Area"] || "",
+          };
+        });
+
+        const updatedlistOnCall = listOnCall.filter((x) => x._id);
+        const newlistOnCall = listOnCall.filter((x) => !x._id);
+        // console.log(updatedlistOnCall, getFinalFilteredArray(updatedlistOnCall));
+        // console.log(newlistOnCall, getFinalFilteredArray(newlistOnCall));
+        const updateFinalListOnCall = getFinalFilteredArray(updatedlistOnCall);
+        const newFinalListOnCall = getFinalFilteredArray(newlistOnCall);
+
+        if (updatedlistOnCall.length) {
+          const result = (
+            await axios.post(
+              "/oncall_bulk/oncallmis_bulk_update",
+              updateFinalListOnCall
+            )
+          ).data;
+          if (result) {
+            alert(
+              "Successfully updated " +
+                updateFinalListOnCall.length +
+                " documents"
+            );
+            inputRef.current.value = null;
+            setSelectedFile(null);
+            setExcelRows([]);
+          }
+        }
+        if (newlistOnCall.length) {
+          const result = (
+            await axios.post(
+              "/oncall_bulk/oncallmis_bulk_insert",
+              newFinalListOnCall
+            )
+          ).data;
+          if (result) {
+            alert(
+              "Successfully added " + newFinalListOnCall.length + " documents"
+            );
+            inputRef.current.value = null;
+            setSelectedFile(null);
+            setExcelRows([]);
+          }
+        }
+
+        fetchOnCallMisUploadData();
+        setLoading(false);
+      }
     } catch (error) {
+      alert("uploadData error: ", error);
       setLoading(false);
-      console.log("uploadData error: ", error);
     }
   };
 
@@ -332,11 +367,11 @@ const OnCallMISUpload = () => {
         //     totalPurchaseHrsPrice + totalPurchaseKmsPrice + tarrifPurchaseRate
         //   }`
         // );
-        console.log(
-          `${exHrs}*${tarrifPurchaseExHrsRate} + ${exKms}*${tarrifPurchaseExKmsRate} + ${tarrifPurchaseRate}=${
-            totalPurchaseHrsPrice + totalPurchaseKmsPrice + tarrifPurchaseRate
-          }`
-        );
+        // console.log(
+        //   `${exHrs}*${tarrifPurchaseExHrsRate} + ${exKms}*${tarrifPurchaseExKmsRate} + ${tarrifPurchaseRate}=${
+        //     totalPurchaseHrsPrice + totalPurchaseKmsPrice + tarrifPurchaseRate
+        //   }`
+        // );
         const purchaseGross =
           singleOnCallData?.Rental !== "Out Station"
             ? totalPurchaseHrsPrice + totalPurchaseKmsPrice + tarrifPurchaseRate
@@ -371,9 +406,9 @@ const OnCallMISUpload = () => {
     return finalList;
   };
   const removeFile = () => {
+    inputRef.current.value = null;
     setSelectedFile(null);
     setExcelRows([]);
-    window.location.reload();
   };
   let durationBody =
     clLocation.length &&
@@ -404,13 +439,15 @@ const OnCallMISUpload = () => {
               let updatedLocation = updated.map((item) =>
                 item?.Location?.map((loc) => loc?.Client_Location)
               );
-              console.log(updatedLocation);
+
               setClLocation(updatedLocation);
               setSelectedCompany(e.target.value);
             }}
             value={selectedCompany}
           >
-            <option selected>Choose a company</option>
+            <option value="" selected>
+              Choose a company
+            </option>
             {companyList.map((comapny) => (
               <option value={comapny.value}>{comapny.text}</option>
             ))}
@@ -420,15 +457,17 @@ const OnCallMISUpload = () => {
             id="location"
             class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 mb-6"
             onChange={(e) => {
-              console.log(e.target.value);
               setSelectedLocation(e.target.value);
             }}
             value={selectedLocation}
           >
-            <option selected>Choose Location</option>
+            <option value="" selected>
+              Choose Location
+            </option>
             {durationBody ? durationBody : null}
           </select>
           <input
+            ref={inputRef}
             type="file"
             name="oncall_mis"
             onChange={readUploadFile}

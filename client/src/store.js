@@ -14,7 +14,15 @@ import AreaListReducer from "./slices/AreaListSlice";
 import VehicleTypeReducer from "./slices/VehicleTypeSlice";
 import BackDatedInvoSliceReducer from "./slices/BackDatedInvoSlice";
 import authReducer from "./slices/authSlice";
+import ownerReducer from "./slices/OwnerSlice";
+import agencyReducer from "./slices/AgencySlice";
+import driverReducer from "./slices/DriverSlice";
+import purchaseMemoReducer from "./slices/PurchaseMemoSlice";
 const reducer = combineReducers({
+  PurchaseMemoState: purchaseMemoReducer,
+  DriverState: driverReducer,
+  AgencyState: agencyReducer,
+  ownerState: ownerReducer,
   authState: authReducer,
   VechicleDetailState: VechicleDetailSliceReducer,
   VechicleInductionState: VehicleInductionSliceReducer,

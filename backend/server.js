@@ -39,14 +39,32 @@ require("src/utils/database");
 app.get("/", (req, res) => res.json("Server working..."));
 app.use("/api/v1", require("src/helpers/router"));
 app.use(
+  "/api/v1/induction",
+  require("src/controllers/induction.controller.js")
+);
+app.use(
   "/api/v1/client",
   require("src/clientcontrollers/client.basecrud.controller")
+);
+app.use(
+  "/api/v1/owners",
+  require("src/clientcontrollers/owner.basecrud.controller")
+);
+app.use(
+  "/api/v1/agencies",
+  require("src/clientcontrollers/agency.basecrud.controller")
+);
+app.use(
+  "/api/v1/drivers",
+  require("src/clientcontrollers/driver.basecrud.controller")
 );
 app.use("/auth", require("src/controllers/auth.controller"));
 app.use(
   "/api/v1/site_mis",
   require("src/sitemiscontrollers/site.mis.controller")
 );
+app.use("/api/v1/purchase", require("src/controllers/purchasememo.controller"));
+app.use("/invoice", require("src/controllers/invoice.controller"));
 app.use("/api/v1/tripsheet_entry", require("src/helpers/router"));
 app.use("/bulk", require("src/controllers/bulk.controller"));
 app.use("/oncall_bulk", require("src/controllers/oncallbulk.controller"));
@@ -56,7 +74,7 @@ app.use("/daymis_bulk", require("src/controllers/daymis.controller"));
 app.use("/tarrifexcel_bulk", require("src/controllers/tarrifbulk.controller"));
 app.use("/vehicle", require("src/controllers/vehicle.controller"));
 app.use("/tarrif", require("src/controllers/tarrif.controller"));
-app.use("/invoice", require("src/controllers/invoice.controller"));
+
 app.get("*", (req, res) => res.status(404).json("API route not found"));
 
 if (process.env.NODE_ENV === "production") {

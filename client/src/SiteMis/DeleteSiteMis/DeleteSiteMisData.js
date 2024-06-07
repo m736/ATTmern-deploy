@@ -1,34 +1,35 @@
 import React, { useEffect, useState } from "react";
-import { DatePicker, Button, Form, Select, Spin, TreeSelect } from "antd";
+import { DatePicker, Button, Form, Spin, TreeSelect } from "antd";
 import { useDispatch, useSelector } from "react-redux";
-import { getClientMasterAction } from "../action/clientMasterAction";
+
 import moment from "moment";
+import { toast } from "react-toastify";
 import {
-  downloadSiteSlabBaseMisUploadFail,
-  downloadSiteSlabBaseMisUploadRequest,
-  downloadSiteSlabBaseMisUploadSuccess,
-} from "../slices/SiteSlabBaseSlice";
-import axios from "axios";
-import { getSiteSlabBaseMisAction } from "../action/SiteMisAction";
-const DownloadSiteSlab = () => {
+  deleteSiteMisAction,
+  getSiteSlabBaseMisAction,
+} from "../../action/SiteMisAction";
+import {
+  clearDeleteSiteMis,
+  clearSiteMisError,
+} from "../../slices/SiteSlabBaseSlice";
+import { getClientMasterAction } from "../../action/clientMasterAction";
+
+const DeleteSiteMisData = () => {
   const [form] = Form.useForm();
   const [, forceUpdate] = useState({});
-  const { Option } = Select;
   const dispatch = useDispatch();
   const [companyList, setCompanyList] = useState([]);
   const [selectedValues, setSelectedValues] = useState([]);
-  const [downloadData, setDownloadData] = useState([]);
+
   // To disable submit button at the beginning.
   const { client_master_detail } = useSelector(
     (state) => state.ClientMasterState || []
   );
-  const { download_site_slab_base_mis, downloadMis, error } = useSelector(
-    (state) => state.ClientMasterState || []
+  const { delete_site_mis, error, siteMisloading } = useSelector(
+    (state) => state.SiteSlabBaseState || []
   );
-
   useEffect(() => {
     dispatch(getClientMasterAction);
-    dispatch(getSiteSlabBaseMisAction);
     forceUpdate({});
   }, []);
 
@@ -133,7 +134,7 @@ const DownloadSiteSlab = () => {
       />
     );
   };
-  console.log(selectedValues);
+
   const onFinish = async (fieldsValue) => {
     const rangeTimejourney = fieldsValue["start_end_date"];
     const startJourney = moment(new Date(rangeTimejourney[0])).format(
@@ -148,56 +149,50 @@ const DownloadSiteSlab = () => {
       startJourney: startJourney,
       endJourney: endJourney,
     };
-
-    try {
-      dispatch(downloadSiteSlabBaseMisUploadRequest());
-      const { data } = await axios.post(
-        "/api/v1/site_mis/download_site_slabbase_mis",
-        values
-      );
-
-      setDownloadData(data?.siteSlabBaseMIsArray);
-      dispatch(downloadSiteSlabBaseMisUploadSuccess(data));
-    } catch (error) {
-      dispatch(downloadSiteSlabBaseMisUploadFail(error.response.data.message));
+    if (selectedValues.length > 0) {
+      dispatch(deleteSiteMisAction(values));
+      dispatch(getSiteSlabBaseMisAction);
+      form.resetFields();
+    } else {
+      alert("please select company");
     }
   };
-  console.log(downloadData);
+  useEffect(() => {
+    if (delete_site_mis) {
+      toast("Site MIS  data Deleted Succesfully!", {
+        type: "success",
+        position: toast.POSITION.BOTTOM_CENTER,
+        onOpen: () => dispatch(clearDeleteSiteMis()),
+      });
+
+      return;
+    }
+
+    if (error) {
+      toast(error, {
+        position: toast.POSITION.BOTTOM_CENTER,
+        type: "error",
+        onOpen: () => {
+          dispatch(clearSiteMisError());
+        },
+      });
+      return;
+    }
+  }, [delete_site_mis, error, dispatch]);
   return (
     <>
       <div className="container">
-        <h4 className="text-uppercase text-decoration-underline my-3">
-          Download Slab Base Data
+        <h4 className="text-uppercase text-decoration-underline mt-6 font-bold text-lg">
+          Delete Site Mis Data
         </h4>
-
         <Form
           form={form}
           name="download_slabBase_mis_data"
-          className="py-5"
+          className="py-5 mb-6"
           layout="inline"
           onFinish={onFinish}
         >
           <Form.Item name="company">
-            {/* <Select
-              showSearch
-              style={{
-                width: 120,
-              }}
-              allowClear={true}
-              optionFilterProp="children"
-              filterOption={(input, option) =>
-                option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
-              }
-              placeholder="company"
-            >
-              {companyList?.map((comapny) => {
-                return (
-                  <Option key={comapny.value} value={comapny.value}>
-                    {comapny.text}
-                  </Option>
-                );
-              })}
-            </Select> */}
             <TreeSelectC />
           </Form.Item>
 
@@ -213,12 +208,12 @@ const DownloadSiteSlab = () => {
             <DatePicker.RangePicker format="MMM Do, YYYY" allowClear={true} />
           </Form.Item>
           <Form.Item shouldUpdate>
-            {() => <Button htmlType="submit">Search</Button>}
+            {() => <Button htmlType="submit">Delete</Button>}
           </Form.Item>
-        </Form>
+        </Form>{" "}
       </div>
     </>
   );
 };
 
-export default DownloadSiteSlab;
+export default DeleteSiteMisData;

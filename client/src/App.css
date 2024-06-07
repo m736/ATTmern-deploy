@@ -84,3 +84,17 @@
 .active {
   color: red;
 }
+a.ant-dropdown-trigger {
+  color: white;
+  font-size: 1rem;
+  line-height: 1.5rem;
+  font-weight: 500;
+}
+.ant-table-wrapper .ant-table-thead > tr > th {
+  background: #aaaacd;
+}
+span.anticon.anticon-bell {
+  color: #f30646;
+  font-size: 19px;
+  padding-left: 34px;
+}

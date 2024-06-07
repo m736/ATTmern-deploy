@@ -22,7 +22,7 @@ export default function ProtectedRoute({
       (isSiteManager === true && user.role !== "sitemanager") ||
       (isUser === true && user.role !== "user")
     ) {
-      return <Navigate to="/login" />;
+      return <Navigate to="/cannotaccess" />;
     }
     return children;
   }

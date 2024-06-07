@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Button, Checkbox, Form, Input, Spin } from "antd";
+import { Button, Checkbox, Form, Input, Spin, Typography } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
@@ -41,9 +41,16 @@ const CreateVehicleType = () => {
       return;
     }
   }, [isVehicleTypeCreated, error, dispatch]);
+  const { Title } = Typography;
   return (
     <div>
       <Spin spinning={vehicleTypeLoading} tip="loading">
+        <Title
+          className="text-center py-3 text-bold uppercase underline"
+          level={4}
+        >
+          New Vehicle Type
+        </Title>
         <Form
           name="vehicle_type_form"
           labelCol={{

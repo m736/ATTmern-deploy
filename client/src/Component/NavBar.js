@@ -14,44 +14,125 @@ const NavBar = () => {
       submenu: true,
       name: "client",
       spacing: "true",
-      role: "user",
+      role: ["user", "admin"],
       submenuItems: [
         {
           title: "New Client Master",
           href: "/client_master/new_client_master",
-          role: "",
+          role: ["user", "admin"],
         },
         {
           title: "List Client Master",
           href: "/client_master/list_client_master",
-          role: "",
+          role: ["user", "admin"],
         },
         {
           title: "Create Area",
           href: "/client_master/create_area",
-          role: "",
+          role: ["user", "admin"],
         },
         {
           title: "List Area",
           href: "/client_master/list_area",
-          role: "user",
+          role: ["user", "admin"],
         },
         {
           title: "Create Vehicle Type",
           href: "/client_master/create_vehicle_type",
-          role: "",
+          role: ["user", "admin"],
         },
         {
           title: "List Vehicle Type",
           href: "/client_master/vehicle_type_list",
-          role: "",
+          role: ["user", "admin"],
+        },
+      ],
+    },
+    {
+      title: "Owners",
+      submenu: true,
+      name: "owners",
+      spacing: "true",
+      role: ["admin"],
+      submenuItems: [
+        {
+          title: "New Owner",
+          href: "/owners/new_owner",
+          role: ["admin"],
+        },
+        {
+          title: "Owners List",
+          href: "/owners/list_owner",
+          role: ["admin"],
+        },
+        {
+          title: "Vehicle Owners List",
+          href: "/owners/vehicle_with_owner",
+          role: ["admin"],
+        },
+      ],
+    },
+    {
+      title: "Agencies",
+      submenu: true,
+      name: "agencies",
+      spacing: "true",
+      role: ["admin"],
+      submenuItems: [
+        {
+          title: "New Agency",
+          href: "/agencies/new_agency",
+          role: ["admin"],
+        },
+        {
+          title: "Agency List",
+          href: "/agencies/list_agencies",
+          role: ["admin"],
+        },
+      ],
+    },
+    {
+      title: "Drivers",
+      submenu: true,
+      name: "drivers",
+      spacing: "true",
+      role: ["admin"],
+      submenuItems: [
+        {
+          title: "New Driver",
+          href: "/driver/new_driver",
+          role: ["admin"],
+        },
+        {
+          title: "Driver List",
+          href: "/driver/list_driver",
+          role: ["admin"],
+        },
+      ],
+    },
+    {
+      title: "Vehicles",
+      submenu: true,
+      name: "vehicles",
+      spacing: "true",
+      role: ["admin"],
+      submenuItems: [
+        {
+          title: "New Vehicle",
+          href: "/vehicle/new_vehicle",
+          role: ["admin"],
+        },
+        {
+          title: "Vehicle List",
+          href: "/vehicle/vehicle_list",
+          role: ["admin"],
         },
       ],
     },
 
     {
       title: "Tarrif",
-      role: "",
+      role: ["user", "admin"],
       submenu: true,
       name: "tarrif",
       spacing: "true",
@@ -59,7 +140,7 @@ const NavBar = () => {
         {
           title: "AddTarrif",
           href: "/tarrif/new_tarrif",
-          role: "",
+          role: ["user", "admin"],
         },
         // {
         //   title: "TarrifExcelUpload",
@@ -69,88 +150,106 @@ const NavBar = () => {
         {
           title: "TarrifList",
           href: "/tarrif/tarrif_list",
-          role: "",
+          role: ["user", "admin"],
         },
       ],
     },
 
     {
       title: "Client MIS",
-      role: "",
+      role: ["user", "admin"],
       submenu: true,
       name: "mis",
       spacing: "true",
       submenuItems: [
         {
           title: "Client MIS Upload",
-          role: "",
+          role: ["user", "admin"],
           href: "/mis/upload_mis",
         },
         {
           title: "Client MIS Download",
-          role: "",
+          role: ["user", "admin"],
           href: "/mis/download_mis",
+        },
+        {
+          title: "Delete Client Mis Data",
+          href: "/mis/delete_client_mis",
+          role: ["admin"],
         },
       ],
     },
     {
       title: "Site MIS",
-      role: "",
-      role: "sitemanager",
+      role: ["user", "admin", "sitemanager"],
+
       submenu: true,
       name: "site_data_mis",
       spacing: "true",
       submenuItems: [
         {
           title: "Site MIS Upload",
-          role: "sitemanager",
+          role: ["user", "admin", "sitemanager"],
           href: "/site_data_mis/site_upload_mis",
         },
         {
           title: "Site MIS Download",
-          role: "sitemanager",
+          role: ["user", "admin", "sitemanager"],
           href: "/site_data_mis/site_download_mis",
         },
         {
-          title: "All Company MIS Download",
-          role: "sitemanager",
-          href: "/site_data_mis/site_allcompany_download_mis",
+          title: "Delete Site Mis",
+          role: ["user", "admin"],
+          href: "/site_data_mis/delete_site_mis",
         },
       ],
     },
     {
       title: "Invoice",
       submenu: true,
-      role: "",
+      role: ["admin"],
       name: "invoice",
       spacing: "true",
       submenuItems: [
         {
           title: "Updated Invoice Number",
           href: "/invoice/invoice_no",
-          role: "",
+          role: ["admin"],
         },
         {
           title: "Invoice Generate",
           href: "/invoice/invoice_generate",
-          role: "",
+          role: ["admin"],
         },
 
         {
           title: "Merge Invoice Generate",
           href: "/invoice/merge_invoice_generate",
-          role: "",
+          role: ["admin"],
         },
         {
           title: "Invoice List",
           href: "/invoice/invoice_list",
-          role: "",
+          role: ["admin"],
         },
-
+      ],
+    },
+    {
+      title: "Purchase Memo",
+      submenu: true,
+      role: ["admin"],
+      name: "purchase_memo",
+      spacing: "true",
+      submenuItems: [
         {
-          title: "Delete Trips From Excel Data",
-          href: "/invoice/delete_excel_data",
-          role: "",
+          title: "Create Purchase_Memo",
+          href: "/purchase_memo/create_purchase_memo",
+          role: ["admin"],
+        },
+        {
+          title: "PurchaseMemo List",
+          href: "/purchase_memo/list_purchase_memo",
+          role: ["admin"],
         },
       ],
     },
@@ -171,12 +270,6 @@ const NavBar = () => {
           open ? "" : "w-20"
         } duration-300 relative`}
       >
-        <BsArrowLeftShort
-          className={`bg-white text-dark-blue text-3xl rounded-full absolute -right-3 top-9 border border-dark-blue cursor-pointer ${
-            !open && "rotate-180"
-          }`}
-          onClick={() => setOpen(!open)}
-        />
         <div className="inline-flex">
           <AiFillCar
             className={`bg-amber-300 text-4xl rounded cursor-pointer block float-left mr-2 duration-500 ${
@@ -212,7 +305,7 @@ const NavBar = () => {
         <ul className={`pt-2`}>
           {menuOption.map(
             (menu, index) =>
-              user?.role === menu?.role && (
+              menu?.role.includes(user?.role) && (
                 <div key={menu.title}>
                   <li
                     key={index}
@@ -249,7 +342,7 @@ const NavBar = () => {
                   {!menu.submenu && open && (
                     <ul>
                       {menu.submenuItems?.map((submenuItem, index) =>
-                        user?.role === submenuItem?.role ? (
+                        submenuItem?.role.includes(user?.role) ? (
                           <>
                             <li
                               key={index}

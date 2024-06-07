@@ -28,7 +28,6 @@ router.post(
         return loc?.Client_Location == clientLocationDetails;
       }
     );
-    console.log(findClientLocationDetails);
     let resultArray = [];
     // if (findInvoiceNo) {
     //   last_invoice_number = Number(findInvoiceNo?.next_invoice_no);
@@ -104,25 +103,12 @@ router.post(
                 $lte: req.body.Todate,
               },
             },
-            { Invoice_No: { $eq: 0 } },
           ],
         },
       },
       { $sort: { Date: 1 } },
-      {
-        $group: {
-          _id: null,
-          salesTotalAmount: { $sum: "$Sales_Nett" },
-          updated_date: { $first: "$Date" },
-        },
-      },
-      {
-        $project: {
-          _id: 0,
-        },
-      },
     ]);
-    const tripResults = await OnCallMisUploadData.aggregate([
+    const tripResults = await TripBaseMisUploadData.aggregate([
       {
         $match: {
           $and: [
@@ -134,25 +120,12 @@ router.post(
                 $lte: req.body.Todate,
               },
             },
-            { Invoice_No: { $eq: 0 } },
           ],
         },
       },
       { $sort: { Date: 1 } },
-      {
-        $group: {
-          _id: null,
-          salesTotalAmount: { $sum: "$Sales_Nett" },
-          updated_date: { $first: "$Date" },
-        },
-      },
-      {
-        $project: {
-          _id: 0,
-        },
-      },
     ]);
-    const oncallResults = await TripBaseMisUploadData.aggregate([
+    const oncallResults = await OnCallMisUploadData.aggregate([
       {
         $match: {
           $and: [
@@ -164,24 +137,12 @@ router.post(
                 $lte: req.body.Todate,
               },
             },
-            { Invoice_No: { $eq: 0 } },
           ],
         },
       },
       { $sort: { Date: 1 } },
-      {
-        $group: {
-          _id: null,
-          salesTotalAmount: { $sum: "$Sales_Nett" },
-          updated_date: { $first: "$Date" },
-        },
-      },
-      {
-        $project: {
-          _id: 0,
-        },
-      },
     ]);
+
     const dayResults = await DayBaseMisUploadData.aggregate([
       {
         $match: {
@@ -194,144 +155,134 @@ router.post(
                 $lte: req.body.Todate,
               },
             },
-            { Invoice_No: { $eq: 0 } },
           ],
         },
       },
       { $sort: { Date: 1 } },
-      {
-        $group: {
-          _id: null,
-          salesTotalAmount: { $sum: "$Sales_Nett" },
-          updated_date: { $first: "$Date" },
-        },
-      },
-      {
-        $project: {
-          _id: 0,
-        },
-      },
     ]);
-    // console.log(slabResults[0]);
-    // console.log(tripResults[0]);
-    // console.log(oncallResults[0]);
-    // console.log(dayResults[0]);
-
-    if (slabResults[0]) {
-      resultArray.push(slabResults[0]);
+    if (slabResults) {
+      resultArray.push(...slabResults);
     }
-    if (tripResults[0]) {
-      resultArray.push(tripResults[0]);
+    if (tripResults) {
+      resultArray.push(...tripResults);
     }
-    if (oncallResults[0]) {
-      resultArray.push(oncallResults[0]);
+    if (oncallResults) {
+      resultArray.push(...oncallResults);
     }
-    if (dayResults[0]) {
-      resultArray.push(dayResults[0]);
+    if (dayResults) {
+      resultArray.push(...dayResults);
     }
-
+    console.log(resultArray.length);
     if (resultArray.length > 0) {
       var sum = resultArray.reduce(function (acc, val) {
-        return acc + val["salesTotalAmount"];
+        return acc + Number(val["Sales_Nett"]);
       }, 0);
-      let allCategory = {
-        salesTotalAmount: sum,
-        Client: req.body.Client,
-        Address: findClientDetails?.Address,
-        City: findClientDetails?.City,
-        Pincode: findClientDetails?.Pincode,
-        Locdetail: findClientLocationDetails[0],
-        Location: req.body.Location,
-        Invoice_No: last_invoice_number,
-        Invoice_Date: req.body.invoiceDate,
-        from_date: req.body.Fromdate,
-        to_date: req.body.Todate,
-        tripsBetween: `${req.body.Fromdate}-${req.body.Todate}`,
-      };
-      console.log(allCategory);
-      const backdatedInvoiceInput = await BackDatedInvoice.create(allCategory);
-      res.status(201).json({
-        success: true,
-        backdatedInvoiceInput,
+      let invoiceNumAllZeros = resultArray.filter((result) => {
+        return result.Invoice_No === 0;
       });
-      if (backdatedInvoiceInput) {
-        const update = {
-          last_invoice_no: Number(last_invoice_number),
-          next_invoice_no: Number(last_invoice_number) + 1,
+      console.log(invoiceNumAllZeros.length);
+      if (invoiceNumAllZeros.length > 0) {
+        let allCategory = {
+          salesTotalAmount: sum,
+          Client: req.body.Client,
+          Address: findClientDetails?.Address,
+          City: findClientDetails?.City,
+          Pincode: findClientDetails?.Pincode,
+          Locdetail: findClientLocationDetails[0],
+          Location: req.body.Location,
+          Invoice_No: last_invoice_number,
+          Invoice_Date: req.body.invoiceDate,
+          from_date: req.body.Fromdate,
+          to_date: req.body.Todate,
+          tripsBetween: `${req.body.Fromdate}-${req.body.Todate}`,
         };
 
-        await InvoiceNumberModel.updateOne(update);
+        const backdatedInvoiceInput = await BackDatedInvoice.create(
+          allCategory
+        );
+        res.status(201).json({
+          success: true,
+          backdatedInvoiceInput,
+        });
+        if (backdatedInvoiceInput) {
+          const update = {
+            last_invoice_no: Number(last_invoice_number),
+            next_invoice_no: Number(last_invoice_number) + 1,
+          };
 
-        // const findDuplicateInvoiceNo = await BackDatedInvoice.findOne(
-        //   { $expr: { $eq: ["$invoice_no", "$$targetNo"] } },
-        //   { _id: 0 },
-        //   { let: { targetNo: next_invoice_number } }
-        // );
+          await InvoiceNumberModel.updateOne(update);
 
-        await SlabBaseMisUploadData.updateMany(
-          {
-            $and: [
-              { Client: req.body.Client },
-              { Location: req.body.Location },
-              {
-                Date: {
-                  $gte: req.body.Fromdate,
-                  $lte: req.body.Todate,
+          await SlabBaseMisUploadData.updateMany(
+            {
+              $and: [
+                { Client: req.body.Client },
+                { Location: req.body.Location },
+                {
+                  Date: {
+                    $gte: req.body.Fromdate,
+                    $lte: req.body.Todate,
+                  },
                 },
-              },
-              { Invoice_No: { $eq: 0 } },
-            ],
-          },
-          { $set: { Invoice_No: last_invoice_number } }
-        );
-        await OnCallMisUploadData.updateMany(
-          {
-            $and: [
-              { Client: req.body.Client },
-              { Location: req.body.Location },
-              {
-                Date: {
-                  $gte: req.body.Fromdate,
-                  $lte: req.body.Todate,
+                { Invoice_No: { $eq: 0 } },
+              ],
+            },
+            { $set: { Invoice_No: last_invoice_number } }
+          );
+          await OnCallMisUploadData.updateMany(
+            {
+              $and: [
+                { Client: req.body.Client },
+                { Location: req.body.Location },
+                {
+                  Date: {
+                    $gte: req.body.Fromdate,
+                    $lte: req.body.Todate,
+                  },
                 },
-              },
-              { Invoice_No: { $eq: 0 } },
-            ],
-          },
-          { $set: { Invoice_No: last_invoice_number } }
-        );
-        await DayBaseMisUploadData.updateMany(
-          {
-            $and: [
-              { Client: req.body.Client },
-              { Location: req.body.Location },
-              {
-                Date: {
-                  $gte: req.body.Fromdate,
-                  $lte: req.body.Todate,
+                { Invoice_No: { $eq: 0 } },
+              ],
+            },
+            { $set: { Invoice_No: last_invoice_number } }
+          );
+          await DayBaseMisUploadData.updateMany(
+            {
+              $and: [
+                { Client: req.body.Client },
+                { Location: req.body.Location },
+                {
+                  Date: {
+                    $gte: req.body.Fromdate,
+                    $lte: req.body.Todate,
+                  },
                 },
-              },
-              { Invoice_No: { $eq: 0 } },
-            ],
-          },
-          { $set: { Invoice_No: last_invoice_number } }
-        );
-        await TripBaseMisUploadData.updateMany(
-          {
-            $and: [
-              { Client: req.body.Client },
-              { Location: req.body.Location },
-              {
-                Date: {
-                  $gte: req.body.Fromdate,
-                  $lte: req.body.Todate,
+                { Invoice_No: { $eq: 0 } },
+              ],
+            },
+            { $set: { Invoice_No: last_invoice_number } }
+          );
+          await TripBaseMisUploadData.updateMany(
+            {
+              $and: [
+                { Client: req.body.Client },
+                { Location: req.body.Location },
+                {
+                  Date: {
+                    $gte: req.body.Fromdate,
+                    $lte: req.body.Todate,
+                  },
                 },
-              },
-              { Invoice_No: { $eq: 0 } },
-            ],
-          },
-          { $set: { Invoice_No: last_invoice_number } }
-        );
+                { Invoice_No: { $eq: 0 } },
+              ],
+            },
+            { $set: { Invoice_No: last_invoice_number } }
+          );
+        }
+      } else {
+        res.status(404).json({
+          success: true,
+          message:
+            "You Cann't Generate Invoice Because already Invoice Raised for this Particular Condition",
+        });
       }
     } else {
       res.status(404).json({
@@ -352,15 +303,6 @@ router.post(
     let mergerentalTypeArr = [];
     let clientLocationDetails =
       req.body?.MGIInputArr[0]?.selectedClientLocation;
-
-    // req.body?.MGIInputArr.forEach((item) => {
-    //   if (item?.selectedClientLocation) {
-    //     mergeLocArr.push(item?.selectedClientLocation);
-    //   }
-    //   if (item?.selectedRentalType) {
-    //     mergerentalTypeArr.push(item?.selectedRentalType);
-    //   }
-    // });
     const result = [];
     const levels = { result };
     const keys = ["selectedClientLocation", "selectedRentalType"];
@@ -384,13 +326,6 @@ router.post(
         return r[label];
       }, levels);
     });
-
-    console.log(result);
-    // function removeDuplicateValue(data) {
-    //   return [...new Set(data)];
-    // }
-
-    // console.log(clientLocationDetails);
     const findClientDetails = await ClientMasterModel.findOne({
       Company_Name: clientDetails,
     });
@@ -399,7 +334,6 @@ router.post(
         return loc?.Client_Location == clientLocationDetails;
       }
     );
-    // console.log(findClientLocationDetails);
     let resultArray = [];
     // console.log(req.body);
     if (req?.body?.MGIInputArr.length) {
@@ -417,25 +351,12 @@ router.post(
                     $lte: body.selectedFromAndToDate[1],
                   },
                 },
-                { Invoice_No: { $eq: 0 } },
               ],
             },
           },
           { $sort: { Date: 1 } },
-          {
-            $group: {
-              _id: null,
-              salesTotalAmount: { $sum: "$Sales_Nett" },
-              updated_date: { $first: "$Date" },
-            },
-          },
-          {
-            $project: {
-              _id: 0,
-            },
-          },
         ]);
-        const tripResults = await OnCallMisUploadData.aggregate([
+        const tripResults = await TripBaseMisUploadData.aggregate([
           {
             $match: {
               $and: [
@@ -448,25 +369,12 @@ router.post(
                     $lte: body.selectedFromAndToDate[1],
                   },
                 },
-                { Invoice_No: { $eq: 0 } },
               ],
             },
           },
           { $sort: { Date: 1 } },
-          {
-            $group: {
-              _id: null,
-              salesTotalAmount: { $sum: "$Sales_Nett" },
-              updated_date: { $first: "$Date" },
-            },
-          },
-          {
-            $project: {
-              _id: 0,
-            },
-          },
         ]);
-        const oncallResults = await TripBaseMisUploadData.aggregate([
+        const oncallResults = await OnCallMisUploadData.aggregate([
           {
             $match: {
               $and: [
@@ -479,23 +387,10 @@ router.post(
                     $lte: body.selectedFromAndToDate[1],
                   },
                 },
-                { Invoice_No: { $eq: 0 } },
               ],
             },
           },
           { $sort: { Date: 1 } },
-          {
-            $group: {
-              _id: null,
-              salesTotalAmount: { $sum: "$Sales_Nett" },
-              updated_date: { $first: "$Date" },
-            },
-          },
-          {
-            $project: {
-              _id: 0,
-            },
-          },
         ]);
         const dayResults = await DayBaseMisUploadData.aggregate([
           {
@@ -510,145 +405,145 @@ router.post(
                     $lte: body.selectedFromAndToDate[1],
                   },
                 },
-                { Invoice_No: { $eq: 0 } },
               ],
             },
           },
           { $sort: { Date: 1 } },
-          {
-            $group: {
-              _id: null,
-              salesTotalAmount: { $sum: "$Sales_Nett" },
-              updated_date: { $first: "$Date" },
-            },
-          },
-          {
-            $project: {
-              _id: 0,
-            },
-          },
         ]);
-        if (slabResults[0]) {
-          resultArray.push(slabResults[0]);
+        if (slabResults) {
+          resultArray.push(...slabResults);
         }
-        if (tripResults[0]) {
-          resultArray.push(tripResults[0]);
+        if (tripResults) {
+          resultArray.push(...tripResults);
         }
-        if (oncallResults[0]) {
-          resultArray.push(oncallResults[0]);
+        if (oncallResults) {
+          resultArray.push(...oncallResults);
         }
         resultArray;
-        if (dayResults[0]) {
-          resultArray.push(dayResults[0]);
+        if (dayResults) {
+          resultArray.push(...dayResults);
         }
       }
     }
 
-    if (resultArray.length) {
+    if (resultArray.length > 0) {
       var sum = resultArray.reduce(function (acc, val) {
-        return acc + val["salesTotalAmount"];
+        return acc + Number(val["Sales_Nett"]);
       }, 0);
-
-      let allCategory = {
-        // rentalArrMerge: removeDuplicateValue(mergerentalTypeArr),
-        // locArrMerge: removeDuplicateValue(mergeLocArr),
-        results: result,
-        salesTotalAmount: sum,
-        Client: req.body?.MGIInputArr[0]?.selectedClient,
-        Address: findClientDetails?.Address,
-        City: findClientDetails?.City,
-        Pincode: findClientDetails?.Pincode,
-        Locdetail: findClientLocationDetails[0],
-        Location: req.body?.MGIInputArr[0]?.selectedClientLocation,
-        Invoice_No: last_invoice_number,
-        Invoice_Date: req.body.invoiceDate,
-        from_date: req.body?.MGIInputArr[0]?.selectedFromAndToDate[0],
-        to_date: req.body?.MGIInputArr[0]?.selectedFromAndToDate[1],
-        tripsBetween: `${req.body?.MGIInputArr[0]?.selectedFromAndToDate[0]}-${req.body?.MGIInputArr[0]?.selectedFromAndToDate[1]}`,
-      };
-      console.log(allCategory);
-      const backdatedInvoiceInput = await BackDatedInvoice.create(allCategory);
-      res.status(201).json({
-        success: true,
-        backdatedInvoiceInput,
+      let invoiceNumAllZeros = resultArray.filter((result) => {
+        return result.Invoice_No === 0;
       });
-      if (backdatedInvoiceInput) {
-        const update = {
-          last_invoice_no: Number(last_invoice_number),
-          next_invoice_no: Number(last_invoice_number) + 1,
+      console.log(invoiceNumAllZeros.length);
+      if (invoiceNumAllZeros.length > 0) {
+        let allCategory = {
+          // rentalArrMerge: removeDuplicateValue(mergerentalTypeArr),
+          // locArrMerge: removeDuplicateValue(mergeLocArr),
+          results: result,
+          salesTotalAmount: sum,
+          Client: req.body?.MGIInputArr[0]?.selectedClient,
+          Address: findClientDetails?.Address,
+          City: findClientDetails?.City,
+          Pincode: findClientDetails?.Pincode,
+          Locdetail: findClientLocationDetails[0],
+          Location: req.body?.MGIInputArr[0]?.selectedClientLocation,
+          Invoice_No: last_invoice_number,
+          Invoice_Date: req.body.invoiceDate,
+          from_date: req.body?.MGIInputArr[0]?.selectedFromAndToDate[0],
+          to_date: req.body?.MGIInputArr[0]?.selectedFromAndToDate[1],
+          tripsBetween: `${req.body?.MGIInputArr[0]?.selectedFromAndToDate[0]}-${req.body?.MGIInputArr[0]?.selectedFromAndToDate[1]}`,
         };
 
-        await InvoiceNumberModel.updateOne(update);
-        for await (const body of req?.body?.MGIInputArr) {
-          await SlabBaseMisUploadData.updateMany(
-            {
-              $and: [
-                { Client: body.selectedClient },
-                { Location: body.selectedClientLocation },
-                { Rental: body?.selectedRentalType },
-                {
-                  Date: {
-                    $gte: body.selectedFromAndToDate[0],
-                    $lte: body.selectedFromAndToDate[1],
+        const backdatedInvoiceInput = await BackDatedInvoice.create(
+          allCategory
+        );
+        res.status(201).json({
+          success: true,
+          backdatedInvoiceInput,
+        });
+        if (backdatedInvoiceInput) {
+          const update = {
+            last_invoice_no: Number(last_invoice_number),
+            next_invoice_no: Number(last_invoice_number) + 1,
+          };
+
+          await InvoiceNumberModel.updateOne(update);
+          for await (const body of req?.body?.MGIInputArr) {
+            await SlabBaseMisUploadData.updateMany(
+              {
+                $and: [
+                  { Client: body.selectedClient },
+                  { Location: body.selectedClientLocation },
+                  { Rental: body?.selectedRentalType },
+                  {
+                    Date: {
+                      $gte: body.selectedFromAndToDate[0],
+                      $lte: body.selectedFromAndToDate[1],
+                    },
                   },
-                },
-                { Invoice_No: { $eq: 0 } },
-              ],
-            },
-            { $set: { Invoice_No: last_invoice_number } }
-          );
-          await OnCallMisUploadData.updateMany(
-            {
-              $and: [
-                { Client: body.selectedClient },
-                { Location: body.selectedClientLocation },
-                { Rental: body?.selectedRentalType },
-                {
-                  Date: {
-                    $gte: body.selectedFromAndToDate[0],
-                    $lte: body.selectedFromAndToDate[1],
+                  { Invoice_No: { $eq: 0 } },
+                ],
+              },
+              { $set: { Invoice_No: last_invoice_number } }
+            );
+            await OnCallMisUploadData.updateMany(
+              {
+                $and: [
+                  { Client: body.selectedClient },
+                  { Location: body.selectedClientLocation },
+                  { Rental: body?.selectedRentalType },
+                  {
+                    Date: {
+                      $gte: body.selectedFromAndToDate[0],
+                      $lte: body.selectedFromAndToDate[1],
+                    },
                   },
-                },
-                { Invoice_No: { $eq: 0 } },
-              ],
-            },
-            { $set: { Invoice_No: last_invoice_number } }
-          );
-          await DayBaseMisUploadData.updateMany(
-            {
-              $and: [
-                { Client: body.selectedClient },
-                { Location: body.selectedClientLocation },
-                { Rental: body?.selectedRentalType },
-                {
-                  Date: {
-                    $gte: body.selectedFromAndToDate[0],
-                    $lte: body.selectedFromAndToDate[1],
+                  { Invoice_No: { $eq: 0 } },
+                ],
+              },
+              { $set: { Invoice_No: last_invoice_number } }
+            );
+            await DayBaseMisUploadData.updateMany(
+              {
+                $and: [
+                  { Client: body.selectedClient },
+                  { Location: body.selectedClientLocation },
+                  { Rental: body?.selectedRentalType },
+                  {
+                    Date: {
+                      $gte: body.selectedFromAndToDate[0],
+                      $lte: body.selectedFromAndToDate[1],
+                    },
                   },
-                },
-                { Invoice_No: { $eq: 0 } },
-              ],
-            },
-            { $set: { Invoice_No: last_invoice_number } }
-          );
-          await TripBaseMisUploadData.updateMany(
-            {
-              $and: [
-                { Client: body.selectedClient },
-                { Location: body.selectedClientLocation },
-                { Rental: body?.selectedRentalType },
-                {
-                  Date: {
-                    $gte: body.selectedFromAndToDate[0],
-                    $lte: body.selectedFromAndToDate[1],
+                  { Invoice_No: { $eq: 0 } },
+                ],
+              },
+              { $set: { Invoice_No: last_invoice_number } }
+            );
+            await TripBaseMisUploadData.updateMany(
+              {
+                $and: [
+                  { Client: body.selectedClient },
+                  { Location: body.selectedClientLocation },
+                  { Rental: body?.selectedRentalType },
+                  {
+                    Date: {
+                      $gte: body.selectedFromAndToDate[0],
+                      $lte: body.selectedFromAndToDate[1],
+                    },
                   },
-                },
-                { Invoice_No: { $eq: 0 } },
-              ],
-            },
-            { $set: { Invoice_No: last_invoice_number } }
-          );
+                  { Invoice_No: { $eq: 0 } },
+                ],
+              },
+              { $set: { Invoice_No: last_invoice_number } }
+            );
+          }
         }
+      } else {
+        res.status(404).json({
+          success: true,
+          message:
+            "You Cann't Generate Invoice Because already Invoice Raised for this Particular Condition",
+        });
       }
     } else {
       res.status(404).json({
@@ -873,12 +768,13 @@ router.delete(
               },
             },
             { Invoice_No: { $eq: 0 } },
+            { Purchase_Memo_No: { $eq: "0" } },
           ],
         },
       },
       { $sort: { Date: 1 } },
     ]);
-    const tripResults = await OnCallMisUploadData.aggregate([
+    const oncallResults = await OnCallMisUploadData.aggregate([
       {
         $match: {
           $and: [
@@ -891,12 +787,13 @@ router.delete(
               },
             },
             { Invoice_No: { $eq: 0 } },
+            { Purchase_Memo_No: { $eq: "0" } },
           ],
         },
       },
       { $sort: { Date: 1 } },
     ]);
-    const oncallResults = await TripBaseMisUploadData.aggregate([
+    const tripResults = await TripBaseMisUploadData.aggregate([
       {
         $match: {
           $and: [
@@ -909,6 +806,7 @@ router.delete(
               },
             },
             { Invoice_No: { $eq: 0 } },
+            { Purchase_Memo_No: { $eq: "0" } },
           ],
         },
       },
@@ -926,16 +824,15 @@ router.delete(
                 $lte: req.body.Todate,
               },
             },
+
             { Invoice_No: { $eq: 0 } },
+            { Purchase_Memo_No: { $eq: "0" } },
           ],
         },
       },
       { $sort: { Date: 1 } },
     ]);
-    console.log(slabResults?.length);
-    console.log(tripResults?.length);
-    console.log(oncallResults?.length);
-    console.log(dayResults?.length);
+
     if (slabResults?.length) {
       resultArray.push(...slabResults);
     }
@@ -976,7 +873,7 @@ router.delete(
       res.status(404).json({
         success: true,
         message:
-          "We cann't delete because Invoice is raised for this Date or No data found on selected date",
+          "We cann't delete because Invoice and purchasememo is raised for this Date or No data found on selected date",
       });
     }
   })

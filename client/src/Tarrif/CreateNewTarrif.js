@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { tarrifInputField } from "./TarrifInputField";
-import { Button, Space, Spin, Row, Col, Select, Form } from "antd";
+import { Button, Space, Spin, Row, Col, Select, Form, Typography } from "antd";
 import { useSelector, useDispatch } from "react-redux";
 import { createTarrif } from "../action/tarrifAction";
 import { useNavigate } from "react-router-dom";
@@ -120,13 +120,25 @@ export const CreateNewTarrif = () => {
       return;
     }
   }, [isTarrifCreated, error, dispatch]);
+  const { Title } = Typography;
   return (
     <>
+      <Title
+        className="text-center py-3 text-bold uppercase underline"
+        level={4}
+      >
+        Create Tarrif
+      </Title>
       <Form>
         <Row gutter={[16, 24]}>
           <Col className="gutter-row" span={4}>
             <Form.Item name="company">
-              <Select placeholder="Select Company" onChange={companyChange}>
+              <Select
+                placeholder="Select Company"
+                onChange={companyChange}
+                allowClear
+                showSearch
+              >
                 {tarrifInfield?.companies?.map((item) => {
                   return (
                     <Option key={item.value} value={item.value}>
@@ -143,6 +155,7 @@ export const CreateNewTarrif = () => {
                 placeholder="Select vehicleType"
                 onChange={vehicleChange}
                 allowClear
+                showSearch
               >
                 {tarrifInfield?.vehicleTypes?.map((item) => {
                   return (

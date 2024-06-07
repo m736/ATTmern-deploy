@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Button, Checkbox, Form, Input, Spin } from "antd";
+import { Button, Checkbox, Form, Input, Spin, Typography } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { createAreaListAction } from "../action/AreaListAction";
 import { toast } from "react-toastify";
@@ -39,9 +39,16 @@ const CreateAreaList = () => {
       return;
     }
   }, [isAreaCreated, error, dispatch]);
+  const { Title } = Typography;
   return (
     <div>
       <Spin spinning={areaListLoading} tip="loading">
+        <Title
+          className="text-center py-3 text-bold uppercase underline"
+          level={4}
+        >
+          New Area
+        </Title>
         <Form
           name="basic"
           labelCol={{

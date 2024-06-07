@@ -205,10 +205,14 @@ const ListClientMaster = () => {
   const AddClientMaster = () => {
     navigate("/client_master/new_client_master");
   };
+  const { Title } = Typography;
   return (
     <>
       <Spin spinning={clientMasterLoading}>
-        <div class="flex flex-row items-center justify-end">
+        <div class="flex flex-row items-center justify-between mt-5">
+          <Title className="font-bold" level={4}>
+            Client List
+          </Title>
           <Button
             className="text-white border-green-500 bg-green-500 hover:bg-white mb-7"
             onClick={AddClientMaster}
@@ -216,7 +220,6 @@ const ListClientMaster = () => {
             Add Client
           </Button>
         </div>
-
         <Table
           id={"company_list"}
           {...tableProps}

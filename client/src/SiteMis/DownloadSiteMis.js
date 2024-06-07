@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Input, Radio, Space } from "antd";
-import DownloadSiteSlab from "./DownloadSiteSlab";
+import DownloadSiteMisData from "./DownloadSiteMisData";
 
 const DownloadSiteMis = () => {
   const [value, setValue] = useState(1);
@@ -12,11 +12,11 @@ const DownloadSiteMis = () => {
     <div>
       <Radio.Group onChange={onChange} value={value}>
         <Space direction="vertical">
-          <Radio value={1}>Slab Base Mis Download</Radio>
+          <Radio value={1}>Site Mis Download</Radio>
         </Space>
       </Radio.Group>
 
-      {value === 1 ? <DownloadSiteSlab /> : null}
+      {value === 1 ? <DownloadSiteMisData /> : null}
     </div>
   );
 };

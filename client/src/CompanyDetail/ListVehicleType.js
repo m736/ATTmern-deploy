@@ -61,6 +61,7 @@ const EditableCell = ({
 };
 const ListVehicleType = () => {
   const [bordered, setBordered] = useState(true);
+  const [filterVehicleType, setFilterVehicleType] = useState([]);
   const [editingKey, setEditingKey] = useState("");
   const [form] = Form.useForm();
   const { confirm } = Modal;
@@ -98,10 +99,31 @@ const ListVehicleType = () => {
         };
       });
       setTabledata(updatedVehicleType);
+      let vehicleList = vehicle_types.map((item) => {
+        console.log(item);
+        return {
+          text: item.VehicleType,
+          value: item.VehicleType,
+        };
+      });
+
+      setFilterVehicleType(removeDuplicateObjects(vehicleList, "value"));
     } else {
       setTabledata([]);
     }
   }, [vehicle_types]);
+  function removeDuplicateObjects(array, property) {
+    const uniqueIds = [];
+    const unique = array.filter((element) => {
+      const isDuplicate = uniqueIds.includes(element[property]);
+      if (!isDuplicate) {
+        uniqueIds.push(element[property]);
+        return true;
+      }
+      return false;
+    });
+    return unique;
+  }
   const isEditing = (record) => record._id === editingKey;
   const edit = (record) => {
     form.setFieldsValue({
@@ -117,6 +139,10 @@ const ListVehicleType = () => {
     {
       title: "Vehicle Type",
       dataIndex: "value",
+      filters: filterVehicleType,
+      onFilter: (value, record) => record.vehicleList.indexOf(value) === 0,
+      filterSearch: true,
+      render: (text) => <a>{text.toUpperCase()}</a>,
       editable: true,
     },
     {
@@ -239,10 +265,14 @@ const ListVehicleType = () => {
   const AddVehicleMaster = () => {
     navigate("/client_master/create_vehicle_type");
   };
+  const { Title } = Typography;
   return (
     <>
       <Spin spinning={vehicleTypeLoading} tip="loading">
-        <div class="flex flex-row items-center justify-end">
+        <div class="flex flex-row items-center justify-between mt-5">
+          <Title className="font-bold" level={4}>
+            Vehicle Type List
+          </Title>
           <Button
             className="text-white border-green-500 bg-green-500 hover:bg-white mb-7"
             onClick={AddVehicleMaster}

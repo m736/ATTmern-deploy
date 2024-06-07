@@ -20,7 +20,7 @@ const ExportToExcel = ({ apiData, fileName }) => {
       className="bg-red-500 hover:bg-red-900 text-white py-3 px-4 ml-3 rounded"
       onClick={(e) => exportToCSV(apiData, fileName)}
     >
-      Export
+      Download
     </button>
   );
 };

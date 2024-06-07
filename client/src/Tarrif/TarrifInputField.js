@@ -120,38 +120,44 @@ export const tarrifInputField = {
 };
 export const onCallMisrequiredFields = [
   "Date",
+  "Dutyslip_No",
   "Vehicle_No",
-  "Vehicle_Type",
   "Vehicle_Billed_As",
   "Segment",
-  "Rental",
+  "OnCall_Rental",
   "Company_Name",
 ];
-export const tarrifExcelUploadrequiredFields = [
-  "S.no",
-  "Company Name",
-  "Vehicle Type",
-  "Rental",
-  "Segment",
-];
+// export const tarrifExcelUploadrequiredFields = [
+//   "S.no",
+//   "Company Name",
+//   "Vehicle Type",
+//   "Rental",
+//   "Segment",
+// ];
 export const slabExcelUploadrequiredFields = [
   "Date",
   "Dutyslip_No",
+  "Vehicle_No",
   "Company_Name",
-  "Rental",
+  "Slab_Rental",
   "Vehicle_Billed_As",
   "Segment",
 ];
 export const tripExcelUploadrequiredFields = [
+  "Date",
   "Dutyslip_No",
+  "Vehicle_No",
   "Company_Name",
   "Vehicle_Billed_As",
   "Segment",
-  "Rental",
+  "Trip_Rental",
 ];
 export const dayExcelUploadrequiredFields = [
-  "Company_Name",
+  "Date",
+  "Dutyslip_No",
+  "Vehicle_No",
   "Vehicle_Billed_As",
   "Segment",
-  "Rental",
+  "Company_Name",
+  "Day_Rental",
 ];

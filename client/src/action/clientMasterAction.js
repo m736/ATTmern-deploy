@@ -24,9 +24,8 @@ export const createClientMasterAction = (formData) => async (dispatch) => {
       `/api/v1/client/client_master_api`,
       formData
     );
-    setTimeout(() => {
-      dispatch(createClientMasterSuccess(data));
-    }, [1000]);
+
+    dispatch(createClientMasterSuccess(data));
   } catch (error) {
     dispatch(createClientMasterFail(error));
   }

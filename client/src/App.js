@@ -48,7 +48,7 @@ import EditTarrifMaster from "./Tarrif/EditTarrifMaster";
 import BackDatedInvoiceGenerate from "./Invoice/BackDatedInvoiceGenerate";
 import SiteUploadMis from "./SiteMis/SiteUploadMis";
 import { toast } from "react-toastify";
-import SiteAllCompanyDownloadMis from "./SiteMis/SiteAllCompanyDownloadMis";
+
 import DownloadSiteMis from "./SiteMis/DownloadSiteMis";
 import ProtectedRoute from "./route/ProtectedRoute";
 import LoginPage from "./authPages/LoginPage";
@@ -59,50 +59,62 @@ import HomePageHeader from "./Component/HomePageHeader";
 import axios from "axios";
 import moment from "moment";
 import { clearError } from "./slices/authSlice";
+import DeleteSiteMisData from "./SiteMis/DeleteSiteMis/DeleteSiteMisData";
+import NewOwner from "./Owners/NewOwner";
+import OwnerList from "./Owners/OwnerList";
+import NewAgency from "./Agency/NewAgency";
+import AgencyList from "./Agency/AgencyList";
+import NewDriver from "./Drivers/NewDriver";
+import NewVehicle from "./Vehicle/NewVehicle";
+import MultipleOwnerForOneVehicle from "./Vehicle/MultipleOwnerForOneVehicle";
+import EditVehicle from "./Vehicle/EditVehicle";
+import DriverList from "./Drivers/DriverList";
+import VehicleOwnerDetail from "./Owners/VehicleOwnerDetail";
+import CreatePurchaseMemo from "./PurchaseMemo/CreatePurchaseMemo";
+import ListPurchaseMemo from "./PurchaseMemo/ListPurchaseMemo";
 function App() {
   const { Header, Footer, Sider, Content } = Layout;
   const headerStyle = {
-    textAlign: "center",
-    color: "#fff",
-    height: 64,
-    paddingInline: 48,
-    lineHeight: "64px",
-    backgroundColor: "#4096ff",
+    textAlign: "right",
+    backgroundColor: "#310e64",
   };
   const [stripeApiKey, setStripeApiKey] = useState([]);
   const dispatch = useDispatch();
   const { loading, error, isAuthenticated, user } = useSelector(
     (state) => state.authState
   );
+  const { site_slab_base_mis_uploadlist } = useSelector(
+    (state) => state.SiteSlabBaseState || []
+  );
   useEffect(() => {
     dispatch(loadUser);
-    // async function getStripeApiKey() {
-    //   const { data } = await axios.get(
-    //     "/api/v1/site_mis/sitemis_missing_upload_date"
-    //   );
+    async function getStripeApiKey() {
+      const { data } = await axios.get(
+        "/api/v1/site_mis/sitemis_missing_upload_date"
+      );
 
-    //   setStripeApiKey(data);
-    // }
-    // getStripeApiKey();
+      setStripeApiKey(data);
+    }
+    getStripeApiKey();
   }, []);
 
   useEffect(() => {
-    // if (isAuthenticated && user.role == "sitemanager") {
-    //   stripeApiKey?.outputValue?.forEach((comapny) => {
-    //     if (comapny.remainingDates?.length) {
-    //       if (comapny.remainingDates?.length > 2) {
-    //         toast.warning(
-    //           `${comapny._id}-${comapny.remainingDates?.length} days missing`
-    //         );
-    //       } else {
-    //         let dateString = comapny.remainingDates.map((item) =>
-    //           moment(item).format("MMM DD YYYY")
-    //         );
-    //         toast.warning(`${comapny._id}-${dateString.join(",")}  missing`);
-    //       }
-    //     }
-    //   });
-    // }
+    if (isAuthenticated && (user.role == "sitemanager" || "admin")) {
+      stripeApiKey?.outputValue?.forEach((comapny) => {
+        if (comapny.remainingDates?.length) {
+          if (comapny.remainingDates?.length > 2) {
+            toast.warning(
+              `${comapny._id}-${comapny.remainingDates?.length} days missing`
+            );
+          } else {
+            let dateString = comapny.remainingDates.map((item) =>
+              moment(item).format("MMM DD YYYY")
+            );
+            toast.warning(`${comapny._id}-${dateString.join(",")}  missing`);
+          }
+        }
+      });
+    }
     if (error) {
       toast(error, {
         position: toast.POSITION.BOTTOM_CENTER,
@@ -137,6 +149,17 @@ function App() {
                   path="/"
                   element={<ProtectedRoute>{"Welcome our Att"}</ProtectedRoute>}
                 />
+                <Route
+                  exact
+                  path="/cannotaccess"
+                  element={
+                    <ProtectedRoute>
+                      {
+                        "This page You Cananot access,because you can access particular page only"
+                      }
+                    </ProtectedRoute>
+                  }
+                />
                 <Route path="/add_vechicle" element={<AddVehicleList />} />
                 <Route path="/vehicle_list" element={<VehicleList />} />
                 <Route path="/client_master">
@@ -156,7 +179,12 @@ function App() {
                   <Route
                     path="list_area"
                     element={
-                      <ProtectedRoute isUser={true}>
+                      // <ProtectedRoute isUser={true}>
+                      //   {" "}
+                      //   <ListArea />
+                      // </ProtectedRoute>
+                      <ProtectedRoute>
+                        {" "}
                         <ListArea />
                       </ProtectedRoute>
                     }
@@ -184,15 +212,15 @@ function App() {
                 <Route path="/mis">
                   <Route path="upload_mis" element={<UploadMis />} />
                   <Route path="download_mis" element={<DownloadMis />} />
+                  <Route
+                    path="delete_client_mis"
+                    element={<DeleteTripsExcelData />}
+                  />
                 </Route>
 
                 <Route path="/invoice">
                   <Route path="manual_invoice" element={<ManualInvoice />} />
 
-                  <Route
-                    path="delete_excel_data"
-                    element={<DeleteTripsExcelData />}
-                  />
                   <Route path="invoice_no" element={<InvoiceNumber />} />
                   <Route
                     path="invoice_generate"
@@ -210,6 +238,17 @@ function App() {
 
                   <Route path="invoice_list" element={<InvoiceList />} />
                 </Route>
+                <Route path="/purchase_memo">
+                  <Route
+                    path="create_purchase_memo"
+                    element={<CreatePurchaseMemo />}
+                  />
+
+                  <Route
+                    path="list_purchase_memo"
+                    element={<ListPurchaseMemo />}
+                  />
+                </Route>
               </Routes>
             </div>
             <Routes>
@@ -217,7 +256,7 @@ function App() {
                 <Route
                   path="site_upload_mis"
                   element={
-                    <ProtectedRoute isSiteManager={true}>
+                    <ProtectedRoute>
                       <SiteUploadMis />
                     </ProtectedRoute>
                   }
@@ -225,16 +264,112 @@ function App() {
                 <Route
                   path="site_download_mis"
                   element={
-                    <ProtectedRoute isSiteManager={true}>
+                    <ProtectedRoute>
                       <DownloadSiteMis />
                     </ProtectedRoute>
                   }
                 />
                 <Route
-                  path="site_allcompany_download_mis"
+                  path="delete_site_mis"
                   element={
-                    <ProtectedRoute isSiteManager={true}>
-                      <SiteAllCompanyDownloadMis />
+                    <ProtectedRoute isAdmin={true}>
+                      <DeleteSiteMisData />
+                    </ProtectedRoute>
+                  }
+                />
+              </Route>
+              <Route path="/owners">
+                <Route
+                  path="new_owner"
+                  element={
+                    <ProtectedRoute>
+                      <NewOwner />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="list_owner"
+                  element={
+                    <ProtectedRoute>
+                      <OwnerList />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="vehicle_with_owner"
+                  element={
+                    <ProtectedRoute>
+                      <VehicleOwnerDetail />
+                    </ProtectedRoute>
+                  }
+                />
+              </Route>
+              <Route path="/agencies">
+                <Route
+                  path="new_agency"
+                  element={
+                    <ProtectedRoute>
+                      <NewAgency />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="list_agencies"
+                  element={
+                    <ProtectedRoute>
+                      <AgencyList />
+                    </ProtectedRoute>
+                  }
+                />
+              </Route>
+              <Route path="/driver">
+                <Route
+                  path="new_driver"
+                  element={
+                    <ProtectedRoute>
+                      <NewDriver />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="list_driver"
+                  element={
+                    <ProtectedRoute>
+                      <DriverList />
+                    </ProtectedRoute>
+                  }
+                />
+              </Route>
+              <Route path="/vehicle">
+                <Route
+                  path="new_vehicle"
+                  element={
+                    <ProtectedRoute>
+                      <NewVehicle />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="vehicle_list"
+                  element={
+                    <ProtectedRoute>
+                      <VehicleList />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="one_vehicle_owners_list/:id"
+                  element={
+                    <ProtectedRoute>
+                      <MultipleOwnerForOneVehicle />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="edit_vehicle/:id"
+                  element={
+                    <ProtectedRoute>
+                      <EditVehicle />
                     </ProtectedRoute>
                   }
                 />

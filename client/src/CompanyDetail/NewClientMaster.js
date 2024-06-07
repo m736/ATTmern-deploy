@@ -38,18 +38,21 @@ const NewClientMaster = () => {
 
   // On change function for all Input
   const handleChange = (field, value) => {
+    console.log(`withouttrim-${value}`);
+    let trimValue = value.trim();
+    console.log(`trim-${trimValue}`);
     if (Object.keys(allClientMasterList.Location).includes(field)) {
       setAllClientMasterList({
         ...allClientMasterList,
         Location: {
           ...allClientMasterList.Location,
-          [field]: value,
+          [field]: trimValue,
         },
       });
     } else {
       setAllClientMasterList({
         ...allClientMasterList,
-        [field]: value,
+        [field]: trimValue,
       });
     }
   };
@@ -103,7 +106,7 @@ const NewClientMaster = () => {
   const removeClientLocation = (Position) => {
     let locationList = [...allClientMasterList?.Location];
     let updated = locationList.filter((i, index) => i?.Position !== Position);
-    setAllClientMasterList({ ...locationList, Location: updated });
+    setAllClientMasterList({ ...allClientMasterList, Location: updated });
   };
 
   useEffect(() => {
@@ -128,14 +131,18 @@ const NewClientMaster = () => {
       return;
     }
   }, [isClientMasterCreated, error, dispatch]);
-
+  const { Title } = Typography;
+  console.log(allClientMasterList);
   return (
     <>
       <Spin spinning={clientMasterLoading} tip="Loading">
         <div className="w-full max-w-4xl">
-          <h1 className="font-bold text-center underline pb-6 uppercase">
-            Create Company
-          </h1>
+          <Title
+            className="text-center py-3 text-bold uppercase underline"
+            level={4}
+          >
+            New Client
+          </Title>
           {/* Company_Name */}
           <div className="md:flex md:items-center mb-6">
             <div className="md:w-1/3">
@@ -248,6 +255,7 @@ const NewClientMaster = () => {
                           <div className="md:w-6/12 mr-4">
                             {" "}
                             <Input
+                              placeholder="GST"
                               value={Location?.Client_GST}
                               onChange={(e) => {
                                 handleLocation(

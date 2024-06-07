@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Table, Button, Space, Spin, Modal } from "antd";
+import { Table, Button, Space, Spin, Modal, Typography } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { deleteTarrif, getTarrif } from "../action/tarrifAction";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import moment from "moment";
 import { clearTarrifDeleted, clearTarrifError } from "../slices/TarrifSlice";
 import { ExclamationCircleFilled } from "@ant-design/icons";
@@ -273,9 +273,25 @@ const TarrifListTable = () => {
       return;
     }
   }, [isTarrifDeleted, error, dispatch]);
+  const navigate = useNavigate();
+  const AddTarrifMaster = () => {
+    navigate("/tarrif/new_tarrif");
+  };
+  const { Title } = Typography;
   return (
     <>
       <Spin spinning={loading} tip="loading">
+        <div class="flex flex-row items-center justify-between mt-5">
+          <Title className="font-bold" level={4}>
+            Tarrif List
+          </Title>
+          <Button
+            className="text-white border-green-500 bg-green-500 hover:bg-white mb-7"
+            onClick={AddTarrifMaster}
+          >
+            New tarrif
+          </Button>
+        </div>
         <Table
           {...tableProps}
           dataSource={tabledata}

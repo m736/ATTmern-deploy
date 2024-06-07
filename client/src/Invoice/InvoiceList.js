@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { jsPDF } from "jspdf";
+import autoTable from "jspdf-autotable";
 import { toast } from "react-toastify";
 import { Button, Form, Modal, Typography, Spin } from "antd";
 import { ExclamationCircleFilled } from "@ant-design/icons";
@@ -10,7 +11,7 @@ import {
   deleteInvoiceListAction,
   getInvoiceListAction,
 } from "../action/BackDatedInvoiceGenerateAction";
-import autoTable from "jspdf-autotable";
+
 import { useNavigate } from "react-router-dom";
 import {
   clearInvoiceError,
@@ -21,10 +22,11 @@ import {
 } from "../slices/BackDatedInvoSlice";
 import axios from "axios";
 
-const ListArea = () => {
+const InvoiceList = () => {
   const { Title } = Typography;
   const [bordered, setBordered] = useState(true);
   const [pdfDetails, SetPdfDetails] = useState({});
+  const [filterClient, setFilterClient] = useState([]);
   const [form] = Form.useForm();
   const { confirm } = Modal;
   const dispatch = useDispatch();
@@ -56,10 +58,31 @@ const ListArea = () => {
         };
       });
       setTabledata(updatedInvoiceList);
+      let clientList = invoice_list.map((item) => {
+        console.log(item);
+        return {
+          text: item.Client,
+          value: item.Client,
+        };
+      });
+
+      setFilterClient(removeDuplicateObjects(clientList, "value"));
     } else {
       setTabledata([]);
     }
   }, [invoice_list]);
+  function removeDuplicateObjects(array, property) {
+    const uniqueIds = [];
+    const unique = array.filter((element) => {
+      const isDuplicate = uniqueIds.includes(element[property]);
+      if (!isDuplicate) {
+        uniqueIds.push(element[property]);
+        return true;
+      }
+      return false;
+    });
+    return unique;
+  }
   const columns = [
     {
       title: "Invoice_No",
@@ -72,6 +95,9 @@ const ListArea = () => {
     {
       title: "Client",
       dataIndex: "Client",
+      filters: filterClient,
+      onFilter: (value, record) => record.Client.indexOf(value) === 0,
+      filterSearch: true,
     },
     {
       title: "Total",
@@ -380,22 +406,21 @@ const ListArea = () => {
   return (
     <>
       <Spin spinning={invoiceLoading} tip="Loading">
-        <div class="flex flex-row items-center justify-end">
+        <div class="flex flex-row items-center justify-between mt-5">
+          <Title className="font-bold" level={4}>
+            Invoice list
+          </Title>
           <Button
-            size="large"
             className="text-white border-green-500 bg-green-500 hover:bg-white mb-7"
             onClick={CreateInvoice}
           >
             Create Invoice
           </Button>
         </div>
-        <Title className="mb-10" level={2}>
-          Invoice list
-        </Title>
         <Table columns={columns} dataSource={tabledata} {...tableProps} />
       </Spin>
     </>
   );
 };
 
-export default ListArea;
+export default InvoiceList;

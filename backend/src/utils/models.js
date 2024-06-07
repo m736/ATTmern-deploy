@@ -163,6 +163,7 @@ const onCallMisSchema = new Schema(
     Sales_Nett: Number,
     Purchase_Nett: Number,
     Invoice_No: { type: Number, default: 0 },
+    Purchase_Memo_No: { type: String, default: "0" },
   },
   { strict: false, timestamps: true }
 );
@@ -208,13 +209,14 @@ const slabBaseMisSchema = new Schema(
     Sales_Nett: Number,
     Purchase_Nett: Number,
     Invoice_No: { type: Number, default: 0 },
+    Purchase_Memo_No: { type: String, default: "0" },
   },
   { strict: false, timestamps: true }
 );
 const tripBaseMisSchema = new Schema(
   {
     Client: String,
-    Location: String,
+    // Location: String,
     Date: {
       type: String,
       required: true,
@@ -242,6 +244,7 @@ const tripBaseMisSchema = new Schema(
     Sales_Nett: Number,
     Purchase_Nett: Number,
     Invoice_No: { type: Number, default: 0 },
+    Purchase_Memo_No: { type: String, default: "0" },
   },
   { strict: false, timestamps: true }
 );
@@ -277,6 +280,7 @@ const dayBaseMisSchema = new Schema(
     Sales_Nett: Number,
     Purchase_Nett: Number,
     Invoice_No: { type: Number, default: 0 },
+    Purchase_Memo_No: { type: String, default: "0" },
   },
   { strict: false, timestamps: true }
 );
@@ -384,11 +388,113 @@ const siteSlabBaseMisSchema = new Schema(
   },
   { strict: false, timestamps: true }
 );
+const siteTripBaseMisSchema = new Schema(
+  {
+    Date: {
+      type: String,
+      required: true,
+      set: (date) => formatDate(date),
+    },
+    Dutyslip_No: String,
+    Vehicle_No: String,
+    Vehicle_Type: String,
+    Vehicle_Billed_As: String,
+    Segment: String,
+    Rental: String,
+    Total_Kms: Number,
+    Trip_Type: String,
+    Trip: Number,
+    Trip_Single: Number,
+    Trip_Escort: Number,
+    Trip_Single_Long: Number,
+    Trip_Back_to_Back: Number,
+    Toll: Number,
+    Sales_Bata: Number,
+    Purchase_Bata: Number,
+    Fuel_Difference: Number,
+    Company_Name: String,
+    Area: String,
+  },
+  { strict: false, timestamps: true }
+);
+const siteDayBaseMisSchema = new Schema(
+  {
+    Date: {
+      type: String,
+      required: true,
+      set: (date) => formatDate(date),
+    },
+    Dutyslip_No: String,
+    Vehicle_No: String,
+    Vehicle_Type: String,
+    Vehicle_Billed_As: String,
+    Segment: String,
+    Rental: String,
+    Total_Kms: Number,
+    Total_Days: Number,
+    Total_Hrs: Number,
+    Toll: Number,
+    Parking: Number,
+    Permit: Number,
+    Driver_Batta: Number,
+    Day_Bata: Number,
+    Night_Sales_Bata: Number,
+    Night_Purchase_Bata: Number,
+    Fuel_Difference: Number,
+    Company_Name: String,
+    Area: String,
+  },
+  { strict: false, timestamps: true }
+);
+const siteOnCallBaseMisSchema = new Schema(
+  {
+    Date: {
+      type: String,
+      required: true,
+      set: (date) => formatDate(date),
+    },
+    Dutyslip_No: String,
+    Vehicle_No: String,
+    Vehicle_Type: String,
+    Vehicle_Billed_As: String,
+    Segment: String,
+    Place: String,
+    P_D: String,
+    Rental: String,
+    Total_Kms: Number,
+    Total_Days: Number,
+    Total_Hrs: String,
+    Toll: Number,
+    Parking: Number,
+    Permit: Number,
+    Driver_Batta: Number,
+    Day_Bata: Number,
+    Night_Sales_Bata: Number,
+    Night_Purchase_Bata: Number,
+    Others: Number,
+    Fuel_Difference: Number,
+    Company_Name: String,
+    Area: String,
+  },
+  { strict: false, timestamps: true }
+);
 module.exports = {
   MyModel: mongoose.model("my_table", myModelSchema),
   SiteSlabBaseMisUploadModel: mongoose.model(
     "site_slab_base_table",
     siteSlabBaseMisSchema
+  ),
+  SiteOnCallBaseMisUploadModel: mongoose.model(
+    "site_oncall_base_table",
+    siteOnCallBaseMisSchema
+  ),
+  SiteTripBaseMisUploadModel: mongoose.model(
+    "site_trip_base_table",
+    siteTripBaseMisSchema
+  ),
+  SiteDayBaseMisUploadModel: mongoose.model(
+    "site_day_base_table",
+    siteDayBaseMisSchema
   ),
   InvoiceNumberModel: mongoose.model("invoice_no_table", invoiceNumberSchema),
   BackDatedInvoice: mongoose.model("invoice_list_table", invoiceSchema),

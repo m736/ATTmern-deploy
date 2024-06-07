@@ -5,7 +5,11 @@ const SiteSlabBaseSlice = createSlice({
     siteMisloading: false,
     downloadMis: false,
     site_slab_base_mis_uploadlist: [],
-    download_site_slab_base_mis: [],
+    site_oncall_base_mis_uploadlist: [],
+    site_trip_base_mis_uploadlist: [],
+    site_day_base_mis_uploadlist: [],
+    download_site_mis: [],
+    delete_site_mis: false,
   },
   reducers: {
     siteSlabBaseMisUploadRequest(state, action) {
@@ -27,6 +31,63 @@ const SiteSlabBaseSlice = createSlice({
         error: action.payload,
       };
     },
+    siteOnCallBaseMisUploadRequest(state, action) {
+      return {
+        ...state,
+        siteMisloading: true,
+      };
+    },
+    siteOnCallBaseMisUploadSuccess(state, action) {
+      return {
+        ...state,
+        site_oncall_base_mis_uploadlist: action.payload,
+        siteMisloading: false,
+      };
+    },
+    siteOnCallBaseMisUploadFail(state, action) {
+      return {
+        siteMisloading: false,
+        error: action.payload,
+      };
+    },
+    siteTripBaseMisUploadRequest(state, action) {
+      return {
+        ...state,
+        siteMisloading: true,
+      };
+    },
+    siteTripBaseMisUploadSuccess(state, action) {
+      return {
+        ...state,
+        site_trip_base_mis_uploadlist: action.payload,
+        siteMisloading: false,
+      };
+    },
+    siteTripBaseMisUploadFail(state, action) {
+      return {
+        siteMisloading: false,
+        error: action.payload,
+      };
+    },
+    siteDayBaseMisUploadRequest(state, action) {
+      return {
+        ...state,
+        siteMisloading: true,
+      };
+    },
+    siteDayBaseMisUploadSuccess(state, action) {
+      return {
+        ...state,
+        site_day_base_mis_uploadlist: action.payload,
+        siteMisloading: false,
+      };
+    },
+    siteDayBaseMisUploadFail(state, action) {
+      return {
+        siteMisloading: false,
+        error: action.payload,
+      };
+    },
     downloadSiteSlabBaseMisUploadRequest(state, action) {
       return {
         ...state,
@@ -37,7 +98,7 @@ const SiteSlabBaseSlice = createSlice({
       return {
         ...state,
         downloadMis: false,
-        download_site_slab_base_mis: action.payload,
+        download_site_mis: action.payload,
       };
     },
     downloadSiteSlabBaseMisUploadFail(state, action) {
@@ -45,6 +106,34 @@ const SiteSlabBaseSlice = createSlice({
         downloadMis: false,
         error: action.payload,
       };
+    },
+    deleteSiteMisUploadRequest(state, action) {
+      return {
+        ...state,
+        siteMisloading: true,
+      };
+    },
+    deleteSiteMisUploadSuccess(state, action) {
+      return {
+        ...state,
+        siteMisloading: false,
+        delete_site_mis: true,
+      };
+    },
+    deleteSiteMisUploadFail(state, action) {
+      return {
+        siteMisloading: false,
+        error: action.payload,
+      };
+    },
+    clearDeleteSiteMis(state, action) {
+      return {
+        ...state,
+        delete_site_mis: false,
+      };
+    },
+    clearSiteMisError(state, action) {
+      return { ...state, error: null };
     },
   },
 });
@@ -58,6 +147,20 @@ export const {
   downloadSiteSlabBaseMisUploadRequest,
   downloadSiteSlabBaseMisUploadSuccess,
   downloadSiteSlabBaseMisUploadFail,
+  siteOnCallBaseMisUploadRequest,
+  siteOnCallBaseMisUploadSuccess,
+  siteOnCallBaseMisUploadFail,
+  siteTripBaseMisUploadRequest,
+  siteTripBaseMisUploadSuccess,
+  siteTripBaseMisUploadFail,
+  siteDayBaseMisUploadRequest,
+  siteDayBaseMisUploadSuccess,
+  siteDayBaseMisUploadFail,
+  deleteSiteMisUploadRequest,
+  deleteSiteMisUploadSuccess,
+  deleteSiteMisUploadFail,
+  clearDeleteSiteMis,
+  clearSiteMisError,
 } = actions;
 
 export default reducer;

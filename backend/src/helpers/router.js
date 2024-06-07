@@ -18,7 +18,7 @@ router.use(
 router.use(
   "/area_list_api",
   isAuthenticatedUser,
-  authorizeRoles("user"),
+  // authorizeRoles("user"),
   require("src/helpers/base.crud")(models.AreaListModel)
 );
 router.use(
@@ -36,6 +36,18 @@ router.use(
 router.use(
   "/get_site_slabbase_mis_data_api",
   require("src/helpers/base.crud")(models.SiteSlabBaseMisUploadModel)
+);
+router.use(
+  "/get_site_oncallbase_mis_data_api",
+  require("src/helpers/base.crud")(models.SiteOnCallBaseMisUploadModel)
+);
+router.use(
+  "/get_site_tripbase_mis_data_api",
+  require("src/helpers/base.crud")(models.SiteTripBaseMisUploadModel)
+);
+router.use(
+  "/get_site_daybase_mis_data_api",
+  require("src/helpers/base.crud")(models.SiteDayBaseMisUploadModel)
 );
 router.use(
   "/tripbase_mis_data",

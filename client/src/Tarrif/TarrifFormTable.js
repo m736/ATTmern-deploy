@@ -238,7 +238,7 @@ const TarrifFormTable = (props) => {
 
     setTarrifInput([...tarrifInput, newItem]);
   };
-  console.log(tarrifInput);
+
   const RemoveTarrifInput = () => {
     let activeIndex = tarrifInput.findIndex(
       (item) => item.position == tarrif.position
@@ -249,7 +249,7 @@ const TarrifFormTable = (props) => {
       setTarrifInput(updated);
     }
   };
-
+  // edit choice
   const editTarrifData = (activeIndex) => {
     let updated = tarrifInput?.map((item, index) => {
       if (index == activeIndex) {
@@ -266,6 +266,7 @@ const TarrifFormTable = (props) => {
     setEditableIndex(activeIndex);
     setTarrifInput(updated);
   };
+  // edit choice
   const cancelTarrifData = (activeIndex) => {
     let canceled = tarrifInput?.map((item, index) => {
       if (index == activeIndex) {
@@ -281,6 +282,7 @@ const TarrifFormTable = (props) => {
     setEditableIndex(null);
     setTarrifInput(canceled);
   };
+  // edit choice
   const updateTarrifData = (index) => {
     let updated = tarrifInput.find((i, ind) => ind == index);
 
@@ -288,6 +290,7 @@ const TarrifFormTable = (props) => {
 
     setEditableIndex(null);
   };
+  // edit choice
   const deleteTarrifData = (id) => {
     dispatch(deleteTarrif(id));
   };
@@ -420,6 +423,7 @@ const TarrifFormTable = (props) => {
               <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200 uppercase">
                 {enableinput?.includes("areas") ? (
                   <Select
+                    allowClear
                     style={{ width: "140px" }}
                     disabled={!enableinput?.includes("areas")}
                     defaultValue={tarrif?.selectedArea}
@@ -861,6 +865,8 @@ const TarrifFormTable = (props) => {
         <tr>
           <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200">
             <Select
+              allowClear
+              showSearch
               style={{ width: "140px" }}
               defaultValue={tarrif?.selectedRental}
               value={tarrif?.selectedRental}
@@ -879,6 +885,8 @@ const TarrifFormTable = (props) => {
           <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200">
             {enableinput?.includes("segment") ? (
               <Select
+                allowClear
+                showSearch
                 style={{ width: "140px" }}
                 disabled={!enableinput?.includes("segment")}
                 defaultValue={tarrif?.selectedSegment}
@@ -900,6 +908,8 @@ const TarrifFormTable = (props) => {
           <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200">
             {enableinput?.includes("areas") ? (
               <Select
+                allowClear
+                showSearch
                 style={{ width: "140px" }}
                 disabled={!enableinput?.includes("areas")}
                 defaultValue={tarrif?.selectedArea}
@@ -921,6 +931,8 @@ const TarrifFormTable = (props) => {
           <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200">
             {enableinput?.includes("slabhrs") ? (
               <Select
+                allowClear
+                showSearch
                 style={{ width: "140px" }}
                 disabled={!enableinput?.includes("slabhrs")}
                 onChange={(value) => {
@@ -942,6 +954,8 @@ const TarrifFormTable = (props) => {
           <td className="px-2 py-4 whitespace-nowrap text-sm text-gray-500 border-r border-gray-200">
             {enableinput?.includes("slabkms") ? (
               <Select
+                allowClear
+                showSearch
                 style={{ width: "140px" }}
                 defaultValue={tarrif.selectedSlabkms}
                 value={tarrif.selectedSlabkms}

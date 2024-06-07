@@ -120,6 +120,7 @@ const DownloadOnCallMisData = () => {
       Fuel_Difference: item?.Fuel_Difference ?? 0,
       Sales_Nett: item?.Sales_Nett ?? 0,
       Purchase_Nett: item?.Purchase_Nett ?? 0,
+      Memo_no: item?.Purchase_Memo_No ?? 0,
     }));
   }
   function removeDuplicateObjects(array, property) {

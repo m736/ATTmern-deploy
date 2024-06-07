@@ -9,14 +9,14 @@ import { getClientMasterAction } from "../action/clientMasterAction";
 import { Spin } from "antd";
 const SlabBaseMisUpload = () => {
   const [fileLoading, setLoading] = useState(false);
-
   const [selectedFile, setSelectedFile] = useState(null);
   const [companyList, setCompanyList] = useState([]);
   const [excelRows, setExcelRows] = useState([]);
   const [selectedCompany, setSelectedCompany] = useState("");
   const [clLocation, setClLocation] = useState([]);
-  const [selectedLocation, setSelectedLocation] = useState([]);
+  const [selectedLocation, setSelectedLocation] = useState("");
   const dispatch = useDispatch();
+
   const { slab_base_mis_uploadlist } = useSelector(
     (state) => state.SlabBaseMisState || []
   );
@@ -49,7 +49,17 @@ const SlabBaseMisUpload = () => {
           cellDates: true,
           raw: false,
         });
-        setExcelRows(json);
+        const vehicleNumberValidation = json?.filter(
+          (row) => !/^[0-9]/i.test(row?.Vehicle_No)
+        );
+        if (vehicleNumberValidation.length > 0) {
+          alert("some vehicle number started as alphabet please check");
+          inputRef.current.value = null;
+          setSelectedFile(null);
+          setExcelRows([]);
+        } else {
+          setExcelRows(json);
+        }
         setLoading(false);
       };
       reader.readAsArrayBuffer(file);
@@ -90,105 +100,128 @@ const SlabBaseMisUpload = () => {
   }
   const uploadData = async (e) => {
     e.preventDefault();
-    setLoading(true);
+    const sameCompany = [];
+    const differentCompany = [];
+    excelRows.forEach((row) => {
+      if (row.Company_Name == selectedCompany) {
+        sameCompany.push(row);
+      } else {
+        differentCompany.push(row);
+      }
+    });
     try {
-      const firstItemKeys = excelRows[0] && Object.keys(excelRows[0]);
-      let requiredValidation = false;
-      if (firstItemKeys?.length) {
-        slabExcelUploadrequiredFields.forEach((element) => {
-          if (!firstItemKeys.find((x) => x === element)) {
-            requiredValidation = true;
-          }
-        });
-      }
-      if (requiredValidation) {
-        alert(
-          "Required fields " + JSON.stringify(slabExcelUploadrequiredFields)
-        );
+      // if (selectedCompany.toUpperCase() == excelCompanyName) {
+      if (selectedCompany == "") {
+        alert("please select company name ");
         setLoading(false);
-        return;
-      }
-      const slabBaseMisUploadList = slab_base_mis_uploadlist || [];
-      const listSlabBase = excelRows.map((obj) => ({
-        _id: slabBaseMisUploadList?.find(
-          (x) => x["Dutyslip_No"] === obj["Dutyslip_No"]
-        )?._id,
-        Date: obj["Date"] || "",
-        // date: moment(new Date(obj["date"]).format("YYYY-MM-DD")) || "",
-        Dutyslip_No: obj["Dutyslip_No"] || "",
-        Vehicle_No: obj["Vehicle_No"] || "",
-        Vehicle_Type: obj["Vehicle_Type"] || "",
-        Vehicle_Billed_As: obj["Vehicle_Billed_As"] || "",
-        Segment: obj["Segment"] || "",
-        Total_Kms: obj["Total_Kms"] || 0,
-        Trip_Type: obj["Trip_Type"] || "",
-        Rental: obj["Rental"] || "",
-        Slab1: obj["Slab1"] || 0,
-        Slab2: obj["Slab2"] || 0,
-        Slab3: obj["Slab3"] || 0,
-        Slab4: obj["Slab4"] || 0,
-        Slab5: obj["Slab5"] || 0,
-        "Slab1 - E": obj["Slab1 - E"] || 0,
-        "Slab2 - E": obj["Slab2 - E"] || 0,
-        "Slab3 - E": obj["Slab3 - E"] || 0,
-        "Slab4 - E": obj["Slab4 - E"] || 0,
-        "Slab5 - E": obj["Slab5 - E"] || 0,
-        "Slab1 - Single": obj["Slab1 - Single"] || 0,
-        "Slab2 - Single": obj["Slab2 - Single"] || 0,
-        "Slab3 - Single": obj["Slab3 - Single"] || 0,
-        "Slab4 - Single": obj["Slab4 - Single"] || 0,
-        "Slab5 - Single": obj["Slab5 - Single"] || 0,
-        Bata: obj["Bata"] || 0,
-        Fuel_Difference: obj["Fuel_Difference"] || 0,
-        Company_Name: obj["Company_Name"] || "",
-        Area: obj["Area"] || "",
-        Sale_Bhata: obj["Sale_Bhata"] || 0,
-        Purchase_Bhata: obj["Purchase_Bhata"] || 0,
-      }));
-
-      const updatedlistSlabBase = listSlabBase.filter((x) => x._id);
-      const newlistSlabBase = listSlabBase.filter((x) => !x._id);
-
-      const updateFinalSlabBase = getFinalFilteredArray(updatedlistSlabBase);
-      const newFinalListSlabBase = getFinalFilteredArray(newlistSlabBase);
-
-      if (updateFinalSlabBase.length > 0) {
-        const result = (
-          await axios.post(
-            "/slabmis_bulk/slabbase_mis_bulk_update",
-            updateFinalSlabBase
-          )
-        ).data;
-        if (result) {
-          alert(
-            "Successfully updated " + updateFinalSlabBase.length + " documents"
-          );
-          inputRef.current.value = null;
-          setSelectedFile(null);
-          setExcelRows([]);
+      } else if (differentCompany.length) {
+        setLoading(false);
+        alert("different company records found");
+      } else if (sameCompany.length) {
+        setLoading(true);
+        const firstItemKeys = excelRows[0] && Object.keys(excelRows[0]);
+        let requiredValidation = false;
+        if (firstItemKeys?.length) {
+          slabExcelUploadrequiredFields.forEach((element) => {
+            if (!firstItemKeys.find((x) => x === element)) {
+              requiredValidation = true;
+            }
+          });
         }
-      }
-      if (newFinalListSlabBase.length > 0) {
-        const result = (
-          await axios.post(
-            "/slabmis_bulk/slabbase_mis_bulk_insert",
-            newFinalListSlabBase
-          )
-        ).data;
-        if (result) {
+        if (requiredValidation) {
           alert(
-            "Successfully added " + newFinalListSlabBase.length + " documents"
+            "Required fields " + JSON.stringify(slabExcelUploadrequiredFields)
           );
-          inputRef.current.value = null;
-          setSelectedFile(null);
-          setExcelRows([]);
+          setLoading(false);
+          return;
         }
+        const slabBaseMisUploadList = slab_base_mis_uploadlist || [];
+        const listSlabBase = excelRows.map((obj) => {
+          Object.keys(obj).forEach((k) => (obj[k] = obj[k]?.trim()));
+          return {
+            _id: slabBaseMisUploadList?.find(
+              (x) => x["Dutyslip_No"] === obj["Dutyslip_No"]
+            )?._id,
+            Date: obj["Date"] || "",
+            // date: moment(new Date(obj["date"]).format("YYYY-MM-DD")) || "",
+            Dutyslip_No: obj["Dutyslip_No"] || "",
+            Vehicle_No: obj["Vehicle_No"] || "",
+            Vehicle_Type: obj["Vehicle_Type"] || "",
+            Vehicle_Billed_As: obj["Vehicle_Billed_As"] || "",
+            Segment: obj["Segment"] || "",
+            Total_Kms: obj["Total_Kms"] || 0,
+            Trip_Type: obj["Trip_Type"] || "",
+            Rental: obj["Slab_Rental"] || "",
+            Slab1: obj["Slab1"] || 0,
+            Slab2: obj["Slab2"] || 0,
+            Slab3: obj["Slab3"] || 0,
+            Slab4: obj["Slab4"] || 0,
+            Slab5: obj["Slab5"] || 0,
+            "Slab1 - E": obj["Slab1 - E"] || 0,
+            "Slab2 - E": obj["Slab2 - E"] || 0,
+            "Slab3 - E": obj["Slab3 - E"] || 0,
+            "Slab4 - E": obj["Slab4 - E"] || 0,
+            "Slab5 - E": obj["Slab5 - E"] || 0,
+            "Slab1 - Single": obj["Slab1 - Single"] || 0,
+            "Slab2 - Single": obj["Slab2 - Single"] || 0,
+            "Slab3 - Single": obj["Slab3 - Single"] || 0,
+            "Slab4 - Single": obj["Slab4 - Single"] || 0,
+            "Slab5 - Single": obj["Slab5 - Single"] || 0,
+            Bata: obj["Bata"] || 0,
+            Fuel_Difference: obj["Fuel_Difference"] || 0,
+            Company_Name: obj["Company_Name"] || "",
+            Area: obj["Area"] || "",
+            Sale_Bhata: obj["Sale_Bhata"] || 0,
+            Purchase_Bhata: obj["Purchase_Bhata"] || 0,
+          };
+        });
+
+        const updatedlistSlabBase = listSlabBase.filter((x) => x._id);
+        const newlistSlabBase = listSlabBase.filter((x) => !x._id);
+
+        const updateFinalSlabBase = getFinalFilteredArray(updatedlistSlabBase);
+        const newFinalListSlabBase = getFinalFilteredArray(newlistSlabBase);
+
+        if (updateFinalSlabBase.length > 0) {
+          const result = (
+            await axios.post(
+              "/slabmis_bulk/slabbase_mis_bulk_update",
+              updateFinalSlabBase
+            )
+          ).data;
+          if (result) {
+            alert(
+              "Successfully updated " +
+                updateFinalSlabBase.length +
+                " documents"
+            );
+            inputRef.current.value = null;
+            setSelectedFile(null);
+            setExcelRows([]);
+          }
+        }
+        if (newFinalListSlabBase.length > 0) {
+          const result = (
+            await axios.post(
+              "/slabmis_bulk/slabbase_mis_bulk_insert",
+              newFinalListSlabBase
+            )
+          ).data;
+          if (result) {
+            alert(
+              "Successfully added " + newFinalListSlabBase.length + " documents"
+            );
+            inputRef.current.value = null;
+            setSelectedFile(null);
+            setExcelRows([]);
+          }
+        }
+        fetchSlabBaseMisUploadData();
+        setLoading(false);
       }
-      fetchSlabBaseMisUploadData();
-      setLoading(false);
     } catch (error) {
       setLoading(false);
-      console.log("uploadData error: ", error);
+      alert("uploadData error: ", error);
     }
   };
 
@@ -370,7 +403,9 @@ const SlabBaseMisUpload = () => {
                 <Spin spinning={clientMasterLoading}></Spin>
               ) : (
                 <>
-                  <option selected>Choose a company</option>
+                  <option value="" selected>
+                    Choose a company
+                  </option>
                   {companyList.map((comapny) => (
                     <option value={comapny.value}>{comapny.text}</option>
                   ))}
@@ -386,7 +421,9 @@ const SlabBaseMisUpload = () => {
               }}
               value={selectedLocation}
             >
-              <option selected>Choose Location</option>
+              <option value="" selected>
+                Choose Location
+              </option>
               {durationBody ? durationBody : null}
             </select>
             <input
